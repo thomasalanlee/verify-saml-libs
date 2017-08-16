@@ -1,0 +1,73 @@
+apply plugin: 'java'
+
+ext {
+    opensaml_version = '3.3.0'
+    saml_extensions_version = "$opensaml_version-1.2a-23"
+}
+
+group = "uk.gov.ida"
+version = "$opensaml_version-${System.env.BUILD_NUMBER ?: 'SNAPSHOT'}"
+
+
+repositories {
+    maven { url 'https://artifactory.ida.digital.cabinet-office.gov.uk/artifactory/whitelisted-repos' }
+}
+
+configurations {
+    opensaml
+}
+
+dependencies {
+    opensaml "org.opensaml:opensaml-core:$opensaml_version",
+             "org.opensaml:opensaml-saml-impl:$opensaml_version",
+             "org.opensaml:opensaml-saml-api:$opensaml_version",
+             "org.opensaml:opensaml-security-api:$opensaml_version",
+             "org.opensaml:opensaml-security-impl:$opensaml_version",
+             "org.opensaml:opensaml-xmlsec-impl:$opensaml_version",
+             "org.opensaml:opensaml-xmlsec-api:$opensaml_version",
+             'net.shibboleth.utilities:java-support:7.2.0'
+
+    compile 'org.slf4j:slf4j-api:1.7.21',
+            "uk.gov.ida:ida-saml-extensions:$saml_extensions_version",
+            "uk.gov.ida:security-utils:2.0.0-309",
+            configurations.opensaml,
+            'com.google.guava:guava:18.0',
+            'com.google.inject:guice:4.0',
+            'joda-time:joda-time:2.9',
+            'org.apache.santuario:xmlsec:1.5.7',
+            'log4j:log4j:1.2.14'
+
+
+
+    testCompile 'org.mockito:mockito-core:1.9.5',
+            'junit:junit:4.11',
+            'commons-codec:commons-codec:1.10',
+            'org.assertj:assertj-core:1.6.0',
+            'uk.gov.ida:ida-dev-pki:1.1.0-19'
+}
+
+apply plugin: 'maven-publish'
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
+publishing {
+    repositories {
+        maven {
+            url "/srv/maven" // change to point to your repo, e.g. http://my.org/repo
+        }
+    }
+
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            groupId = "uk.gov.ida"
+            artifactId = "saml-security"
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+}
