@@ -1,0 +1,46 @@
+apply from: 'buildSrc/publish.gradle'
+
+subprojects {
+    apply plugin: 'java'
+    repositories {
+        maven { url 'https://artifactory.ida.digital.cabinet-office.gov.uk/artifactory/whitelisted-repos' }
+    }
+
+    ext {
+      opensaml_version = '3.3.0'
+      dropwizard_version = '1.0.5'
+      ida_utils_version = '309'
+    }
+
+    group = "uk.gov.ida"
+    version = "$opensaml_version-${System.env.BUILD_NUMBER ?: 'SNAPSHOT'}"
+
+    configurations {
+        all*.exclude group: 'org.mockito', module: 'mockito-all'
+        guice
+        opensaml
+        dropwizard
+        xml_utils
+        test_deps
+    }
+    
+    dependencies {
+        guice 'com.google.inject:guice:4.0'
+
+        dropwizard "io.dropwizard:dropwizard-core:$dropwizard_version",
+            "io.dropwizard:dropwizard-client:$dropwizard_version"
+
+        opensaml "org.opensaml:opensaml-core:$opensaml_version",
+            "org.opensaml:opensaml-saml-impl:$opensaml_version",
+            "org.opensaml:opensaml-xmlsec-api:$opensaml_version",
+            "org.opensaml:opensaml-security-api:$opensaml_version",
+            "org.opensaml:opensaml-saml-api:$opensaml_version",
+            "org.opensaml:opensaml-xmlsec-impl:$opensaml_version"
+
+        test_deps 'uk.gov.ida:common-test-utils:2.0.0-32',
+                "com.github.tomakehurst:wiremock-standalone:2.5.0",
+                "io.dropwizard:dropwizard-testing:$dropwizard_version"
+
+        xml_utils "uk.gov.ida:common-utils:2.0.0-$ida_utils_version"
+    }
+}

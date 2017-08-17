@@ -1,0 +1,11 @@
+include "saml-metadata-bindings",
+        "saml-metadata-bindings-test",
+        "buildSrc"
+
+// allows the gradle name to match the project name
+rootProject.children.each { ProjectDescriptor p ->
+    p.buildFileName = p.name + '.gradle'
+    p.children.each { ProjectDescriptor pp ->
+        pp.buildFileName = pp.name + '.gradle'
+    }
+}
