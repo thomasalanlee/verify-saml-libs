@@ -106,6 +106,11 @@ public class ResponseBuilder {
         return this;
     }
 
+    public ResponseBuilder withDigestAlgorithm(DigestAlgorithm digestAlgorithm) {
+        this.digestAlgorithm = digestAlgorithm;
+        return this;
+    }
+
     private static Status getStatus() {
         Status status = testSamlObjectFactory.createStatus();
         StatusCode statusCode = testSamlObjectFactory.createStatusCode();
