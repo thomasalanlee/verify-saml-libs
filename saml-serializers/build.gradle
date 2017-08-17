@@ -1,0 +1,9 @@
+dependencies {
+    compile configurations.saml,
+            configurations.common_utils,
+            configurations.opensaml
+
+    testCompile configurations.test_deps,
+                configurations.saml_test,
+                configurations.opensaml
+}
