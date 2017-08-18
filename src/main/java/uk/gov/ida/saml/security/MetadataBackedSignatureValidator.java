@@ -1,13 +1,15 @@
 package uk.gov.ida.saml.security;
 
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.utilities.java.support.resolver.Criterion;
 import org.opensaml.core.criterion.EntityIdCriterion;
-import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
-import org.opensaml.security.SecurityException;
+import org.opensaml.security.trust.TrustEngine;
+import org.opensaml.xmlsec.signature.Signature;
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
 
 import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class MetadataBackedSignatureValidator extends SignatureValidator {
@@ -34,12 +36,17 @@ public class MetadataBackedSignatureValidator extends SignatureValidator {
     }
 
     @Override
-    protected boolean additionalValidations(SignableSAMLObject signableSAMLObject, String entityId, QName role) throws SecurityException {
-        CriteriaSet criteriaSet = new CriteriaSet();
+    protected List<Criterion> getAdditionalCriteria(String entityId, QName role) {
+        List<Criterion> criteriaSet = new ArrayList<>();
         criteriaSet.add(new EntityIdCriterion(entityId));
         criteriaSet.add(new EntityRoleCriterion(role));
         this.certificateChainEvaluableCriteria.map(criteriaSet::add);
 
-        return explicitKeySignatureTrustEngine.validate(signableSAMLObject.getSignature(), criteriaSet);
+        return criteriaSet;
+    }
+
+    @Override
+    protected TrustEngine<Signature> getTrustEngine(String entityId) {
+        return explicitKeySignatureTrustEngine;
     }
 }
