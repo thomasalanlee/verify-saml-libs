@@ -9,7 +9,7 @@ subprojects {
     ext {
       opensaml_version = '3.3.0'
       dropwizard_version = '1.0.5'
-      ida_utils_version = '309'
+      ida_utils_version = '312'
     }
 
     group = "uk.gov.ida"
