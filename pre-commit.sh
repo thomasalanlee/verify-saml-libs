@@ -17,6 +17,7 @@ printf "\n ida-compliance-tool"
 printf "\n ida-hub"
 printf "\n ida-msa"
 printf "\n ida-sample-rp"
+printf "\n verify-service-provider"
 
 tput bold
 printf "\n\nThank you! :)\n\n"
