@@ -1,22 +1,19 @@
 package uk.gov.ida.saml.security;
 
 
-import java.util.List;
-
-import javax.xml.namespace.QName;
-
-import org.opensaml.saml.common.SignableSAMLObject;
-import org.opensaml.security.SecurityException;
+import net.shibboleth.utilities.java.support.resolver.Criterion;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.credential.CredentialResolver;
 import org.opensaml.security.credential.impl.StaticCredentialResolver;
+import org.opensaml.security.trust.TrustEngine;
 import org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap;
 import org.opensaml.xmlsec.keyinfo.KeyInfoCredentialResolver;
+import org.opensaml.xmlsec.signature.Signature;
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
 
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import net.shibboleth.utilities.java.support.resolver.Criterion;
-
+import javax.xml.namespace.QName;
+import java.util.Arrays;
+import java.util.List;
 
 public class CredentialFactorySignatureValidator extends SignatureValidator {
     private final SigningCredentialFactory credentialFactory;
@@ -27,14 +24,16 @@ public class CredentialFactorySignatureValidator extends SignatureValidator {
     }
 
     @Override
-    protected boolean additionalValidations(SignableSAMLObject signableSAMLObject, String entityId, QName role) throws SecurityException {
+    protected List<Criterion> getAdditionalCriteria(String entityId, QName role) {
+        return Arrays.asList(new Criterion() {});
+    }
+
+    @Override
+    protected TrustEngine<Signature> getTrustEngine(String entityId) {
         List<Credential> credentials = credentialFactory.getVerifyingCredentials(entityId);
 
         CredentialResolver credResolver = new StaticCredentialResolver(credentials);
         KeyInfoCredentialResolver kiResolver = DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver();
-        ExplicitKeySignatureTrustEngine trustEngine = new ExplicitKeySignatureTrustEngine(credResolver, kiResolver);
-
-        return trustEngine.validate(signableSAMLObject.getSignature(), new CriteriaSet(new Criterion() {}));
+        return new ExplicitKeySignatureTrustEngine(credResolver, kiResolver);
     }
-
 }
