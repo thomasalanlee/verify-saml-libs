@@ -1,6 +1,6 @@
 package uk.gov.ida.saml.security.exception;
 
-import org.apache.log4j.Level;
+import org.slf4j.event.Level;
 import uk.gov.ida.saml.core.validation.SamlTransformationErrorException;
 
 public class SamlFailedToDecryptException extends SamlTransformationErrorException {

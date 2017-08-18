@@ -2,7 +2,7 @@ apply plugin: 'java'
 
 ext {
     opensaml_version = '3.3.0'
-    saml_extensions_version = "$opensaml_version-1.2a-23"
+    saml_extensions_version = "$opensaml_version-1.2a-27"
 }
 
 group = "uk.gov.ida"

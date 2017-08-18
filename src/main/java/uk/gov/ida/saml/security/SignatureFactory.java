@@ -1,7 +1,6 @@
 package uk.gov.ida.saml.security;
 
 import com.google.inject.Inject;
-import org.apache.log4j.Level;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.security.SecurityException;
 import org.opensaml.security.credential.Credential;
@@ -13,6 +12,7 @@ import org.opensaml.xmlsec.keyinfo.impl.X509KeyInfoGeneratorFactory;
 import org.opensaml.xmlsec.signature.Signature;
 import org.opensaml.xmlsec.signature.support.DocumentInternalIDContentReference;
 import org.opensaml.xmlsec.signature.support.SignatureConstants;
+import org.slf4j.event.Level;
 import uk.gov.ida.saml.core.validation.SamlTransformationErrorException;
 
 import javax.validation.constraints.NotNull;
