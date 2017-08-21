@@ -11,12 +11,11 @@ import org.opensaml.security.credential.Credential;
 import org.opensaml.xmlsec.signature.support.SignatureException;
 import uk.gov.ida.saml.core.test.TestCertificateStrings;
 import uk.gov.ida.saml.core.test.TestEntityIds;
-import uk.gov.ida.saml.core.validation.SamlTransformationErrorException;
 import uk.gov.ida.saml.security.saml.OpenSAMLMockitoRunner;
 import uk.gov.ida.saml.security.saml.StringEncoding;
+import uk.gov.ida.saml.security.saml.TestCredentialFactory;
 import uk.gov.ida.saml.security.saml.builders.AssertionBuilder;
 import uk.gov.ida.saml.security.saml.builders.SignatureBuilder;
-import uk.gov.ida.saml.security.saml.TestCredentialFactory;
 import uk.gov.ida.saml.security.saml.deserializers.AuthnRequestUnmarshaller;
 import uk.gov.ida.saml.security.saml.deserializers.SamlObjectParser;
 import uk.gov.ida.saml.security.saml.deserializers.StringToOpenSamlObjectTransformer;
@@ -75,9 +74,12 @@ public class CredentialFactorySignatureValidatorTest {
     /*
      * Signature algorithm should be valid.
      */
-    @Test(expected = SamlTransformationErrorException.class)
+    @Test
     public void shouldNotValidateBadSignatureAlgorithm() throws Exception {
-        validateAuthnRequestFile("authnRequestBadAlgorithm.xml");
+        URL authnRequestUrl = getClass().getClassLoader().getResource("authnRequestBadAlgorithm.xml");
+        String input = StringEncoding.toBase64Encoded(Resources.toString(authnRequestUrl, Charsets.UTF_8));
+        AuthnRequest request = getStringtoOpenSamlObjectTransformer().apply(input);
+        assertThat(credentialFactorySignatureValidator.validate(request, issuerId, null)).isFalse();
     }
 
     /*

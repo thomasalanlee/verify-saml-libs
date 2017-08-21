@@ -14,13 +14,25 @@ import org.opensaml.security.credential.impl.StaticCredentialResolver;
 import org.opensaml.security.trust.TrustEngine;
 import org.opensaml.xmlsec.algorithm.descriptors.DigestMD5;
 import org.opensaml.xmlsec.algorithm.descriptors.DigestSHA1;
+import org.opensaml.xmlsec.algorithm.descriptors.DigestSHA256;
+import org.opensaml.xmlsec.algorithm.descriptors.DigestSHA512;
+import org.opensaml.xmlsec.algorithm.descriptors.SignatureDSASHA1;
+import org.opensaml.xmlsec.algorithm.descriptors.SignatureECDSASHA1;
+import org.opensaml.xmlsec.algorithm.descriptors.SignatureRSAMD5;
+import org.opensaml.xmlsec.algorithm.descriptors.SignatureRSASHA1;
+import org.opensaml.xmlsec.algorithm.descriptors.SignatureRSASHA256;
+import org.opensaml.xmlsec.algorithm.descriptors.SignatureRSASHA512;
 import org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap;
 import org.opensaml.xmlsec.keyinfo.KeyInfoCredentialResolver;
+import org.opensaml.xmlsec.signature.SignableXMLObject;
 import org.opensaml.xmlsec.signature.Signature;
+import org.opensaml.xmlsec.signature.support.SignatureConstants;
 import org.opensaml.xmlsec.signature.support.SignatureException;
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
 import uk.gov.ida.saml.core.test.TestEntityIds;
+import uk.gov.ida.saml.security.errors.SamlTransformationErrorFactory;
 import uk.gov.ida.saml.security.saml.OpenSAMLMockitoRunner;
+import uk.gov.ida.saml.security.saml.SamlTransformationErrorManagerTestHelper;
 
 import javax.xml.namespace.QName;
 import java.util.Arrays;
@@ -57,7 +69,7 @@ public class SignatureValidatorTest {
     }
 
     @Test
-    public void shouldNotValidateMD5Digests() throws SignatureException, SecurityException, MarshallingException {
+    public void shouldNotAllowMD5Digests() throws SignatureException, SecurityException, MarshallingException {
         final Response signedResponse = aResponse()
                 .withDigestAlgorithm(new DigestMD5())
                 .build();
@@ -72,4 +84,51 @@ public class SignatureValidatorTest {
         assertThat(signatureValidator.validate(signedResponse, signedResponse.getIssuer().getValue(), SPSSODescriptor.DEFAULT_ELEMENT_NAME)).isTrue();
     }
 
+    @Test
+    public void shouldAllowSha256DigestMethod() throws SignatureException, SecurityException, MarshallingException {
+        final Response signedResponse = aResponse()
+                .withDigestAlgorithm(new DigestSHA256())
+                .build();
+        assertThat(signatureValidator.validate(signedResponse, signedResponse.getIssuer().getValue(), SPSSODescriptor.DEFAULT_ELEMENT_NAME)).isTrue();
+    }
+
+    @Test
+    public void shouldAllowSha512DigestMethod() throws SignatureException, SecurityException, MarshallingException {
+        final Response signedResponse = aResponse()
+                .withDigestAlgorithm(new DigestSHA512())
+                .build();
+        assertThat(signatureValidator.validate(signedResponse, signedResponse.getIssuer().getValue(), SPSSODescriptor.DEFAULT_ELEMENT_NAME)).isTrue();
+    }
+
+    @Test
+    public void shouldAllowSigningAlgorithmRsaSHA1() throws Exception {
+        final Response signedResponse = aResponse()
+                .withSignatureAlgorithm(new SignatureRSASHA1())
+                .build();
+        assertThat(signatureValidator.validate(signedResponse, signedResponse.getIssuer().getValue(), SPSSODescriptor.DEFAULT_ELEMENT_NAME)).isTrue();
+    }
+
+    @Test
+    public void shouldAllowSigningAlgorithmRsaSHA256() throws Exception {
+        final Response signedResponse = aResponse()
+                .withSignatureAlgorithm(new SignatureRSASHA256())
+                .build();
+        assertThat(signatureValidator.validate(signedResponse, signedResponse.getIssuer().getValue(), SPSSODescriptor.DEFAULT_ELEMENT_NAME)).isTrue();
+    }
+
+    @Test
+    public void shouldAllowSigningAlgorithmRsaSHA512() throws Exception {
+        final Response signedResponse = aResponse()
+                .withSignatureAlgorithm(new SignatureRSASHA512())
+                .build();
+        assertThat(signatureValidator.validate(signedResponse, signedResponse.getIssuer().getValue(), SPSSODescriptor.DEFAULT_ELEMENT_NAME)).isTrue();
+    }
+
+    @Test
+    public void shouldNotAllowSigningAlgorithmMD5() throws Exception {
+        final Response signedResponse = aResponse()
+                .withSignatureAlgorithm(new SignatureRSAMD5())
+                .build();
+        assertThat(signatureValidator.validate(signedResponse, signedResponse.getIssuer().getValue(), SPSSODescriptor.DEFAULT_ELEMENT_NAME)).isFalse();
+    }
 }

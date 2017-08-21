@@ -111,6 +111,11 @@ public class ResponseBuilder {
         return this;
     }
 
+    public ResponseBuilder withSignatureAlgorithm(SignatureAlgorithm signatureAlgorithm) {
+        this.signatureAlgorithm = signatureAlgorithm;
+        return this;
+    }
+
     private static Status getStatus() {
         Status status = testSamlObjectFactory.createStatus();
         StatusCode statusCode = testSamlObjectFactory.createStatusCode();

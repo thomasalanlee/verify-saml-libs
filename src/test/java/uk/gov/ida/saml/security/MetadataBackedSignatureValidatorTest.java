@@ -22,7 +22,6 @@ import uk.gov.ida.common.shared.security.verification.CertificateChainValidator;
 import uk.gov.ida.common.shared.security.verification.CertificateValidity;
 import uk.gov.ida.saml.core.test.TestCertificateStrings;
 import uk.gov.ida.saml.core.test.TestEntityIds;
-import uk.gov.ida.saml.core.validation.SamlTransformationErrorException;
 import uk.gov.ida.saml.security.saml.OpenSAMLMockitoRunner;
 import uk.gov.ida.saml.security.saml.StringEncoding;
 import uk.gov.ida.saml.security.saml.TestCredentialFactory;
@@ -165,9 +164,12 @@ public class MetadataBackedSignatureValidatorTest {
     /*
      * Signature algorithm should be valid.
      */
-    @Test(expected = SamlTransformationErrorException.class)
+    @Test
     public void shouldNotValidateBadSignatureAlgorithm() throws Exception {
-        validateAuthnRequestFile("authnRequestBadAlgorithm.xml");
+        URL authnRequestUrl = getClass().getClassLoader().getResource("authnRequestBadAlgorithm.xml");
+        String input = StringEncoding.toBase64Encoded(Resources.toString(authnRequestUrl, Charsets.UTF_8));
+        AuthnRequest request = getStringtoOpenSamlObjectTransformer().apply(input);
+        assertThat(createMetadataBackedSignatureValidator().validate(request, issuerId, SPSSODescriptor.DEFAULT_ELEMENT_NAME)).isFalse();
     }
 
     /*
