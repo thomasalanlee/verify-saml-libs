@@ -128,6 +128,11 @@ public class ResponseBuilder {
         return this;
     }
 
+    public ResponseBuilder withIssueInstant(DateTime issueInstant) {
+        this.issueInstant = ofNullable(issueInstant);
+        return this;
+    }
+
     public ResponseBuilder addAssertion(Assertion assertion) {
         addDefaultEncryptedAssertionIfNoneIsAdded = false;
         this.assertions.add(assertion);
