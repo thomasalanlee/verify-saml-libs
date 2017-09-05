@@ -32,7 +32,7 @@ dependencies {
             'com.google.inject:guice:4.0',
             'joda-time:joda-time:2.9'
 
-    testCompile "uk.gov.verify:saml-test-utils:$opensaml_version-22",
+    testCompile "uk.gov.verify:saml-test-utils:$opensaml_version-24",
             'org.assertj:assertj-joda-time:1.1.0'
 }
 
