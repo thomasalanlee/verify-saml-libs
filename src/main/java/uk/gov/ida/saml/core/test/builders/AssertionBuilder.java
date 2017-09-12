@@ -15,7 +15,10 @@ import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.encryption.Encrypter;
 import org.opensaml.security.credential.Credential;
+import org.opensaml.xmlsec.encryption.support.DataEncryptionParameters;
+import org.opensaml.xmlsec.encryption.support.EncryptionConstants;
 import org.opensaml.xmlsec.encryption.support.EncryptionException;
+import org.opensaml.xmlsec.encryption.support.KeyEncryptionParameters;
 import org.opensaml.xmlsec.signature.Signature;
 import org.opensaml.xmlsec.signature.support.SignatureException;
 import org.opensaml.xmlsec.signature.support.Signer;
@@ -23,7 +26,6 @@ import uk.gov.ida.saml.core.OpenSamlXmlObjectFactory;
 import uk.gov.ida.saml.core.test.TestCertificateStrings;
 import uk.gov.ida.saml.core.test.TestCredentialFactory;
 import uk.gov.ida.saml.core.test.TestEntityIds;
-import uk.gov.ida.saml.security.EncrypterFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -156,7 +158,29 @@ public class AssertionBuilder {
     }
 
     public EncryptedAssertion buildWithEncrypterCredential(Credential credential) {
-        return buildWithEncrypterCredential(new EncrypterFactory().createEncrypter(credential));
+        return buildWithEncrypterCredential(createEncrypter(credential));
+    }
+
+    public EncryptedAssertion buildWithEncrypterCredential(Credential credential, String encryptionAlgorithm) {
+        return buildWithEncrypterCredential(createEncrypter(credential, encryptionAlgorithm));
+    }
+
+    public Encrypter createEncrypter(Credential credential) {
+        return createEncrypter(credential, EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128);
+    }
+
+    public Encrypter createEncrypter(Credential credential, String encryptionAlgorithm) {
+        DataEncryptionParameters encParams = new DataEncryptionParameters();
+        encParams.setAlgorithm(encryptionAlgorithm);
+
+        KeyEncryptionParameters kekParams = new KeyEncryptionParameters();
+        kekParams.setEncryptionCredential(credential);
+        kekParams.setAlgorithm(EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSAOAEP);
+
+        Encrypter encrypter = new Encrypter(encParams, kekParams);
+        encrypter.setKeyPlacement(Encrypter.KeyPlacement.PEER);
+
+        return encrypter;
     }
 
     public EncryptedAssertion buildWithEncrypterCredential(Encrypter encrypter) {
