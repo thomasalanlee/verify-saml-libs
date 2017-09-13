@@ -8,7 +8,6 @@ import uk.gov.ida.saml.core.IdaConstants;
 import uk.gov.ida.saml.core.domain.IdentityProviderAuthnStatement;
 import uk.gov.ida.saml.core.domain.IpAddress;
 import uk.gov.ida.saml.core.extensions.IPAddress;
-import uk.gov.ida.saml.core.transformers.AuthnContextFactory;
 
 import static uk.gov.ida.saml.core.domain.IdentityProviderAuthnStatement.createIdentityProviderAuthnStatement;
 
