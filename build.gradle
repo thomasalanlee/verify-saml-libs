@@ -8,7 +8,7 @@ subprojects {
 
     ext {
         opensaml_version = '3.3.0'
-        saml_extensions_version = "$opensaml_version-1.2a-28"
+        saml_extensions_version = "$opensaml_version-1.2a-30"
     }
 
     group = "uk.gov.ida"
