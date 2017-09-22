@@ -22,7 +22,7 @@ dependencies {
             'com.google.guava:guava:18.0',
             'com.google.inject:guice:4.0',
             'uk.gov.ida:ida-dev-pki:1.1.0-19',
-            "uk.gov.verify:saml-domain-objects:$opensaml_version-32",
+            "uk.gov.verify:saml-domain-objects:$opensaml_version-33",
             'junit:junit:4.11',
             'org.assertj:assertj-core:1.6.0',
             'org.mockito:mockito-core:1.9.5',
