@@ -1,7 +1,7 @@
-SAML Security
-========
 
-Responsible for reusable security-related SAML operations. These include:
+# SAML Security
+
+Library for performing security-related SAML operations. These include:
 
 * Validating signatures
 * Signing things
@@ -9,4 +9,14 @@ Responsible for reusable security-related SAML operations. These include:
 * Decrypting assertions
 * Validating issuers
 
-This library is used by [hub-saml](https://github.gds/gds/hub-saml) and [stub-idp-saml](https://github.gds/gds/stub-idp-saml).
+This library is used by [hub-saml](https://github.com/alphagov/verify-hub-saml), [stub-idp-saml](https://github.com/alphagov/verify-stub-idp-saml) and the [verify-service-provider](https://github.com/alphagov/verify-service-provider).
+
+### Building the project
+
+`./gradlew clean build`
+
+## Licence
+
+[MIT License](LICENSE)
+
+This code is provided for informational purposes only and is not yet intended for use outside GOV.UK Verify
