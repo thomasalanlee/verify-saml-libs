@@ -17,6 +17,6 @@ This library is used by [hub-saml](https://github.com/alphagov/verify-hub-saml),
 
 ## Licence
 
-[MIT License](LICENSE)
+[MIT Licence](LICENCE)
 
 This code is provided for informational purposes only and is not yet intended for use outside GOV.UK Verify
