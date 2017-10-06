@@ -25,9 +25,9 @@ dependencies {
     compile 'com.google.guava:guava:18.0',
             'com.google.inject:guice:4.0',
             configurations.opensaml,
-            "uk.gov.ida:saml-serializers:$opensaml_version-20",
-            "uk.gov.ida:saml-security:$opensaml_version-42",
-            "uk.gov.verify:saml-domain-objects:$opensaml_version-33",
+            "uk.gov.ida:saml-serializers:$opensaml_version-22",
+            "uk.gov.ida:saml-security:$opensaml_version-45",
+            "uk.gov.verify:saml-domain-objects:$opensaml_version-36",
             'com.google.guava:guava:18.0',
             'com.google.inject:guice:4.0',
             'joda-time:joda-time:2.9'
