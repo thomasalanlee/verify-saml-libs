@@ -38,7 +38,7 @@ subprojects {
                 "org.opensaml:opensaml-saml-impl:$opensaml_version",
                 "org.opensaml:opensaml-saml-api:$opensaml_version"
 
-        common_utils 'uk.gov.ida:common-utils:2.0.0-312',
+        common_utils 'uk.gov.ida:common-utils:2.0.0-317',
                 'com.google.guava:guava:18.0'
     }
 }
