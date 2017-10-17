@@ -20,7 +20,6 @@
 package uk.gov.ida.saml.security;
 
 import com.google.common.base.Optional;
-import com.google.inject.Inject;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.credential.criteria.impl.EvaluableCredentialCriterion;
 import org.opensaml.security.x509.X509Credential;
@@ -30,6 +29,7 @@ import uk.gov.ida.common.shared.security.verification.CertificateChainValidator;
 import uk.gov.ida.common.shared.security.verification.CertificateValidity;
 import uk.gov.ida.common.shared.security.verification.exceptions.CertificateChainValidationException;
 
+import javax.inject.Inject;
 import java.security.KeyStore;
 import java.security.cert.CertPathValidatorException;
 import java.security.cert.X509Certificate;

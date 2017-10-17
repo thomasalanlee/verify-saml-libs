@@ -1,7 +1,6 @@
 package uk.gov.ida.saml.security;
 
 import com.google.common.base.Strings;
-import com.google.inject.Inject;
 import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Issuer;
@@ -14,6 +13,7 @@ import uk.gov.ida.saml.core.validation.SamlValidationResponse;
 import uk.gov.ida.saml.security.errors.SamlTransformationErrorFactory;
 import uk.gov.ida.saml.security.validators.signature.SamlSignatureUtil;
 
+import javax.inject.Inject;
 import javax.xml.namespace.QName;
 
 import static uk.gov.ida.saml.security.errors.SamlTransformationErrorFactory.invalidMessageSignature;

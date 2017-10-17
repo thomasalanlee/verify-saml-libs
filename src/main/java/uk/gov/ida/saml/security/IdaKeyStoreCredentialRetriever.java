@@ -1,10 +1,10 @@
 package uk.gov.ida.saml.security;
 
-import com.google.inject.Inject;
 import org.opensaml.security.credential.BasicCredential;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.credential.UsageType;
 
+import javax.inject.Inject;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
