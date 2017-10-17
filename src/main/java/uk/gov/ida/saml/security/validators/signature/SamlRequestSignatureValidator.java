@@ -1,12 +1,12 @@
 package uk.gov.ida.saml.security.validators.signature;
 
-import com.google.inject.Inject;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import uk.gov.ida.saml.core.validation.SamlTransformationErrorException;
 import uk.gov.ida.saml.core.validation.SamlValidationResponse;
 import uk.gov.ida.saml.core.validation.SamlValidationSpecificationFailure;
 import uk.gov.ida.saml.security.SamlMessageSignatureValidator;
 
+import javax.inject.Inject;
 import javax.xml.namespace.QName;
 
 public class SamlRequestSignatureValidator<T extends RequestAbstractType> {

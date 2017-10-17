@@ -1,6 +1,5 @@
 package uk.gov.ida.saml.security;
 
-import com.google.inject.Inject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.security.SecurityException;
 import org.opensaml.security.credential.Credential;
@@ -15,6 +14,7 @@ import org.opensaml.xmlsec.signature.support.SignatureConstants;
 import org.slf4j.event.Level;
 import uk.gov.ida.saml.core.validation.SamlTransformationErrorException;
 
+import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import java.security.cert.X509Certificate;
 
