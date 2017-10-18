@@ -2,7 +2,6 @@ apply plugin: 'java'
 
 ext {
     opensaml_version = '3.3.0'
-    saml_extensions_version = "$opensaml_version-1.2a-33"
 }
 
 group = "uk.gov.ida"
@@ -17,6 +16,10 @@ configurations {
     opensaml
 }
 
+def dependencyVersions = [
+        ida_saml_extensions:"$opensaml_version-1.2a-33"
+]
+
 dependencies {
     opensaml "org.opensaml:opensaml-core:$opensaml_version",
              "org.opensaml:opensaml-saml-impl:$opensaml_version",
@@ -28,7 +31,7 @@ dependencies {
              'net.shibboleth.utilities:java-support:7.2.0'
 
     compile 'org.slf4j:slf4j-api:1.7.21',
-            "uk.gov.ida:ida-saml-extensions:$saml_extensions_version",
+            "uk.gov.ida:ida-saml-extensions:$dependencyVersions.ida_saml_extensions",
             "uk.gov.ida:security-utils:2.0.0-309",
             configurations.opensaml,
             'com.google.guava:guava:18.0',
