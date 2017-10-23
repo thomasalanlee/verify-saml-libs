@@ -2,5 +2,5 @@ dependencies {
     compile configurations.opensaml,
             configurations.xml_utils,
             'uk.gov.ida:ida-dev-pki:1.1.0-19',
-            "uk.gov.verify:saml-test-utils:$opensaml_version-27"
+            "uk.gov.verify:saml-test-utils:$opensaml_version-29"
 }
