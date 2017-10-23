@@ -25,14 +25,14 @@ dependencies {
     compile 'com.google.guava:guava:18.0',
             'com.google.inject:guice:4.0',
             configurations.opensaml,
-            "uk.gov.ida:saml-serializers:$opensaml_version-24",
-            "uk.gov.ida:saml-security:$opensaml_version-46",
-            "uk.gov.verify:saml-domain-objects:$opensaml_version-37",
+            "uk.gov.ida:saml-serializers:$opensaml_version-26",
+            "uk.gov.ida:saml-security:$opensaml_version-49",
+            "uk.gov.verify:saml-domain-objects:$opensaml_version-38",
             'com.google.guava:guava:18.0',
             'com.google.inject:guice:4.0',
             'joda-time:joda-time:2.9'
 
-    testCompile "uk.gov.verify:saml-test-utils:$opensaml_version-27",
+    testCompile "uk.gov.verify:saml-test-utils:$opensaml_version-29",
             'org.assertj:assertj-joda-time:1.1.0'
 }
 
