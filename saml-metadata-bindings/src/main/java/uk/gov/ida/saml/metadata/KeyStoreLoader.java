@@ -1,6 +1,7 @@
 package uk.gov.ida.saml.metadata;
 
 import com.google.common.base.Throwables;
+import uk.gov.ida.saml.metadata.exception.EmptyTrustStoreException;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -29,9 +30,22 @@ public class KeyStoreLoader {
             try (InputStream autoCloseableInputStream = keystoreInputStream) {
                 keyStore.load(autoCloseableInputStream, charPassword);
             }
+            validate(keyStore);
             return keyStore;
         } catch (KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException e) {
             throw Throwables.propagate(e);
+        }
+    }
+
+    public void validate(KeyStore keyStore) {
+        int keyStoreSize = 0;
+        try {
+            keyStoreSize = keyStore.size();
+        } catch (KeyStoreException e) {
+            Throwables.propagate(e);
+        }
+        if (keyStoreSize == 0) {
+            throw new EmptyTrustStoreException();
         }
     }
 }
