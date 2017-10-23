@@ -5,7 +5,7 @@ ext {
 }
 
 def dependencyVersions = [
-        ida_saml_extensions:"$opensaml_version-1.2a-33"
+        ida_saml_extensions:"$opensaml_version-1.2a-34"
 ]
 
 subprojects {
