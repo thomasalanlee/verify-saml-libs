@@ -7,8 +7,11 @@ repositories {
 
 ext {
     opensaml_version = '3.3.0'
-    saml_extensions_version = "$opensaml_version-1.2a-30"
 }
+
+def dependencyVersions = [
+    ida_saml_extensions_test:"$opensaml_version-1.2a-30"
+]
 
 group = "uk.gov.verify"
 version = "$opensaml_version-${System.env.BUILD_NUMBER ?: 'SNAPSHOT'}"
@@ -26,7 +29,7 @@ dependencies {
             'junit:junit:4.11',
             'org.assertj:assertj-core:1.6.0',
             'org.mockito:mockito-core:1.9.5',
-            "uk.gov.ida:ida-saml-extensions-test:$saml_extensions_version",
+            "uk.gov.ida:ida-saml-extensions-test:$dependencyVersions.ida_saml_extensions_test",
             "org.opensaml:opensaml-saml-api:$opensaml_version",
             "org.opensaml:opensaml-security-api:$opensaml_version",
             "org.opensaml:opensaml-xmlsec-api:$opensaml_version",
