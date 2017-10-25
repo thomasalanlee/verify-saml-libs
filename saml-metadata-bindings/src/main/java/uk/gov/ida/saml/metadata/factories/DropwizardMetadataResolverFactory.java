@@ -4,7 +4,6 @@ import io.dropwizard.setup.Environment;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
 import uk.gov.ida.saml.metadata.ExpiredCertificateMetadataFilter;
-import uk.gov.ida.saml.metadata.KeyStoreLoader;
 import uk.gov.ida.saml.metadata.MetadataResolverConfiguration;
 import uk.gov.ida.saml.metadata.PKIXSignatureValidationFilterProvider;
 
@@ -47,12 +46,8 @@ public class DropwizardMetadataResolverFactory {
     private List<MetadataFilter> getMetadataFilters(MetadataResolverConfiguration metadataConfiguration, boolean validateSignatures) {
         if (!validateSignatures) { return emptyList(); }
 
-        KeyStore metadataTrustStore = getMetadataTrustStore(metadataConfiguration);
+        KeyStore metadataTrustStore = metadataConfiguration.getTrustStore();
         PKIXSignatureValidationFilterProvider pkixSignatureValidationFilterProvider = new PKIXSignatureValidationFilterProvider(metadataTrustStore);
         return asList(pkixSignatureValidationFilterProvider.get(), expiredCertificateMetadataFilter);
-    }
-
-    private KeyStore getMetadataTrustStore(MetadataResolverConfiguration metadataConfiguration) {
-        return new MetadataTrustStoreProvider(new KeyStoreLoader(), metadataConfiguration.getTrustStorePath(), metadataConfiguration.getTrustStorePassword()).get();
     }
 }

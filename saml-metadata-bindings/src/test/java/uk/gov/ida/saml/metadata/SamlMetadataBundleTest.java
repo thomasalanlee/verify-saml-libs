@@ -71,9 +71,9 @@ public class SamlMetadataBundleTest {
 
     public static class TestConfiguration extends Configuration {
         @JsonProperty("metadata")
-        MetadataConfiguration metadataConfiguration;
+        TrustStorePathMetadataConfiguration metadataConfiguration;
 
-        public MetadataConfiguration getMetadataConfiguration() {
+        public MetadataResolverConfiguration getMetadataConfiguration() {
             return metadataConfiguration;
         }
     }
