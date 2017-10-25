@@ -1,29 +1,39 @@
 package uk.gov.ida.saml.metadata;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.dropwizard.client.JerseyClientConfiguration;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
-import java.security.KeyStore;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.PROPERTY,
-        property = "type",
-        defaultImpl = FileBackedTrustStoreMetadataConfiguration.class)
-@JsonSubTypes({
-        @JsonSubTypes.Type(value=FileBackedTrustStoreMetadataConfiguration.class, name="file"),
-        @JsonSubTypes.Type(value=EncodedTrustStoreMetadataConfiguration.class, name="encoded")
-})
-public abstract class MetadataConfiguration {
+public class MetadataConfiguration implements MetadataResolverConfiguration {
+    protected MetadataConfiguration() {
+    }
+
+    public MetadataConfiguration(String trustStorePath, String trustStorePassword, URI uri, Long minRefreshDelay, Long maxRefreshDelay, String expectedEntityId, JerseyClientConfiguration client, String jerseyClientName) {
+        this.trustStorePath = trustStorePath;
+        this.trustStorePassword = trustStorePassword;
+        this.uri = uri;
+        this.minRefreshDelay = minRefreshDelay;
+        this.maxRefreshDelay = maxRefreshDelay;
+        this.expectedEntityId = expectedEntityId;
+        this.client = client;
+        this.jerseyClientName = jerseyClientName;
+    }
+
+    /*
+     * TrustStore configuration is used to do certificate chain validation when loading metadata
+     */
+    @NotNull
+    @Valid
+    @JsonProperty
+    private String trustStorePath;
 
     @NotNull
     @Valid
     @JsonProperty
-    protected String trustStorePassword;
+    private String trustStorePassword;
 
     /* HTTP{S} URL the SAML metadata can be loaded from */
     @NotNull
@@ -62,28 +72,42 @@ public abstract class MetadataConfiguration {
     @JsonProperty
     private String jerseyClientName = "MetadataClient";
 
-    public abstract KeyStore getTrustStore();
+    @Override
+    public String getTrustStorePath() {
+        return trustStorePath;
+    }
 
+    @Override
+    public String getTrustStorePassword() {
+        return trustStorePassword;
+    }
+
+    @Override
     public URI getUri() {
         return uri;
     }
 
+    @Override
     public Long getMinRefreshDelay() {
         return minRefreshDelay;
     }
 
+    @Override
     public Long getMaxRefreshDelay() {
         return maxRefreshDelay;
     }
 
+    @Override
     public String getExpectedEntityId() {
         return expectedEntityId;
     }
 
+    @Override
     public JerseyClientConfiguration getJerseyClientConfiguration() {
         return client;
     }
 
+    @Override
     public String getJerseyClientName() {
         return jerseyClientName;
     }

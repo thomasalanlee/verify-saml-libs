@@ -8,7 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.security.KeyStore;
 import java.util.Base64;
 
-public class EncodedTrustStoreMetadataConfiguration extends MetadataConfiguration {
+public class EncodedTrustStoreConfiguration extends TrustStoreConfiguration {
 
     @Valid
     @NotNull

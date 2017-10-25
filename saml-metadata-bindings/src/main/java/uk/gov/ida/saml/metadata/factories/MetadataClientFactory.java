@@ -5,12 +5,13 @@ import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.setup.Environment;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import uk.gov.ida.saml.metadata.MetadataConfiguration;
+import uk.gov.ida.saml.metadata.MetadataResolverConfiguration;
 
 import javax.ws.rs.client.Client;
 import java.net.ProxySelector;
 
 public class MetadataClientFactory {
-    public Client getClient(Environment environment, MetadataConfiguration metadataConfiguration) {
+    public Client getClient(Environment environment, MetadataResolverConfiguration metadataConfiguration) {
         JerseyClientConfiguration jerseyClientConfiguration = metadataConfiguration.getJerseyClientConfiguration();
         JerseyClientBuilder jerseyClientBuilder = new JerseyClientBuilder(environment)
                 .using(jerseyClientConfiguration);

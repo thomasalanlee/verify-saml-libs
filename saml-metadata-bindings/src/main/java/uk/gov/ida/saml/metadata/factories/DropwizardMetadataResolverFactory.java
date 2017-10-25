@@ -4,7 +4,8 @@ import io.dropwizard.setup.Environment;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
 import uk.gov.ida.saml.metadata.ExpiredCertificateMetadataFilter;
-import uk.gov.ida.saml.metadata.MetadataConfiguration;
+import uk.gov.ida.saml.metadata.KeyStoreLoader;
+import uk.gov.ida.saml.metadata.MetadataResolverConfiguration;
 import uk.gov.ida.saml.metadata.PKIXSignatureValidationFilterProvider;
 
 import javax.ws.rs.client.Client;
@@ -20,15 +21,15 @@ public class DropwizardMetadataResolverFactory {
     private final ExpiredCertificateMetadataFilter expiredCertificateMetadataFilter = new ExpiredCertificateMetadataFilter();
     private final MetadataClientFactory metadataClientFactory = new MetadataClientFactory();
 
-    public MetadataResolver createMetadataResolver(Environment environment, MetadataConfiguration metadataConfiguration) {
+    public MetadataResolver createMetadataResolver(Environment environment, MetadataResolverConfiguration metadataConfiguration) {
         return createMetadataResolver(environment, metadataConfiguration, true);
     }
 
-    public MetadataResolver createMetadataResolverWithoutSignatureValidation(Environment environment, MetadataConfiguration metadataConfiguration) {
+    public MetadataResolver createMetadataResolverWithoutSignatureValidation(Environment environment, MetadataResolverConfiguration metadataConfiguration) {
         return createMetadataResolver(environment, metadataConfiguration, false);
     }
 
-    private MetadataResolver createMetadataResolver(Environment environment, MetadataConfiguration metadataConfiguration, boolean validateSignatures) {
+    private MetadataResolver createMetadataResolver(Environment environment, MetadataResolverConfiguration metadataConfiguration, boolean validateSignatures) {
         URI uri = metadataConfiguration.getUri();
         Long minRefreshDelay = metadataConfiguration.getMinRefreshDelay();
         Long maxRefreshDelay = metadataConfiguration.getMaxRefreshDelay();
@@ -43,11 +44,15 @@ public class DropwizardMetadataResolverFactory {
         );
     }
 
-    private List<MetadataFilter> getMetadataFilters(MetadataConfiguration metadataConfiguration, boolean validateSignatures) {
+    private List<MetadataFilter> getMetadataFilters(MetadataResolverConfiguration metadataConfiguration, boolean validateSignatures) {
         if (!validateSignatures) { return emptyList(); }
 
-        KeyStore metadataTrustStore = metadataConfiguration.getTrustStore();
+        KeyStore metadataTrustStore = getMetadataTrustStore(metadataConfiguration);
         PKIXSignatureValidationFilterProvider pkixSignatureValidationFilterProvider = new PKIXSignatureValidationFilterProvider(metadataTrustStore);
         return asList(pkixSignatureValidationFilterProvider.get(), expiredCertificateMetadataFilter);
+    }
+
+    private KeyStore getMetadataTrustStore(MetadataResolverConfiguration metadataConfiguration) {
+        return new MetadataTrustStoreProvider(new KeyStoreLoader(), metadataConfiguration.getTrustStorePath(), metadataConfiguration.getTrustStorePassword()).get();
     }
 }

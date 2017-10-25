@@ -1,18 +1,18 @@
 package uk.gov.ida.saml.metadata;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dropwizard.client.JerseyClientConfiguration;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.net.URI;
 import java.security.KeyStore;
 
-public class FileBackedTrustStoreMetadataConfiguration extends MetadataConfiguration {
+public class FileBackedTrustStoreConfiguration extends TrustStoreConfiguration {
 
     @NotNull
     @Valid
     @JsonProperty
+    @JsonAlias({ "path" })
     private String trustStorePath;
 
 
