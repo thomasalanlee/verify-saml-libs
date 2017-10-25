@@ -1,5 +1,7 @@
 package uk.gov.ida.saml.metadata;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.client.JerseyClientConfiguration;
 import uk.gov.ida.saml.metadata.factories.MetadataTrustStoreProvider;
@@ -17,25 +19,31 @@ import java.security.KeyStore;
  */
 @Deprecated
 public class TrustStorePathMetadataConfiguration extends MetadataConfiguration {
-    protected TrustStorePathMetadataConfiguration() {
-    }
 
-    public TrustStorePathMetadataConfiguration(String trustStorePath, String trustStorePassword, URI uri, Long minRefreshDelay, Long maxRefreshDelay, String expectedEntityId, JerseyClientConfiguration client, String jerseyClientName) {
+    @JsonCreator
+    public TrustStorePathMetadataConfiguration(
+            @JsonProperty("uri") @JsonAlias({ "url" }) URI uri,
+            @JsonProperty("minRefreshDelay") Long minRefreshDelay,
+            @JsonProperty("maxRefreshDelay") Long maxRefreshDelay,
+            @JsonProperty("expectedEntityId") String expectedEntityId,
+            @JsonProperty("client") JerseyClientConfiguration client,
+            @JsonProperty("jerseyClientName") @JsonAlias({ "client" }) String jerseyClientName,
+            @JsonProperty("trustStorePath") String trustStorePath,
+            @JsonProperty("trustStorePassword") String trustStorePassword
+    ) {
+        super(uri, minRefreshDelay, maxRefreshDelay, expectedEntityId, client, jerseyClientName);
         this.trustStorePath = trustStorePath;
         this.trustStorePassword = trustStorePassword;
     }
-
     /*
      * TrustStore configuration is used to do certificate chain validation when loading metadata
      */
     @NotNull
     @Valid
-    @JsonProperty
     private String trustStorePath;
 
     @NotNull
     @Valid
-    @JsonProperty
     private String trustStorePassword;
 
     @Override
