@@ -5,7 +5,7 @@ import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
-import uk.gov.ida.saml.metadata.MetadataConfiguration;
+import uk.gov.ida.saml.metadata.MetadataResolverConfiguration;
 import uk.gov.ida.saml.metadata.factories.DropwizardMetadataResolverFactory;
 
 import javax.inject.Provider;
@@ -21,7 +21,7 @@ public class MetadataResolverBundle<T extends Configuration> implements io.dropw
 
     @Override
     public void run(T configuration, Environment environment) throws Exception {
-        MetadataConfiguration metadataConfiguration = configExtractor.getMetadataConfiguration(configuration);
+        MetadataResolverConfiguration metadataConfiguration = configExtractor.getMetadataConfiguration(configuration);
         metadataResolver = dropwizardMetadataResolverFactory.createMetadataResolver(environment, metadataConfiguration);
     }
 
@@ -43,7 +43,7 @@ public class MetadataResolverBundle<T extends Configuration> implements io.dropw
     }
 
     public interface MetadataConfigurationExtractor<T> {
-        MetadataConfiguration getMetadataConfiguration(T configuration);
+        MetadataResolverConfiguration getMetadataConfiguration(T configuration);
     }
 
 }

@@ -3,12 +3,11 @@ package uk.gov.ida.saml.metadata;
 import io.dropwizard.client.JerseyClientConfiguration;
 
 import java.net.URI;
+import java.security.KeyStore;
 
 public interface MetadataResolverConfiguration {
 
-    public String getTrustStorePath();
-
-    public String getTrustStorePassword();
+    public KeyStore getTrustStore();
 
     public URI getUri();
 

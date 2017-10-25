@@ -1,19 +1,20 @@
 package uk.gov.ida.saml.metadata;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.client.JerseyClientConfiguration;
+import uk.gov.ida.saml.metadata.factories.MetadataTrustStoreProvider;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
+import java.security.KeyStore;
 
-public class MetadataConfiguration implements MetadataResolverConfiguration {
+public abstract class MetadataConfiguration implements MetadataResolverConfiguration {
     protected MetadataConfiguration() {
     }
 
-    public MetadataConfiguration(String trustStorePath, String trustStorePassword, URI uri, Long minRefreshDelay, Long maxRefreshDelay, String expectedEntityId, JerseyClientConfiguration client, String jerseyClientName) {
-        this.trustStorePath = trustStorePath;
-        this.trustStorePassword = trustStorePassword;
+    public MetadataConfiguration(URI uri, Long minRefreshDelay, Long maxRefreshDelay, String expectedEntityId, JerseyClientConfiguration client, String jerseyClientName) {
         this.uri = uri;
         this.minRefreshDelay = minRefreshDelay;
         this.maxRefreshDelay = maxRefreshDelay;
@@ -22,23 +23,11 @@ public class MetadataConfiguration implements MetadataResolverConfiguration {
         this.jerseyClientName = jerseyClientName;
     }
 
-    /*
-     * TrustStore configuration is used to do certificate chain validation when loading metadata
-     */
-    @NotNull
-    @Valid
-    @JsonProperty
-    private String trustStorePath;
-
-    @NotNull
-    @Valid
-    @JsonProperty
-    private String trustStorePassword;
-
     /* HTTP{S} URL the SAML metadata can be loaded from */
     @NotNull
     @Valid
     @JsonProperty
+    @JsonAlias({ "url" })
     private URI uri;
 
     /* Used to set {@link org.opensaml.saml2.metadata.provider.AbstractReloadingMetadataProvider#minRefreshDelay} */
@@ -71,16 +60,6 @@ public class MetadataConfiguration implements MetadataResolverConfiguration {
     @Valid
     @JsonProperty
     private String jerseyClientName = "MetadataClient";
-
-    @Override
-    public String getTrustStorePath() {
-        return trustStorePath;
-    }
-
-    @Override
-    public String getTrustStorePassword() {
-        return trustStorePassword;
-    }
 
     @Override
     public URI getUri() {
