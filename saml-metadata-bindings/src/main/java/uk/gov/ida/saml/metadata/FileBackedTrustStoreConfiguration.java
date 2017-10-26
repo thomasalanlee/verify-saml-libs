@@ -12,12 +12,12 @@ public class FileBackedTrustStoreConfiguration extends TrustStoreConfiguration {
     @NotNull
     @Valid
     @JsonProperty
-    @JsonAlias({ "path" })
-    private String trustStorePath;
+    @JsonAlias({ "path", "trustStorePath" })
+    private String store;
 
 
     @Override
     public KeyStore getTrustStore() {
-        return new KeyStoreLoader().load(trustStorePath, trustStorePassword);
+        return new KeyStoreLoader().load(store, trustStorePassword);
     }
 }

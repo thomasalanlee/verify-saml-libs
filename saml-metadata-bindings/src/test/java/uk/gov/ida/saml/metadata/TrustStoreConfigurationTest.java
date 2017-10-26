@@ -38,7 +38,7 @@ public class TrustStoreConfigurationTest {
     public void should_loadTrustStoreFromEncodedString() throws Exception {
         byte[] trustStore = Files.readAllBytes(new File(keyStoreRule.getAbsolutePath()).toPath());
         String encodedTrustStore = Base64.getEncoder().encodeToString(trustStore);
-        String jsonConfig = "{\"type\": \"encoded\", \"trustStore\": \"" + encodedTrustStore + "\", \"trustStorePassword\": \"" + keyStoreRule.getPassword() + "\"}";
+        String jsonConfig = "{\"type\": \"encoded\", \"store\": \"" + encodedTrustStore + "\", \"trustStorePassword\": \"" + keyStoreRule.getPassword() + "\"}";
         TrustStoreConfiguration config = objectMapper.readValue(jsonConfig, TrustStoreConfiguration.class);
 
         assertThat(config.getTrustStore()).isNotNull();
