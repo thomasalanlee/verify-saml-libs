@@ -13,10 +13,10 @@ public class EncodedTrustStoreConfiguration extends TrustStoreConfiguration {
     @Valid
     @NotNull
     @JsonProperty
-    private String trustStore;
+    private String store;
 
     @Override
     public KeyStore getTrustStore() {
-        return new KeyStoreLoader().load(new ByteArrayInputStream(Base64.getDecoder().decode(trustStore)), trustStorePassword);
+        return new KeyStoreLoader().load(new ByteArrayInputStream(Base64.getDecoder().decode(store)), trustStorePassword);
     }
 }
