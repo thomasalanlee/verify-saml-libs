@@ -73,4 +73,9 @@ public abstract class MetadataConfiguration implements MetadataResolverConfigura
     public String getJerseyClientName() {
         return jerseyClientName;
     }
+
+    @Override
+    public String getHubFederationId() {
+        return hubFederationId;
+    }
 }

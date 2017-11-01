@@ -20,4 +20,6 @@ public interface MetadataResolverConfiguration {
     public JerseyClientConfiguration getJerseyClientConfiguration();
 
     public String getJerseyClientName();
+
+    public String getHubFederationId();
 }
