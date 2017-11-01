@@ -11,7 +11,8 @@ public abstract class MetadataConfiguration implements MetadataResolverConfigura
         Long maxRefreshDelay,
         String expectedEntityId,
         JerseyClientConfiguration client,
-        String jerseyClientName
+        String jerseyClientName,
+        String hubFederationId
     ) {
         this.uri = uri;
         this.minRefreshDelay = Optional.ofNullable(minRefreshDelay).orElse(60000L);
@@ -19,6 +20,7 @@ public abstract class MetadataConfiguration implements MetadataResolverConfigura
         this.expectedEntityId = Optional.ofNullable(expectedEntityId).orElse("https://signin.service.gov.uk");
         this.client = Optional.ofNullable(client).orElse(new JerseyClientConfiguration());
         this.jerseyClientName = Optional.ofNullable(jerseyClientName).orElse("MetadataClient");
+        this.hubFederationId = Optional.ofNullable(hubFederationId).orElse("VERIFY-FEDERATION");
     }
 
     /* HTTP{S} URL the SAML metadata can be loaded from */
@@ -39,6 +41,8 @@ public abstract class MetadataConfiguration implements MetadataResolverConfigura
     private JerseyClientConfiguration client;
 
     private String jerseyClientName;
+
+    private String hubFederationId;
 
     @Override
     public URI getUri() {

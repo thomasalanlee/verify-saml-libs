@@ -28,10 +28,11 @@ public class TrustStorePathMetadataConfiguration extends MetadataConfiguration {
             @JsonProperty("expectedEntityId") String expectedEntityId,
             @JsonProperty("client") JerseyClientConfiguration client,
             @JsonProperty("jerseyClientName") @JsonAlias({ "client" }) String jerseyClientName,
+            @JsonProperty("hubFederationId") String hubFederationId,
             @JsonProperty("trustStorePath") String trustStorePath,
             @JsonProperty("trustStorePassword") String trustStorePassword
     ) {
-        super(uri, minRefreshDelay, maxRefreshDelay, expectedEntityId, client, jerseyClientName);
+        super(uri, minRefreshDelay, maxRefreshDelay, expectedEntityId, client, jerseyClientName, hubFederationId);
         this.trustStorePath = trustStorePath;
         this.trustStorePassword = trustStorePassword;
     }

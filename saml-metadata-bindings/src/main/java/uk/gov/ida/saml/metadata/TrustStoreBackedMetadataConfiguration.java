@@ -20,9 +20,10 @@ public class TrustStoreBackedMetadataConfiguration extends MetadataConfiguration
         @JsonProperty("expectedEntityId") String expectedEntityId,
         @JsonProperty("client") JerseyClientConfiguration client,
         @JsonProperty("jerseyClientName") String jerseyClientName,
+        @JsonProperty("hubFederationId") String hubFederationId,
         @JsonProperty("trustStore") TrustStoreConfiguration trustStore
     ) {
-        super(uri, minRefreshDelay, maxRefreshDelay, expectedEntityId, client, jerseyClientName);
+        super(uri, minRefreshDelay, maxRefreshDelay, expectedEntityId, client, jerseyClientName, hubFederationId);
         this.trustStore = trustStore;
     }
 
