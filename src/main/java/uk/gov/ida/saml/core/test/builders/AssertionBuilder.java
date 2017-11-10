@@ -22,7 +22,14 @@ import org.opensaml.xmlsec.encryption.support.KeyEncryptionParameters;
 import org.opensaml.xmlsec.signature.Signature;
 import org.opensaml.xmlsec.signature.support.SignatureException;
 import org.opensaml.xmlsec.signature.support.Signer;
+import uk.gov.ida.saml.core.IdaConstants;
 import uk.gov.ida.saml.core.OpenSamlXmlObjectFactory;
+import uk.gov.ida.saml.core.extensions.eidas.CurrentFamilyName;
+import uk.gov.ida.saml.core.extensions.eidas.CurrentGivenName;
+import uk.gov.ida.saml.core.extensions.eidas.PersonIdentifier;
+import uk.gov.ida.saml.core.extensions.eidas.impl.CurrentFamilyNameBuilder;
+import uk.gov.ida.saml.core.extensions.eidas.impl.CurrentGivenNameBuilder;
+import uk.gov.ida.saml.core.extensions.eidas.impl.PersonIdentifierBuilder;
 import uk.gov.ida.saml.core.test.TestCertificateStrings;
 import uk.gov.ida.saml.core.test.TestCredentialFactory;
 import uk.gov.ida.saml.core.test.TestEntityIds;
@@ -34,6 +41,7 @@ import java.util.Optional;
 import static com.google.common.base.Throwables.propagate;
 import static java.util.Optional.ofNullable;
 import static uk.gov.ida.saml.core.test.builders.AttributeStatementBuilder.anAttributeStatement;
+import static uk.gov.ida.saml.core.test.builders.AttributeStatementBuilder.anEidasAttributeStatement;
 
 public class AssertionBuilder {
 
@@ -53,6 +61,12 @@ public class AssertionBuilder {
 
     public static AssertionBuilder anAssertion() {
         return new AssertionBuilder();
+    }
+
+    public static AssertionBuilder anEidasAssertion() {
+        return new AssertionBuilder()
+            .addAttributeStatement(anEidasAttributeStatement().build())
+            .addAuthnStatement(AuthnStatementBuilder.anAuthnStatement().build());
     }
 
     public static Assertion anAuthnStatementAssertion() {
