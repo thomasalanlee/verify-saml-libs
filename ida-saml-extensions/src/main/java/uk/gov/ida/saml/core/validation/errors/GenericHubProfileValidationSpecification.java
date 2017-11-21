@@ -56,6 +56,8 @@ public class GenericHubProfileValidationSpecification extends SamlValidationSpec
     public static final String MDS_MULTIPLE_STATEMENTS = "Matching dataset contains multiple attribute statements.";
     public static final String MISSING_MDS = "Missing a matching dataset assertion.";
 
+    public static final String MISMATCHED_PIDS = "IDP matching dataset and authn statement assertions do not contain matching persistent identifiers";
+
     public static final String MDS_ATTRIBUTE_NOT_RECOGNISED = "''{0}'' is not a recognised matching dataset attribute.";
     public static final String EMPTY_ATTRIBUTE = "Attribute ''{0}'' does not have a value.";
     public static final String ATTRIBUTE_HAS_INCORRECT_TYPE = "Attribute ''{0}'' has incorrect type. Should be ''{1}'' but got ''{2}''.";
