@@ -17,7 +17,7 @@ configurations {
 }
 
 def dependencyVersions = [
-        ida_saml_extensions:"$opensaml_version-1.2a-34"
+        ida_saml_extensions:"$opensaml_version-1.2a-37"
 ]
 
 dependencies {
