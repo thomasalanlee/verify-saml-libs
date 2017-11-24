@@ -9,6 +9,6 @@ public class BirthNameUnmarshaller extends AbstractSAMLObjectUnmarshaller {
     /** {@inheritDoc} */
     protected void processElementContent(XMLObject samlObject, String elementContent) {
         BirthName birthName = (BirthName) samlObject;
-        birthName.setPlaceOfBirth(elementContent);
+        birthName.setBirthName(elementContent);
     }
 }

@@ -24,12 +24,12 @@ public class BirthNameImpl extends AbstractSAMLObject implements BirthName {
     }
 
     /** {@inheritDoc} */
-    public String getPlaceOfBirth() {
+    public String getBirthName() {
         return birthName;
     }
 
     /** {@inheritDoc} */
-    public void setPlaceOfBirth(String s) {
+    public void setBirthName(String s) {
 
         birthName = prepareForAssignment(birthName, s);
     }

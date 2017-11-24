@@ -20,7 +20,7 @@ public class BirthNameMarshallerTest {
         final String fullName = "Sarah Jane Booth";
         final BirthName birthName = new BirthNameBuilder().buildObject();
         final Marshaller birthNameMarshaller = XMLObjectProviderRegistrySupport.getMarshallerFactory().getMarshaller(birthName);
-        birthName.setPlaceOfBirth(fullName);
+        birthName.setBirthName(fullName);
 
         final Element marshalledElement = birthNameMarshaller.marshall(birthName);
 

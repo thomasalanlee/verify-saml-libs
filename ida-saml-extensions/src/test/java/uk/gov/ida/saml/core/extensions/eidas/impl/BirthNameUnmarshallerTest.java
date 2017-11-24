@@ -22,6 +22,6 @@ public class BirthNameUnmarshallerTest {
                 "</saml2:AttributeValue>"
         );
 
-        assertThat(birthName.getPlaceOfBirth()).isEqualTo("Sarah Jane Booth");
+        assertThat(birthName.getBirthName()).isEqualTo("Sarah Jane Booth");
     }
 }
