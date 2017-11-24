@@ -7,7 +7,6 @@ import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.Marshaller;
 import org.w3c.dom.Element;
 import uk.gov.ida.saml.core.extensions.eidas.CurrentAddress;
-import uk.gov.ida.saml.core.extensions.eidas.Gender;
 import uk.gov.ida.saml.core.test.OpenSAMLRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,7 +24,7 @@ public class CurrentAddressMarshallerTest {
 
         final Element marshalledElement = currentAddressMarshaller.marshall(currentAddress);
 
-        assertThat(marshalledElement.getNamespaceURI()).isEqualTo(Gender.DEFAULT_ELEMENT_NAME.getNamespaceURI());
+        assertThat(marshalledElement.getNamespaceURI()).isEqualTo(CurrentAddress.DEFAULT_ELEMENT_NAME.getNamespaceURI());
         assertThat(marshalledElement.getAttributeNS(XMLConstants.XSI_NS, XMLConstants.XSI_TYPE_ATTRIB_NAME.getLocalPart())).isEqualTo(String.format("%s:%s", EIDAS_NATURUAL_PREFIX, CurrentAddress.TYPE_LOCAL_NAME));
         assertThat(marshalledElement.getTextContent()).isEqualTo(address);
     }

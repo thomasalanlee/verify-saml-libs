@@ -45,6 +45,16 @@ public interface IdaConstants {
             String FRIENDLY_NAME = "Gender";
             String NAME = "http://eidas.europa.eu/attributes/naturalperson/Gender";
         }
+
+        interface BirthName {
+            String FRIENDLY_NAME = "BirthName";
+            String NAME = "http://eidas.europa.eu/attributes/naturalperson/BirthName";
+        }
+
+        interface PlaceOfBirth {
+            String FRIENDLY_NAME = "PlaceOfBirth";
+            String NAME = "http://eidas.europa.eu/attributes/naturalperson/PlaceOfBirth";
+        }
     }
 
     interface Attributes_1_1 {
