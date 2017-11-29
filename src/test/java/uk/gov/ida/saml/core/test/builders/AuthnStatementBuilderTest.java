@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AuthnStatementBuilderTest {
 
     @Test
-    public void shouldBuildWithCorretLOA() {
+    public void shouldBuildWithCorrectLOA() {
         AuthnStatement authnStatement = AuthnStatementBuilder.anEidasAuthnStatement().build();
 
         assertThat(authnStatement.getAuthnContext().getAuthnContextClassRef().getAuthnContextClassRef()).isEqualTo(EidasAuthnContext.EIDAS_LOA_SUBSTANTIAL);
