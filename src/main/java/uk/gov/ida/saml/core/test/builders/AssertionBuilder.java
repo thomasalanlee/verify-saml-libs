@@ -22,14 +22,7 @@ import org.opensaml.xmlsec.encryption.support.KeyEncryptionParameters;
 import org.opensaml.xmlsec.signature.Signature;
 import org.opensaml.xmlsec.signature.support.SignatureException;
 import org.opensaml.xmlsec.signature.support.Signer;
-import uk.gov.ida.saml.core.IdaConstants;
 import uk.gov.ida.saml.core.OpenSamlXmlObjectFactory;
-import uk.gov.ida.saml.core.extensions.eidas.CurrentFamilyName;
-import uk.gov.ida.saml.core.extensions.eidas.CurrentGivenName;
-import uk.gov.ida.saml.core.extensions.eidas.PersonIdentifier;
-import uk.gov.ida.saml.core.extensions.eidas.impl.CurrentFamilyNameBuilder;
-import uk.gov.ida.saml.core.extensions.eidas.impl.CurrentGivenNameBuilder;
-import uk.gov.ida.saml.core.extensions.eidas.impl.PersonIdentifierBuilder;
 import uk.gov.ida.saml.core.test.TestCertificateStrings;
 import uk.gov.ida.saml.core.test.TestCredentialFactory;
 import uk.gov.ida.saml.core.test.TestEntityIds;
@@ -42,6 +35,7 @@ import static com.google.common.base.Throwables.propagate;
 import static java.util.Optional.ofNullable;
 import static uk.gov.ida.saml.core.test.builders.AttributeStatementBuilder.anAttributeStatement;
 import static uk.gov.ida.saml.core.test.builders.AttributeStatementBuilder.anEidasAttributeStatement;
+import static uk.gov.ida.saml.core.test.builders.AuthnStatementBuilder.anEidasAuthnStatement;
 
 public class AssertionBuilder {
 
@@ -66,50 +60,50 @@ public class AssertionBuilder {
     public static AssertionBuilder anEidasAssertion() {
         return new AssertionBuilder()
             .addAttributeStatement(anEidasAttributeStatement().build())
-            .addAuthnStatement(AuthnStatementBuilder.anAuthnStatement().build());
+            .addAuthnStatement(anEidasAuthnStatement().build());
     }
 
     public static Assertion anAuthnStatementAssertion() {
         return anAssertion()
-                .addAuthnStatement(AuthnStatementBuilder.anAuthnStatement().build())
-                .addAttributeStatement(anAttributeStatement().addAttribute(IPAddressAttributeBuilder.anIPAddress().build()).build())
-                .buildUnencrypted();
+            .addAuthnStatement(AuthnStatementBuilder.anAuthnStatement().build())
+            .addAttributeStatement(anAttributeStatement().addAttribute(IPAddressAttributeBuilder.anIPAddress().build()).build())
+            .buildUnencrypted();
     }
 
     public static Assertion aMatchingDatasetAssertion(
-            Attribute firstName,
-            Attribute middlenames,
-            Attribute surname,
-            Attribute gender,
-            Attribute dateOfBirth,
-            Attribute currentAddress,
-            Attribute previousAddresses) {
+        Attribute firstName,
+        Attribute middlenames,
+        Attribute surname,
+        Attribute gender,
+        Attribute dateOfBirth,
+        Attribute currentAddress,
+        Attribute previousAddresses) {
         AttributeStatementBuilder attributeStatementBuilder = anAttributeStatement()
-                .addAttribute(firstName)
-                .addAttribute(middlenames)
-                .addAttribute(surname)
-                .addAttribute(gender)
-                .addAttribute(dateOfBirth)
-                .addAttribute(currentAddress)
-                .addAttribute(previousAddresses);
+            .addAttribute(firstName)
+            .addAttribute(middlenames)
+            .addAttribute(surname)
+            .addAttribute(gender)
+            .addAttribute(dateOfBirth)
+            .addAttribute(currentAddress)
+            .addAttribute(previousAddresses);
 
         return anAssertion()
-                .addAttributeStatement(attributeStatementBuilder.build())
-                .buildUnencrypted();
+            .addAttributeStatement(attributeStatementBuilder.build())
+            .buildUnencrypted();
     }
 
     public static Assertion aCycle3DatasetAssertion(String name, String value) {
         SimpleStringAttributeBuilder attribute = SimpleStringAttributeBuilder.aSimpleStringAttribute()
-                .withName(name)
-                .withSimpleStringValue(value);
+            .withName(name)
+            .withSimpleStringValue(value);
 
         AttributeStatementBuilder attributeStatementBuilder = anAttributeStatement()
-                .addAttribute(attribute.build());
+            .addAttribute(attribute.build());
 
         return anAssertion()
-                .withIssuer(IssuerBuilder.anIssuer().withIssuerId(TestEntityIds.HUB_ENTITY_ID).build()) // Hub entity id defines the ability to parse an attribute query
-                .addAttributeStatement(attributeStatementBuilder.build())
-                .buildUnencrypted();
+            .withIssuer(IssuerBuilder.anIssuer().withIssuerId(TestEntityIds.HUB_ENTITY_ID).build()) // Hub entity id defines the ability to parse an attribute query
+            .addAttributeStatement(attributeStatementBuilder.build())
+            .buildUnencrypted();
     }
 
     public static Assertion aCycle3DatasetAssertion(List<Attribute> attributes) {
@@ -118,9 +112,9 @@ public class AssertionBuilder {
             attributeStatementBuilder.addAttribute(attribute);
         }
         return anAssertion()
-                .withIssuer(IssuerBuilder.anIssuer().withIssuerId(TestEntityIds.HUB_ENTITY_ID).build()) // Hub entity id defines the ability to parse an attribute query
-                .addAttributeStatement(attributeStatementBuilder.build())
-                .buildUnencrypted();
+            .withIssuer(IssuerBuilder.anIssuer().withIssuerId(TestEntityIds.HUB_ENTITY_ID).build()) // Hub entity id defines the ability to parse an attribute query
+            .addAttributeStatement(attributeStatementBuilder.build())
+            .buildUnencrypted();
     }
 
     public Assertion buildUnencrypted() {
