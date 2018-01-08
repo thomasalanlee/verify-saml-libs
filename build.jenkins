@@ -11,7 +11,6 @@
             agent {
                 docker {
                     image 'govukverify/java8:latest'
-                    additionalBuildArgs "--pull"
                 }
             }
             steps {
