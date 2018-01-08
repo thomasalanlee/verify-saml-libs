@@ -1,16 +1,34 @@
 pipeline {
-    agent {
-        dockerfile {
-            additionalBuildArgs "--pull"
-        }
+  agent {
+    dockerfile {additionalBuildArgs "--pull"
     }
+  }
 
-   stages {
-       stage('Build') {
-           steps {
-               sh './gradlew build'
-           }
-       }
-   }
+  environment {
+    ARTIUSER = "${env.ARTIFACTORYUSER}"
+    ARTIPASSWORD = "${env.ARTIFACTORYPASSWORD}"
+  }
+
+  stages {
+    stage('Build') {
+      steps {
+        sh './gradlew build'
+      }
+    }
+    stage('Tag') {
+      when { branch 'master' }
+      agent any
+      steps {
+        sh 'git tag -a build_${BUILD_NUMBER} -m "jenkins2 tag build_${BUILD_NUMBER}" && git push origin build_${BUILD_NUMBER}'
+      }
+    }
+    stages('Publish') {
+      when {
+        branch 'master'
+      }
+      steps {
+        sh './gradlew publish'
+      }
+    }
+  }
 }
-
