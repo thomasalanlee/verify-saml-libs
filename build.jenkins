@@ -1,6 +1,16 @@
-  agent {
-        docker {
-            image 'govukverify/java8:latest'
-        }
-    }
+  pipeline {
+      agent none
 
+      stages {
+          stage('Build') {
+              agent {
+                docker {
+                    image 'govukverify/java8:latest'
+                }
+              }
+              steps {
+                  sh './gradlew clean build'
+              }
+          }
+      }
+  }
