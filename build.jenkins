@@ -1,0 +1,16 @@
+pipeline {
+    agent {
+        dockerfile {
+            additionalBuildArgs "--pull"
+        }
+    }
+
+   stages {
+       stage('Build') {
+           steps {
+               sh './gradlew build'
+           }
+       }
+   }
+}
+
