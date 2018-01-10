@@ -2,10 +2,6 @@
     agent none
 
     environment {
-        // Artifactory credentials
-        ARTIUSER = "${env.ARTIFACTORYUSER}"
-        ARTIPASSWORD = "${env.ARTIFACTORYPASSWORD}"
-
         // GitHub credentials
         ACCESS_TOKEN=credentials('verify-ci-build-scan-2017-12-20')
     }
@@ -33,6 +29,11 @@
             when { branch 'master' }
             agent {
                 docker { image 'govukverify/java8:latest' }
+            }
+            environment {
+                // Artifactory credentials
+                ARTIUSER = "${env.ARTIFACTORYUSER}"
+                ARTIPASSWORD = "${env.ARTIFACTORYPASSWORD}"
             }
             steps {
                 sh './gradlew publish'
