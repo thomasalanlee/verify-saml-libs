@@ -20,9 +20,10 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
+import org.opensaml.core.config.InitializationException;
+import org.opensaml.core.config.InitializationService;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
-import uk.gov.ida.saml.core.IdaSamlBootstrap;
 import uk.gov.ida.saml.core.test.TestEntityIds;
 import uk.gov.ida.saml.metadata.bundle.MetadataResolverBundle;
 import uk.gov.ida.saml.metadata.test.factories.metadata.MetadataFactory;
@@ -41,7 +42,6 @@ public class SamlMetadataBundleTest {
     public static KeyStoreRule keyStoreRule = new KeyStoreRuleBuilder().withCertificate("metadata", CACertificates.TEST_METADATA_CA).withCertificate("root", CACertificates.TEST_ROOT_CA).build();
 
     static {
-        IdaSamlBootstrap.bootstrap();
         metadataResource.stubFor(get(urlEqualTo("/metadata")).willReturn(aResponse().withBody(new MetadataFactory().defaultMetadata())));
     }
 

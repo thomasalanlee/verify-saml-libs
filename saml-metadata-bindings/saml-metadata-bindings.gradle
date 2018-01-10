@@ -6,6 +6,5 @@ dependencies {
     testCompile configurations.test_deps,
             project(':saml-metadata-bindings-test'),
             'uk.gov.ida:ida-dev-pki:1.1.0-19',
-            "commons-io:commons-io:2.4",
-            "uk.gov.ida:ida-saml-extensions-test:$opensaml_version-1.2a-38"
+            "commons-io:commons-io:2.4"
 }

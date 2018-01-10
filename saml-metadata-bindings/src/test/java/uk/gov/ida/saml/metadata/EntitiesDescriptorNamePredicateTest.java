@@ -6,8 +6,8 @@ import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
 import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.opensaml.soap.wsaddressing.impl.AddressBuilder;
 import org.opensaml.xmlsec.signature.support.SignatureException;
-import uk.gov.ida.saml.core.extensions.impl.AddressBuilder;
 import uk.gov.ida.saml.metadata.test.factories.metadata.EntityDescriptorFactory;
 
 import java.util.Collections;
@@ -80,7 +80,7 @@ public class EntitiesDescriptorNamePredicateTest {
     @Test
     public void shouldNotApplyForEntityWithWrongParentType() throws MarshallingException, SignatureException {
         EntityDescriptor entityDescriptor = new EntityDescriptorFactory().idpEntityDescriptor("an idp");
-        entityDescriptor.setParent(new AddressBuilder().buildObject());
+        entityDescriptor.setParent(new AddressBuilder().buildObject("Some", "Other", "Type"));
 
         EntitiesDescriptorNamePredicate entitiesDescriptorNamePredicate = new EntitiesDescriptorNamePredicate(
                 new EntitiesDescriptorNameCriterion("some other parent"));

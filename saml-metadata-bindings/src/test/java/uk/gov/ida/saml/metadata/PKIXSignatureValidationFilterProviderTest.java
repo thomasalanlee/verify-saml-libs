@@ -8,7 +8,6 @@ import net.shibboleth.utilities.java.support.xml.XMLParserException;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.io.UnmarshallingException;
@@ -20,7 +19,6 @@ import org.opensaml.xmlsec.algorithm.descriptors.DigestSHA256;
 import org.opensaml.xmlsec.algorithm.descriptors.SignatureRSAMD5;
 import org.opensaml.xmlsec.algorithm.descriptors.SignatureRSASHA256;
 import org.opensaml.xmlsec.signature.Signature;
-import uk.gov.ida.saml.core.IdaSamlBootstrap;
 import uk.gov.ida.saml.core.test.TestCertificateStrings;
 import uk.gov.ida.saml.core.test.builders.metadata.SignatureBuilder;
 import uk.gov.ida.saml.metadata.test.factories.metadata.EntitiesDescriptorFactory;
@@ -53,11 +51,6 @@ public class PKIXSignatureValidationFilterProviderTest {
             keyStore.setEntry(cert.toString(), new KeyStore.TrustedCertificateEntry(cert), new KeyStore.PasswordProtection(null));
         }
         return keyStore;
-    }
-
-    @BeforeClass
-    public static void bootStrapOpenSAML() {
-        IdaSamlBootstrap.bootstrap();
     }
 
     @Before
