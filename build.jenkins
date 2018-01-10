@@ -1,12 +1,6 @@
 pipeline {
   agent none
 
-  environment {
-    ARTIUSER = "${env.ARTIFACTORYUSER}"
-    ARTIPASSWORD = "${env.ARTIFACTORYPASSWORD}"
-    ACCESS_TOKEN=credentials('verify-ci-build-scan-2017-12-20')
-  }
-
   stages {
     stage('Build') {
       agent {
@@ -18,10 +12,17 @@ pipeline {
       agent {
         dockerfile { additionalBuildArgs "--pull" }
       }
+      environment {
+        ARTIUSER = "${env.ARTIFACTORYUSER}"
+        ARTIPASSWORD = "${env.ARTIFACTORYPASSWORD}"
+      }
       when { branch 'master' }
       steps { sh './gradlew publish' }
     }
     stage('Tag') {
+      environment {
+        ACCESS_TOKEN=credentials('verify-ci-build-scan-2017-12-20')
+      }
       when { branch 'master' }
       agent any
       steps {
