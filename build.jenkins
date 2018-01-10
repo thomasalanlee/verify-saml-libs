@@ -1,18 +1,13 @@
 pipeline {
-    agent {
-        docker {
-            image 'govukverify/java8:latest'
-        }
-    }
-
-    environment {
-        ARTIUSER = "${env.ARTIFACTORYUSER}"
-        ARTIPASSWORD = "${env.ARTIFACTORYPASSWORD}"
-        ACCESS_TOKEN=credentials('verify-ci-build-scan-2017-12-20')
-    }
+    agent none
 
     stages {
         stage('Build') {
+            agent {
+                docker {
+                    image 'govukverify/java8:latest'
+                }
+            }
             steps {
                 sh './gradlew clean build'
             }
@@ -22,12 +17,24 @@ pipeline {
                 branch 'master'
             }
             agent any
+            environment {
+                ACCESS_TOKEN=credentials('verify-ci-build-scan-2017-12-20')
+            }
             steps {
                 sh 'git config credential.username ${ACCESS_TOKEN_USR} && git config credential.helper "!echo password=\${ACCESS_TOKEN_PSW}; echo"'
                 sh 'git tag -a build_${BUILD_NUMBER} -m "jenkins2 tag build_${BUILD_NUMBER}" && GIT_ASKPASS=true git push origin build_${BUILD_NUMBER}'
             }
         }
         stage('Publish') {
+            agent {
+                docker {
+                    image 'govukverify/java8:latest'
+                }
+            }
+            environment {
+                ARTIUSER = "${env.ARTIFACTORYUSER}"
+                ARTIPASSWORD = "${env.ARTIFACTORYPASSWORD}"
+            }
             when {
                 branch 'master'
             }
