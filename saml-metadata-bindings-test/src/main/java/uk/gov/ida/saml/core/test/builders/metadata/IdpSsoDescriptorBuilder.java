@@ -19,11 +19,18 @@ import static uk.gov.ida.saml.core.test.builders.metadata.X509DataBuilder.aX509D
 
 public class IdpSsoDescriptorBuilder {
 
-    private Optional<String> protocol = Optional.ofNullable(SAMLConstants.SAML20P_NS);
+    private Optional<String> protocol = Optional.of(SAMLConstants.SAML20P_NS);
     private Optional<SingleSignOnService> singleSignOnService = Optional.ofNullable(anEndpoint().buildSingleSignOnService());
     private List<KeyDescriptor> keyDescriptors = new ArrayList<>();
     private boolean addDefaultSigningKey = true;
-    private KeyDescriptor defaultSigningKeyDescriptor = aKeyDescriptor().withKeyInfo(aKeyInfo().withKeyName(TestEntityIds.HUB_ENTITY_ID).withX509Data(aX509Data().withX509Certificate(aX509Certificate().build()).build()).build()).build();
+    private KeyDescriptor defaultSigningKeyDescriptor = aKeyDescriptor()
+            .withKeyInfo(aKeyInfo()
+                    .withKeyName(TestEntityIds.HUB_ENTITY_ID)
+                    .withX509Data(aX509Data()
+                            .withX509Certificate(aX509Certificate().build())
+                            .build())
+                    .build())
+            .build();
 
     public static IdpSsoDescriptorBuilder anIdpSsoDescriptor() {
         return new IdpSsoDescriptorBuilder();

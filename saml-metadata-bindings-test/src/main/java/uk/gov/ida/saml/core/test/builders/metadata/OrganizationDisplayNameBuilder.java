@@ -1,9 +1,9 @@
 package uk.gov.ida.saml.core.test.builders.metadata;
 
 import org.opensaml.saml.saml2.metadata.OrganizationDisplayName;
-import uk.gov.ida.saml.core.IdaConstants;
 
 public class OrganizationDisplayNameBuilder {
+    private static final String DEFAULT_LANGUAGE = "en-GB";
 
     private String organizationName = "org-display-name";
 
@@ -15,7 +15,7 @@ public class OrganizationDisplayNameBuilder {
         OrganizationDisplayName organizationDisplayName = new org.opensaml.saml.saml2.metadata.impl.OrganizationDisplayNameBuilder()
                 .buildObject();
         organizationDisplayName.setValue(organizationName);
-        organizationDisplayName.setXMLLang(IdaConstants.IDA_LANGUAGE);
+        organizationDisplayName.setXMLLang(DEFAULT_LANGUAGE);
         return organizationDisplayName;
     }
 

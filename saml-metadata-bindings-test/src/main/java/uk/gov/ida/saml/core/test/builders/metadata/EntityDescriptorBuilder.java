@@ -23,7 +23,6 @@ import java.util.UUID;
 import static java.util.Optional.ofNullable;
 import static uk.gov.ida.saml.core.test.builders.metadata.ContactPersonBuilder.aContactPerson;
 import static uk.gov.ida.saml.core.test.builders.metadata.KeyDescriptorBuilder.aKeyDescriptor;
-import static uk.gov.ida.saml.core.test.builders.SignatureBuilder.aSignature;
 
 public class EntityDescriptorBuilder {
 
@@ -40,7 +39,7 @@ public class EntityDescriptorBuilder {
     private final SPSSODescriptor defaultSpServiceDescriptor = SPSSODescriptorBuilder.anSpServiceDescriptor().addKeyDescriptor(aKeyDescriptor().withX509ForSigning("").build()).addKeyDescriptor(aKeyDescriptor().withX509ForEncryption("").build()).build();
     private final ContactPerson defaultContactPerson = aContactPerson().build();
     private Optional<IDPSSODescriptor> idpSsoDescriptor = ofNullable(IdpSsoDescriptorBuilder.anIdpSsoDescriptor().build());
-    private Optional<Signature> signature = ofNullable(aSignature().build());
+    private Optional<Signature> signature = Optional.empty();
     private Optional<AttributeAuthorityDescriptor> attributeAuthorityDescriptor = Optional.empty();
 
     public static EntityDescriptorBuilder anEntityDescriptor() {

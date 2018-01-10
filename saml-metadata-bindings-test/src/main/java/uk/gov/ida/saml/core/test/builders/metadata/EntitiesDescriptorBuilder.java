@@ -8,7 +8,6 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.xmlsec.signature.Signature;
 import org.opensaml.xmlsec.signature.support.SignatureException;
 import org.opensaml.xmlsec.signature.support.Signer;
-import uk.gov.ida.saml.core.IdaSamlBootstrap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +60,6 @@ public class EntitiesDescriptorBuilder {
     }
 
     public EntitiesDescriptor build() throws MarshallingException, SignatureException {
-        IdaSamlBootstrap.bootstrap();
         EntitiesDescriptor entitiesDescriptor = new org.opensaml.saml.saml2.metadata.impl.EntitiesDescriptorBuilder().buildObject();
 
         entitiesDescriptor.getEntityDescriptors().addAll(entityDescriptors);

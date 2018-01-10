@@ -1,18 +1,16 @@
 package uk.gov.ida.saml.core.test.builders.metadata;
 
-import org.opensaml.core.xml.util.XMLObjectSupport;
-import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.metadata.Organization;
 import org.opensaml.saml.saml2.metadata.OrganizationDisplayName;
 import org.opensaml.saml.saml2.metadata.OrganizationName;
 import org.opensaml.saml.saml2.metadata.OrganizationURL;
 import org.opensaml.saml.saml2.metadata.impl.OrganizationNameBuilder;
 import org.opensaml.saml.saml2.metadata.impl.OrganizationURLBuilder;
-import uk.gov.ida.saml.core.IdaConstants;
 
 import java.util.Optional;
 
 public class OrganizationBuilder {
+    private static final String DEFAULT_LANGUAGE = "en-GB";
 
     private Optional<OrganizationDisplayName> organizationDisplayName = Optional.ofNullable(OrganizationDisplayNameBuilder.anOrganizationDisplayName().build());
     private Optional<OrganizationName> name = Optional.ofNullable(createName("org-name"));
@@ -42,7 +40,7 @@ public class OrganizationBuilder {
     private OrganizationName createName(String name) {
         OrganizationName organizationName = new OrganizationNameBuilder().buildObject();
         organizationName.setValue(name);
-        organizationName.setXMLLang(IdaConstants.IDA_LANGUAGE);
+        organizationName.setXMLLang(DEFAULT_LANGUAGE);
         return organizationName;
 
     }
@@ -50,7 +48,7 @@ public class OrganizationBuilder {
     private OrganizationURL createUrl(String url) { 
         OrganizationURL buildObject = new OrganizationURLBuilder().buildObject();
         buildObject.setValue(url);
-        buildObject.setXMLLang(IdaConstants.IDA_LANGUAGE);
+        buildObject.setXMLLang(DEFAULT_LANGUAGE);
         return buildObject;
     }
 
