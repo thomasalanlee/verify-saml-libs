@@ -1,7 +1,6 @@
 package uk.gov.ida.saml.deserializers;
 
 import org.opensaml.core.xml.XMLObject;
-import uk.gov.ida.saml.transformers.Transformer;
 import uk.gov.ida.saml.deserializers.validators.Base64StringDecoder;
 import uk.gov.ida.saml.deserializers.validators.NotNullSamlStringValidator;
 import uk.gov.ida.saml.deserializers.validators.SizeValidator;
