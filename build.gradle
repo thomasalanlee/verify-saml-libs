@@ -38,8 +38,7 @@ subprojects {
                 'org.assertj:assertj-core:1.6.0',
                 "org.opensaml:opensaml-security-api:$opensaml_version"
 
-        saml_test "uk.gov.ida:ida-saml-extensions-test:$dependencyVersions.ida_saml_extensions",
-                "org.opensaml:opensaml-saml-impl:$opensaml_version",
+        saml_test "org.opensaml:opensaml-saml-impl:$opensaml_version",
                 "org.opensaml:opensaml-saml-api:$opensaml_version"
 
         common_utils 'uk.gov.ida:common-utils:2.0.0-317',

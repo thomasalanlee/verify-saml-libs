@@ -1,15 +1,20 @@
 package uk.gov.ida.saml.deserializers.parser;
 
 import org.assertj.core.api.Assertions;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.opensaml.core.config.InitializationException;
+import org.opensaml.core.config.InitializationService;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.security.credential.UsageType;
-import uk.gov.ida.saml.core.test.OpenSAMLRunner;
 
-@RunWith(OpenSAMLRunner.class)
 public class SamlObjectParserTest {
+
+    @Before
+    public void setup() throws InitializationException {
+        InitializationService.initialize();
+    }
 
     @Test
     public void shouldNotFailWithEntityDescriptorStuff() throws Exception {
