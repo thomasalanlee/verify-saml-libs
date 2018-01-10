@@ -2,9 +2,9 @@ apply from: 'buildSrc/publish.gradle'
 apply plugin: 'java'
 
 subprojects {
-    ext { 
-      opensaml_version = "3.3.0"
-      saml_profile_version = "1.2a"
+    ext {
+        opensaml_version = "3.3.0"
+        saml_profile_version = "1.2a"
     }
     group = "uk.gov.ida"
     version = "$opensaml_version-$saml_profile_version-${System.env.BUILD_NUMBER ?: 'SNAPSHOT'}"
@@ -19,7 +19,10 @@ subprojects {
     }
 
     dependencies {
-        compile 'org.slf4j:slf4j-api:1.7.21'
+        compile 'org.slf4j:slf4j-api:1.7.21',
+                configurations.opensaml
+
+        testCompile configurations.test_deps
 
         opensaml "org.opensaml:opensaml-core:$opensaml_version",
                 "org.opensaml:opensaml-saml-api:$opensaml_version",

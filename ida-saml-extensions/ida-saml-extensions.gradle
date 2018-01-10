@@ -1,6 +1,0 @@
-dependencies {
-    compile configurations.opensaml
-
-    testCompile configurations.test_deps,
-                project(':ida-saml-extensions-test')
-}
