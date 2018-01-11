@@ -25,7 +25,6 @@ dependencies {
             'com.google.guava:guava:18.0',
             'com.google.inject:guice:4.0',
             'uk.gov.ida:ida-dev-pki:1.1.0-19',
-            "uk.gov.verify:saml-domain-objects:$opensaml_version-40",
             'junit:junit:4.11',
             'org.assertj:assertj-core:1.6.0',
             'org.mockito:mockito-core:1.9.5',
@@ -33,7 +32,9 @@ dependencies {
             "org.opensaml:opensaml-saml-api:$opensaml_version",
             "org.opensaml:opensaml-security-api:$opensaml_version",
             "org.opensaml:opensaml-xmlsec-api:$opensaml_version",
-            "org.opensaml:opensaml-xmlsec-impl:$opensaml_version"
+            "org.opensaml:opensaml-xmlsec-impl:$opensaml_version",
+            'javax.validation:validation-api:1.1.0.Final',
+            'uk.gov.ida:security-utils:2.0.0-309'
 }
 
 apply plugin: 'maven-publish'

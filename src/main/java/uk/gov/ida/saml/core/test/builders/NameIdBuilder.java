@@ -3,7 +3,7 @@ package uk.gov.ida.saml.core.test.builders;
 import com.google.common.base.Optional;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDType;
-import uk.gov.ida.saml.core.OpenSamlXmlObjectFactory;
+import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
 
 public class NameIdBuilder {
 

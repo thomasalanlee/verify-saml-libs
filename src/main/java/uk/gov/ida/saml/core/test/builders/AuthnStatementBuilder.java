@@ -4,7 +4,7 @@ import com.google.common.base.Optional;
 import org.joda.time.DateTime;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnStatement;
-import uk.gov.ida.saml.core.OpenSamlXmlObjectFactory;
+import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
 import uk.gov.ida.saml.core.extensions.EidasAuthnContext;
 
 import static com.google.common.base.Optional.fromNullable;
