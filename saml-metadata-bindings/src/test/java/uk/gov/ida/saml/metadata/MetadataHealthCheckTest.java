@@ -5,7 +5,8 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.xml.BasicParserPool;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import uk.gov.ida.saml.core.IdaSamlBootstrap;
+import org.opensaml.core.config.InitializationException;
+import org.opensaml.core.config.InitializationService;
 import uk.gov.ida.saml.metadata.test.factories.metadata.MetadataFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,8 +16,8 @@ public class MetadataHealthCheckTest {
     public static final String EXPECTED_ENTITY_ID = "https://signin.service.gov.uk";
 
     @BeforeClass
-    public static void bootStrapOpenSAML() {
-        IdaSamlBootstrap.bootstrap();
+    public static void bootStrapOpenSAML() throws InitializationException {
+        InitializationService.initialize();
     }
 
     @Test
