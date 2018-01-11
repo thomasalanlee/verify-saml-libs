@@ -16,7 +16,7 @@ import org.opensaml.xmlsec.algorithm.descriptors.DigestSHA256;
 import org.opensaml.xmlsec.algorithm.descriptors.SignatureRSASHA256;
 import org.opensaml.xmlsec.signature.support.SignatureException;
 import org.opensaml.xmlsec.signature.support.Signer;
-import uk.gov.ida.saml.core.OpenSamlXmlObjectFactory;
+import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -61,7 +61,7 @@ public class ResponseBuilder {
     public static ResponseBuilder aValidIdpResponse() {
         return aResponse()
                 .withStatus(StatusBuilder.aStatus().build())
-                .addAssertion(AssertionBuilder.anAssertion().addAttributeStatement(MatchingDatasetAttributeStatementBuilder_1_1.aMatchingDatasetAttributeStatement_1_1().build()).buildUnencrypted())
+                .addAssertion(AssertionBuilder.anAssertion().addAttributeStatement(AttributeStatementBuilder.anAttributeStatement().build()).buildUnencrypted())
                 .addAssertion(AssertionBuilder.anAssertion().addAuthnStatement(AuthnStatementBuilder.anAuthnStatement().build()).buildUnencrypted());
     }
 

@@ -4,7 +4,6 @@ import org.joda.time.LocalDate;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import uk.gov.ida.saml.core.IdaConstants;
-import uk.gov.ida.saml.core.OpenSamlXmlObjectFactory;
 import uk.gov.ida.saml.core.extensions.eidas.CurrentFamilyName;
 import uk.gov.ida.saml.core.extensions.eidas.CurrentGivenName;
 import uk.gov.ida.saml.core.extensions.eidas.DateOfBirth;
@@ -13,6 +12,7 @@ import uk.gov.ida.saml.core.extensions.eidas.impl.CurrentFamilyNameBuilder;
 import uk.gov.ida.saml.core.extensions.eidas.impl.CurrentGivenNameBuilder;
 import uk.gov.ida.saml.core.extensions.eidas.impl.DateOfBirthBuilder;
 import uk.gov.ida.saml.core.extensions.eidas.impl.PersonIdentifierBuilder;
+import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
 
 import java.util.ArrayList;
 import java.util.List;

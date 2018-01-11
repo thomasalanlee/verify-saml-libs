@@ -2,7 +2,7 @@ package uk.gov.ida.saml.core.test.builders;
 
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
-import uk.gov.ida.saml.core.OpenSamlXmlObjectFactory;
+import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
 
 import static uk.gov.ida.saml.core.test.builders.AuthnContextClassRefBuilder.anAuthnContextClassRef;
 

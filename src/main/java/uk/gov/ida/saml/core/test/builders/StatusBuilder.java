@@ -4,7 +4,7 @@ import com.google.common.base.Optional;
 import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.core.StatusMessage;
-import uk.gov.ida.saml.core.OpenSamlXmlObjectFactory;
+import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
 
 public class StatusBuilder {
 

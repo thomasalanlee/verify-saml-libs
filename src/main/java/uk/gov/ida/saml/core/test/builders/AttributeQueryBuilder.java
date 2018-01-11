@@ -9,7 +9,7 @@ import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.xmlsec.signature.Signature;
 import org.opensaml.xmlsec.signature.support.SignatureException;
 import org.opensaml.xmlsec.signature.support.Signer;
-import uk.gov.ida.saml.core.OpenSamlXmlObjectFactory;
+import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
 
 import java.util.ArrayList;
 import java.util.List;

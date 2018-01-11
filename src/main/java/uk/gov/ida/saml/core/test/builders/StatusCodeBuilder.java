@@ -2,7 +2,7 @@ package uk.gov.ida.saml.core.test.builders;
 
 import com.google.common.base.Optional;
 import org.opensaml.saml.saml2.core.StatusCode;
-import uk.gov.ida.saml.core.OpenSamlXmlObjectFactory;
+import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
 import uk.gov.ida.saml.core.domain.SamlStatusCode;
 
 public class StatusCodeBuilder {
