@@ -10,7 +10,7 @@ ext {
 }
 
 def dependencyVersions = [
-    ida_saml_extensions_test:"$opensaml_version-1.2a-38"
+    ida_saml_extensions:"$opensaml_version-1.2a-41"
 ]
 
 group = "uk.gov.verify"
@@ -28,7 +28,7 @@ dependencies {
             'junit:junit:4.11',
             'org.assertj:assertj-core:1.6.0',
             'org.mockito:mockito-core:1.9.5',
-            "uk.gov.ida:ida-saml-extensions-test:$dependencyVersions.ida_saml_extensions_test",
+            "uk.gov.ida:ida-saml-extensions:$dependencyVersions.ida_saml_extensions",
             "org.opensaml:opensaml-saml-api:$opensaml_version",
             "org.opensaml:opensaml-security-api:$opensaml_version",
             "org.opensaml:opensaml-xmlsec-api:$opensaml_version",
