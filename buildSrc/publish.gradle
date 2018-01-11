@@ -20,7 +20,7 @@ configure(subprojects.findAll {it.name != 'buildSrc'}) {
         publications {
             mavenJava(MavenPublication) {
                 from components.java
-                groupId = "uk.gov.verify"
+                groupId = "uk.gov.ida"
                 artifactId = "saml-serializers"
 
                 artifact sourceJar {
