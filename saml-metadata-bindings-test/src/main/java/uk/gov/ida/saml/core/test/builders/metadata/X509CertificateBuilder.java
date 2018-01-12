@@ -35,4 +35,9 @@ public class X509CertificateBuilder {
         this.cert = Optional.ofNullable(cert);
         return this;
     }
+
+    public X509CertificateBuilder withCertForEntityId(String entityId) {
+        this.certForEntityId = Optional.ofNullable(entityId);
+        return this;
+    }
 }
