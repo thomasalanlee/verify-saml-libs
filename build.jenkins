@@ -1,11 +1,6 @@
   pipeline {
     agent none
 
-    environment {
-        // GitHub credentials
-        ACCESS_TOKEN=credentials('verify-ci-build-scan-2017-12-20')
-    }
-
     stages {
         stage('Build') {
             agent {
@@ -19,6 +14,10 @@
         stage('Tag') {
             when { branch 'master' }
             agent any
+            environment {
+                // GitHub credentials
+                ACCESS_TOKEN=credentials('verify-ci-build-scan-2017-12-20')
+            }
             steps {
                 sh 'git config credential.username ${ACCESS_TOKEN_USR} && git config credential.helper "!echo password=\${ACCESS_TOKEN_PSW}; echo"'
                 sh 'git tag -a build_${BUILD_NUMBER} -m "jenkins2 tag build_${BUILD_NUMBER}" && GIT_ASKPASS=true git push origin build_${BUILD_NUMBER}'
