@@ -12,7 +12,7 @@ public class FileBackedTrustStoreConfiguration extends TrustStoreConfiguration {
     @NotNull
     @Valid
     @JsonProperty
-    @JsonAlias({ "path", "trustStorePath" })
+    @JsonAlias({ "path", "trustStorePath", "store" })
     private String store;
 
 
