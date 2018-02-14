@@ -26,7 +26,7 @@ dependencies {
             'com.google.inject:guice:4.0',
             configurations.opensaml,
             "uk.gov.ida:saml-serializers:$opensaml_version-45",
-            "uk.gov.ida:saml-security:$opensaml_version-53",
+            "uk.gov.ida:saml-security:$opensaml_version-56",
             "uk.gov.verify:saml-domain-objects:$opensaml_version-42",
             'com.google.guava:guava:18.0',
             'com.google.inject:guice:4.0',
@@ -64,4 +64,3 @@ publishing {
         }
     }
 }
-
