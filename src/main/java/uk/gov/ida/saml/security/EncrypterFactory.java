@@ -8,19 +8,14 @@ import org.opensaml.xmlsec.encryption.support.KeyEncryptionParameters;
 
 public class EncrypterFactory {
 
+    private String dataEncryptionAlgorithm = EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128;
+
+    public EncrypterFactory withAes256Encryption() {
+        dataEncryptionAlgorithm = EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES256;
+        return this;
+    }
+
     public Encrypter createEncrypter(Credential credential) {
-        return createAES128Encrypter(credential);
-    }
-
-    public Encrypter createAES128Encrypter(Credential credential) {
-        return createEncrypter(credential, EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128);
-    }
-
-    public Encrypter createAES256Encrypter(Credential credential) {
-        return createEncrypter(credential, EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES256);
-    }
-
-    private Encrypter createEncrypter(Credential credential, String dataEncryptionAlgorithm) {
         DataEncryptionParameters encParams = new DataEncryptionParameters();
         encParams.setAlgorithm(dataEncryptionAlgorithm);
 
