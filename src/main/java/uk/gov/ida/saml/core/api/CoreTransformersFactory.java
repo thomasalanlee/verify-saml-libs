@@ -95,16 +95,26 @@ public class CoreTransformersFactory {
         return new CredentialFactorySignatureValidator(publicCredentialFactory);
     }
 
-
     public ResponseToSignedStringTransformer getResponseStringTransformer(
             final EncryptionKeyStore publicKeyStore,
             final IdaKeyStore keyStore,
             final EntityToEncryptForLocator entityToEncryptForLocator,
             final SignatureAlgorithm signatureAlgorithm,
             final DigestAlgorithm digestAlgorithm) {
+        return getResponseStringTransformer(publicKeyStore, keyStore, entityToEncryptForLocator, signatureAlgorithm,
+                digestAlgorithm, new EncrypterFactory());
+    }
+
+    public ResponseToSignedStringTransformer getResponseStringTransformer(
+            final EncryptionKeyStore publicKeyStore,
+            final IdaKeyStore keyStore,
+            final EntityToEncryptForLocator entityToEncryptForLocator,
+            final SignatureAlgorithm signatureAlgorithm,
+            final DigestAlgorithm digestAlgorithm,
+            final EncrypterFactory encrypterFactory) {
         SignatureFactory signatureFactory = new SignatureFactory(new IdaKeyStoreCredentialRetriever(keyStore), signatureAlgorithm, digestAlgorithm);
         ResponseAssertionSigner responseAssertionSigner = new ResponseAssertionSigner(signatureFactory);
-        return getResponseStringTransformer(publicKeyStore, keyStore, entityToEncryptForLocator, responseAssertionSigner, signatureAlgorithm, digestAlgorithm);
+        return getResponseStringTransformer(publicKeyStore, entityToEncryptForLocator, encrypterFactory, signatureFactory, responseAssertionSigner);
     }
 
     public ResponseToSignedStringTransformer getResponseStringTransformer(
@@ -118,18 +128,7 @@ public class CoreTransformersFactory {
     ) {
         SignatureFactory signatureFactory = new SignatureWithKeyInfoFactory(new IdaKeyStoreCredentialRetriever(keyStore), signatureAlgorithm, digestAlgorithm, issuerId, publicSigningKey);
         ResponseAssertionSigner responseAssertionSigner = new ResponseAssertionSigner(signatureFactory);
-        SamlResponseAssertionEncrypter responseAssertionEncrypter =
-                new SamlResponseAssertionEncrypter(
-                        new EncryptionCredentialFactory(encryptionKeyStore),
-                        new EncrypterFactory(),
-                        entityToEncryptForLocator);
-        return new ResponseToSignedStringTransformer(
-                new XmlObjectToBase64EncodedStringTransformer<>(),
-                new SamlSignatureSigner<Response>(),
-                responseAssertionEncrypter,
-                responseAssertionSigner,
-                new ResponseSignatureCreator(signatureFactory)
-        );
+        return getResponseStringTransformer(encryptionKeyStore, entityToEncryptForLocator, new EncrypterFactory(), signatureFactory, responseAssertionSigner);
     }
 
     public ResponseToSignedStringTransformer getResponseStringTransformer(
@@ -139,15 +138,24 @@ public class CoreTransformersFactory {
             final ResponseAssertionSigner responseAssertionSigner,
             final SignatureAlgorithm signatureAlgorithm,
             final DigestAlgorithm digestAlgorithm) {
+        SignatureFactory signatureFactory = new SignatureFactory(new IdaKeyStoreCredentialRetriever(keyStore), signatureAlgorithm, digestAlgorithm);
+        return getResponseStringTransformer(publicKeyStore, entityToEncryptForLocator, new EncrypterFactory(), signatureFactory, responseAssertionSigner);
+    }
+
+    private ResponseToSignedStringTransformer getResponseStringTransformer(
+            final EncryptionKeyStore publicKeyStore,
+            final EntityToEncryptForLocator entityToEncryptForLocator,
+            final EncrypterFactory encrypterFactory,
+            final SignatureFactory signatureFactory,
+            final ResponseAssertionSigner responseAssertionSigner) {
         SamlResponseAssertionEncrypter responseAssertionEncrypter =
                 new SamlResponseAssertionEncrypter(
                         new EncryptionCredentialFactory(publicKeyStore),
-                        new EncrypterFactory(),
+                        encrypterFactory,
                         entityToEncryptForLocator);
-        SignatureFactory signatureFactory = new SignatureFactory(new IdaKeyStoreCredentialRetriever(keyStore), signatureAlgorithm, digestAlgorithm);
         return new ResponseToSignedStringTransformer(
                 new XmlObjectToBase64EncodedStringTransformer<>(),
-                new SamlSignatureSigner<Response>(),
+                new SamlSignatureSigner<>(),
                 responseAssertionEncrypter,
                 responseAssertionSigner,
                 new ResponseSignatureCreator(signatureFactory)
@@ -165,6 +173,4 @@ public class CoreTransformersFactory {
                 new IdGenerator()
         );
     }
-
-
 }
