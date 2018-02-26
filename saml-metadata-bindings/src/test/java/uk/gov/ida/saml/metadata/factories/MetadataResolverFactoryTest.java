@@ -22,12 +22,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class MetadataResolverFactoryTest {
     @Mock
-    MetadataResolverConfiguration configuration;
-
-    @Mock
-    Environment environment;
-
-    @Mock
     ExpiredCertificateMetadataFilter expiredCertificateMetadataFilter;
 
     @Mock
