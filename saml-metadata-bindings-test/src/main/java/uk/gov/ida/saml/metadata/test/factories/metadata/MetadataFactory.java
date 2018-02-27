@@ -1,53 +1,83 @@
 package uk.gov.ida.saml.metadata.test.factories.metadata;
 
+import static uk.gov.ida.shared.utils.xml.XmlUtils.newDocumentBuilder;
+
+import javax.xml.parsers.ParserConfigurationException;
 import java.util.List;
 
+import com.google.common.base.Throwables;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.io.Marshaller;
+import org.opensaml.core.xml.io.MarshallerFactory;
+import org.opensaml.core.xml.io.MarshallingException;
+import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import uk.gov.ida.shared.utils.xml.XmlUtils;
 
 public class MetadataFactory {
     private final EntitiesDescriptorFactory entitiesDescriptorFactory = new EntitiesDescriptorFactory();
-    private final EntitiesDescriptorToElementTransformer entitiesDescriptorEntitiesDescriptorToElementTransformer = new EntitiesDescriptorToElementTransformer();
 
     public String defaultMetadata() {
-        EntitiesDescriptor entitiesDescriptor = entitiesDescriptorFactory.defaultEntitiesDescriptor();
-        return metadata(entitiesDescriptor);
+        return metadata(entitiesDescriptorFactory.defaultEntitiesDescriptor());
     }
 
     public String emptyMetadata() {
-        EntitiesDescriptor entitiesDescriptor = entitiesDescriptorFactory.emptyEntitiesDescriptor();
-        return metadata(entitiesDescriptor);
+        return metadata(entitiesDescriptorFactory.emptyEntitiesDescriptor());
     }
 
     public String metadata(EntitiesDescriptor entitiesDescriptor) {
-        Element element = entitiesDescriptorEntitiesDescriptorToElementTransformer.transform(entitiesDescriptor);
-        return XmlUtils.writeToString(element);
+        return XmlUtils.writeToString(transform(entitiesDescriptor));
     }
 
     public String metadata(List<EntityDescriptor> entityDescriptors) {
-        EntitiesDescriptor metadata = entitiesDescriptorFactory.entitiesDescriptor(entityDescriptors);
-        return metadata(metadata);
+        return metadata(entitiesDescriptorFactory.entitiesDescriptor(entityDescriptors));
+    }
+
+    public String singleEntityMetadata(EntityDescriptor entityDescriptor) {
+        return XmlUtils.writeToString(transform(entityDescriptor));
     }
 
     public String expiredMetadata() {
-        EntitiesDescriptor metadata = entitiesDescriptorFactory.expiredEntitiesDescriptor();
-        return metadata(metadata);
+        return metadata(entitiesDescriptorFactory.expiredEntitiesDescriptor());
     }
 
     public String unsignedMetadata() {
-        EntitiesDescriptor metadata = entitiesDescriptorFactory.unsignedEntitiesDescriptor();
-        return metadata(metadata);
+        return metadata(entitiesDescriptorFactory.unsignedEntitiesDescriptor());
     }
 
     public String signedMetadata(String publicCertificate, String privateKey) {
-        EntitiesDescriptor metadata = entitiesDescriptorFactory.signedEntitiesDescriptor(publicCertificate, privateKey);
-        return metadata(metadata);
+        return metadata(entitiesDescriptorFactory.signedEntitiesDescriptor(publicCertificate, privateKey));
     }
 
     public String metadataWithFullCertificateChain(String publicCertificate, List<String> certificateChain ,String privateKey) {
-        EntitiesDescriptor metadata = entitiesDescriptorFactory.fullChainSignedEntitiesDescriptor(publicCertificate, certificateChain, privateKey);
-        return metadata(metadata);
+        return metadata(
+                entitiesDescriptorFactory.fullChainSignedEntitiesDescriptor(publicCertificate, certificateChain, privateKey)
+        );
+    }
+
+
+    private Element transform(SAMLObject entitiesDescriptor) {
+        Element result;
+        try {
+            marshallToXml(entitiesDescriptor);
+            result = entitiesDescriptor.getDOM();
+        } catch (ParserConfigurationException | MarshallingException e) {
+            throw Throwables.propagate(e);
+        }
+        return result;
+    }
+
+    private Document marshallToXml(SAMLObject samlXml) throws ParserConfigurationException, MarshallingException {
+        MarshallerFactory marshallerFactory = XMLObjectProviderRegistrySupport.getMarshallerFactory();
+
+        Marshaller responseMarshaller = marshallerFactory.getMarshaller(samlXml);
+
+        Document document = newDocumentBuilder().newDocument();
+        responseMarshaller.marshall(samlXml, document);
+
+        return document;
     }
 }

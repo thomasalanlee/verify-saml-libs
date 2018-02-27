@@ -13,19 +13,27 @@ import static com.codahale.metrics.health.HealthCheck.Result.healthy;
 import static com.codahale.metrics.health.HealthCheck.Result.unhealthy;
 
 public class MetadataHealthCheck extends HealthCheck {
-
-    private MetadataResolver metadataResolver;
-    private String expectedEntityId;
+    private final MetadataResolver metadataResolver;
+    private final String expectedEntityId;
+    private final String name;
 
     @Inject
     public MetadataHealthCheck(MetadataResolver metadataProvider,
-                               @Named("expectedEntityId") String expectedEntityId) {
+           @Named("expectedEntityId") String expectedEntityId) {
+        this(metadataProvider, "metadata", expectedEntityId);
+    }
+
+    @Inject
+    public MetadataHealthCheck(MetadataResolver metadataProvider,
+            String name,
+            @Named("expectedEntityId") String expectedEntityId) {
         this.metadataResolver = metadataProvider;
+        this.name = name;
         this.expectedEntityId = expectedEntityId;
     }
 
     public String getName() {
-        return "metadata";
+        return name;
     }
 
     @Override
