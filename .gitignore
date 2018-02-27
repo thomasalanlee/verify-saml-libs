@@ -8,7 +8,8 @@ repo
 *.ipr
 .sass-cache
 *.iws
-out/**
+out/
+*/out/
 deploy/perf_graphs
 # Package Files #
 *.jar
