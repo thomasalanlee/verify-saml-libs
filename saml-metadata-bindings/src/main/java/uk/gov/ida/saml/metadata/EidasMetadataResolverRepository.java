@@ -14,9 +14,16 @@ import uk.gov.ida.saml.metadata.factories.DropwizardMetadataResolverFactory;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.UriBuilder;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.Date;
@@ -93,13 +100,19 @@ public class EidasMetadataResolverRepository {
         }
     }
 
-    private void addMetadataResolver(JWK trustAnchor) throws UnsupportedEncodingException {
+    private void addMetadataResolver(JWK trustAnchor) throws IOException, CertificateException, NoSuchAlgorithmException, KeyStoreException {
         MetadataResolver metadataResolver = dropwizardMetadataResolverFactory.createMetadataResolver(environment, createMetadataResolverConfiguration(trustAnchor));
         metadataResolvers.put(trustAnchor.getKeyID(), metadataResolver);
     }
 
-    private MetadataResolverConfiguration createMetadataResolverConfiguration(JWK trustAnchor) throws UnsupportedEncodingException {
+    private MetadataResolverConfiguration createMetadataResolverConfiguration(JWK trustAnchor)
+            throws UnsupportedEncodingException, CertificateException, KeyStoreException {
+
         URI metadataUri = UriBuilder.fromUri(eidasMetadataConfiguration.getMetadataBaseUri()).path(URLEncoder.encode(trustAnchor.getKeyID(), "UTF-8")).build();
+
+        CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+        byte[] trustedCertBytes = trustAnchor.getX509CertChain().get(0).decode();
+        X509Certificate trustedCert = (X509Certificate) certificateFactory.generateCertificate(new ByteArrayInputStream(trustedCertBytes));
 
         return new TrustStoreBackedMetadataConfiguration(
                 metadataUri,
@@ -107,9 +120,9 @@ public class EidasMetadataResolverRepository {
                 eidasMetadataConfiguration.getMaxRefreshDelay(),
                 null,
                 eidasMetadataConfiguration.getJerseyClientConfiguration(),
-                eidasMetadataConfiguration.getJerseyClientName(),
+                getClientName(trustAnchor.getKeyID()),
                 null,
-                new DynamicTrustStoreConfiguration(trustAnchor.getKeyStore())
+                new DynamicTrustStoreConfiguration(buildKeyStoreFromCertificate(trustedCert))
                 );
     }
 
@@ -119,9 +132,25 @@ public class EidasMetadataResolverRepository {
                 if (metadataResolvers.get(entityId) instanceof AbstractReloadingMetadataResolver){
                     ((AbstractReloadingMetadataResolver) metadataResolvers.get(entityId)).destroy();
                 }
+                environment.metrics().remove(getClientName(entityId));
                 metadataResolvers.remove(entityId);
             }
         }
+    }
+
+    private KeyStore buildKeyStoreFromCertificate(X509Certificate certificate) {
+        try {
+            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            keyStore.load(null);
+            keyStore.setCertificateEntry("certificate", certificate);
+            return keyStore;
+        } catch (CertificateException | NoSuchAlgorithmException | KeyStoreException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String getClientName(String entityId) {
+        return String.format("%s - %s", eidasMetadataConfiguration.getJerseyClientName(), entityId);
     }
 
     private class RefreshTimerTask extends TimerTask {
