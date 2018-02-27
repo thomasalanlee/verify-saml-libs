@@ -3,9 +3,7 @@ package uk.gov.ida.saml.metadata.factories;
 import io.dropwizard.setup.Environment;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
-import uk.gov.ida.saml.metadata.EidasMetadataConfiguration;
 import uk.gov.ida.saml.metadata.ExpiredCertificateMetadataFilter;
-import uk.gov.ida.saml.metadata.MetadataConfiguration;
 import uk.gov.ida.saml.metadata.MetadataResolverConfiguration;
 import uk.gov.ida.saml.metadata.PKIXSignatureValidationFilterProvider;
 

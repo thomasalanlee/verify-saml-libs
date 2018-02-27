@@ -6,8 +6,10 @@ import io.dropwizard.setup.Environment;
 import org.apache.xml.security.utils.Base64;
 import org.joda.time.DateTime;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.opensaml.saml.metadata.resolver.impl.AbstractReloadingMetadataResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.gov.ida.eidas.trustanchor.CountryTrustAnchor;
 import uk.gov.ida.saml.metadata.factories.DropwizardMetadataResolverFactory;
 
 import javax.inject.Inject;
@@ -16,6 +18,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.security.cert.X509Certificate;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -26,18 +29,20 @@ public class EidasMetadataResolverRepository {
 
     private final Logger log = LoggerFactory.getLogger(EidasMetadataResolverRepository.class);
     private final EidasTrustAnchorResolver trustAnchorResolver;
-    private final DropwizardMetadataResolverFactory dropwizardMetadataResolverFactory = new DropwizardMetadataResolverFactory();
+    private final DropwizardMetadataResolverFactory dropwizardMetadataResolverFactory;
     private HashMap<String, MetadataResolver> metadataResolvers = new HashMap<>();
     private final Environment environment;
     private final EidasMetadataConfiguration eidasMetadataConfiguration;
-    private Timer timer = new Timer();
+    private final Timer timer;
     private long delayBeforeNextRefresh;
 
     @Inject
-    public EidasMetadataResolverRepository(EidasTrustAnchorResolver trustAnchorResolver, Environment environment, EidasMetadataConfiguration eidasMetadataConfiguration) {
+    public EidasMetadataResolverRepository(EidasTrustAnchorResolver trustAnchorResolver, Environment environment, EidasMetadataConfiguration eidasMetadataConfiguration, DropwizardMetadataResolverFactory dropwizardMetadataResolverFactory, Timer timer) {
         this.trustAnchorResolver = trustAnchorResolver;
         this.environment = environment;
         this.eidasMetadataConfiguration = eidasMetadataConfiguration;
+        this.dropwizardMetadataResolverFactory = dropwizardMetadataResolverFactory;
+        this.timer = timer;
 
         refresh();
     }
@@ -46,24 +51,22 @@ public class EidasMetadataResolverRepository {
         return metadataResolvers.get(entityId);
     }
 
+    public HashMap<String, MetadataResolver> getMetadataResolvers(){
+        return metadataResolvers;
+    }
+
     private void refresh() {
         delayBeforeNextRefresh =  eidasMetadataConfiguration.getTrustAnchorMaxRefreshDelay();
         try {
             List<JWK> trustAnchors = trustAnchorResolver.getTrustAnchors();
 
             removeMetadataResolvers(trustAnchors);
-
             registerMetadataResolvers(trustAnchors);
         } catch (Exception e) {
             log.error("Error fetching trust anchor or validating it", e);
             delayBeforeNextRefresh = eidasMetadataConfiguration.getTrustAnchorMinRefreshDelay();
         } finally {
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    refresh();
-                }
-            }, delayBeforeNextRefresh);
+            timer.schedule(new RefreshTimerTask(), delayBeforeNextRefresh);
         }
     }
 
@@ -74,6 +77,11 @@ public class EidasMetadataResolverRepository {
                 certificate.checkValidity();
 
                 addMetadataResolver(trustAnchor);
+                Collection<String> errors = CountryTrustAnchor.findErrors(trustAnchor);
+                if (!errors.isEmpty()) {
+                    throw new Error(String.format("Managed to generate an invalid anchor: %s", String.join(", ", errors)));
+                }
+
                 Date metadataSigningCertExpiryDate = certificate.getNotAfter();
                 Date nextRunTime = DateTime.now().plus(delayBeforeNextRefresh).toDate();
                 if(metadataSigningCertExpiryDate.before(nextRunTime)) {
@@ -88,20 +96,10 @@ public class EidasMetadataResolverRepository {
     private void addMetadataResolver(JWK trustAnchor) throws UnsupportedEncodingException {
         MetadataResolver metadataResolver = dropwizardMetadataResolverFactory.createMetadataResolver(environment, createMetadataResolverConfiguration(trustAnchor));
         metadataResolvers.put(trustAnchor.getKeyID(), metadataResolver);
-
-        registerHealthCheck(metadataResolver, trustAnchor.getKeyID());
     }
 
-    private void registerHealthCheck(MetadataResolver metadataResolver, String entityId) {
-        environment.healthChecks().register(getHealthCheckName(entityId), new MetadataHealthCheck(metadataResolver, entityId));
-    }
-
-    private String getHealthCheckName(String entityId) {
-        return "eIDAS metadata: " + entityId;
-    }
-
-    private MetadataResolverConfiguration createMetadataResolverConfiguration(JWK jwk) throws UnsupportedEncodingException {
-        URI metadataUri = UriBuilder.fromUri(eidasMetadataConfiguration.getMetadataBaseUri()).path(URLEncoder.encode(jwk.getKeyID(), "UTF-8")).build();
+    private MetadataResolverConfiguration createMetadataResolverConfiguration(JWK trustAnchor) throws UnsupportedEncodingException {
+        URI metadataUri = UriBuilder.fromUri(eidasMetadataConfiguration.getMetadataBaseUri()).path(URLEncoder.encode(trustAnchor.getKeyID(), "UTF-8")).build();
 
         return new TrustStoreBackedMetadataConfiguration(
                 metadataUri,
@@ -111,16 +109,25 @@ public class EidasMetadataResolverRepository {
                 eidasMetadataConfiguration.getJerseyClientConfiguration(),
                 eidasMetadataConfiguration.getJerseyClientName(),
                 null,
-                new DynamicTrustStoreConfiguration(jwk.getKeyStore())
+                new DynamicTrustStoreConfiguration(trustAnchor.getKeyStore())
                 );
     }
 
     private void removeMetadataResolvers(List<JWK> trustAnchors) {
         for(String entityId : metadataResolvers.keySet()) {
             if(trustAnchors.stream().noneMatch(jwk -> jwk.getKeyID().equals(entityId))) {
+                if (metadataResolvers.get(entityId) instanceof AbstractReloadingMetadataResolver){
+                    ((AbstractReloadingMetadataResolver) metadataResolvers.get(entityId)).destroy();
+                }
                 metadataResolvers.remove(entityId);
-                environment.healthChecks().unregister(getHealthCheckName(entityId));
             }
+        }
+    }
+
+    private class RefreshTimerTask extends TimerTask {
+        @Override
+        public void run() {
+            refresh();
         }
     }
 }

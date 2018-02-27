@@ -1,7 +1,6 @@
 package uk.gov.ida.saml.metadata.factories;
 
 import com.google.common.base.Predicate;
-import io.dropwizard.setup.Environment;
 import net.shibboleth.utilities.java.support.resolver.CriterionPredicateRegistry;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -12,7 +11,6 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import uk.gov.ida.saml.metadata.EntitiesDescriptorNameCriterion;
 import uk.gov.ida.saml.metadata.EntitiesDescriptorNamePredicate;
 import uk.gov.ida.saml.metadata.ExpiredCertificateMetadataFilter;
-import uk.gov.ida.saml.metadata.MetadataResolverConfiguration;
 
 import javax.ws.rs.client.Client;
 import java.net.URI;
@@ -21,6 +19,7 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MetadataResolverFactoryTest {
+
     @Mock
     ExpiredCertificateMetadataFilter expiredCertificateMetadataFilter;
 

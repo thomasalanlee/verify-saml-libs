@@ -1,29 +1,33 @@
 package uk.gov.ida.saml.metadata;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.client.JerseyClientConfiguration;
 
 import java.net.URI;
-import java.security.cert.X509Certificate;
 import java.util.Optional;
 
 public class EidasMetadataConfiguration {
-    public EidasMetadataConfiguration(URI trustAnchorUri,
-                                      Long minRefreshDelay,
-                                      Long maxRefreshDelay,
-                                      Long trustAnchorMaxRefreshDelay,
-                                      JerseyClientConfiguration client,
-                                      String jerseyClientName,
-                                      X509Certificate signingCertificate,
-                                      URI metadataBaseUri)
+
+    @JsonCreator
+    public EidasMetadataConfiguration(@JsonProperty("trustAnchorUri") URI trustAnchorUri,
+                                      @JsonProperty("minRefreshDelay") Long minRefreshDelay,
+                                      @JsonProperty("maxRefreshDelay") Long maxRefreshDelay,
+                                      @JsonProperty("trustAnchorMaxRefreshDelay") Long trustAnchorMaxRefreshDelay,
+                                      @JsonProperty("trustAnchorMinRefreshDelay") Long trustAnchorMinRefreshDelay,
+                                      @JsonProperty("client") JerseyClientConfiguration client,
+                                      @JsonProperty("jerseyClientName") String jerseyClientName,
+                                      @JsonProperty("trustStore") TrustStoreConfiguration trustStore,
+                                      @JsonProperty("metadataBaseUri") URI metadataBaseUri)
     {
         this.trustAnchorUri = trustAnchorUri;
         this.minRefreshDelay = Optional.ofNullable(minRefreshDelay).orElse(60000L);
         this.maxRefreshDelay = Optional.ofNullable(maxRefreshDelay).orElse(600000L);
-        this.trustAnchorMinRefreshDelay = Optional.ofNullable(trustAnchorMaxRefreshDelay).orElse(60000L);
-        this.trustAnchorMaxRefreshDelay = Optional.ofNullable(trustAnchorMaxRefreshDelay).orElse(3600000l);
+        this.trustAnchorMinRefreshDelay = Optional.ofNullable(trustAnchorMinRefreshDelay).orElse(60000L);
+        this.trustAnchorMaxRefreshDelay = Optional.ofNullable(trustAnchorMaxRefreshDelay).orElse(3600000L);
         this.client = Optional.ofNullable(client).orElse(new JerseyClientConfiguration());
         this.jerseyClientName = Optional.ofNullable(jerseyClientName).orElse("MetadataClient");
-        this.signingCertificate = signingCertificate;
+        this.trustStore = trustStore;
         this.metadataBaseUri = metadataBaseUri;
     }
 
@@ -43,9 +47,9 @@ public class EidasMetadataConfiguration {
 
     private String jerseyClientName;
 
-    private X509Certificate signingCertificate;
-
     private URI metadataBaseUri;
+
+    private TrustStoreConfiguration trustStore;
 
     public URI getTrustAnchorUri() {
         return trustAnchorUri;
@@ -75,11 +79,11 @@ public class EidasMetadataConfiguration {
         return jerseyClientName;
     }
 
-    public X509Certificate getSigningCertificate() {
-        return signingCertificate;
-    }
-
     public URI getMetadataBaseUri() {
         return metadataBaseUri;
+    }
+
+    public TrustStoreConfiguration getTrustStoreConfiguration() {
+        return trustStore;
     }
 }

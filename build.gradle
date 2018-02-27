@@ -9,7 +9,8 @@ subprojects {
     ext {
       opensaml_version = '3.3.0'
       dropwizard_version = '1.2.0'
-      ida_utils_version = '312'
+      ida_utils_version = '317'
+      trust_anchor_version = '1.0-6'
     }
 
     group = "uk.gov.ida"
@@ -22,6 +23,7 @@ subprojects {
         dropwizard
         xml_utils
         test_deps
+        security
     }
     
     dependencies {
@@ -36,6 +38,10 @@ subprojects {
             "org.opensaml:opensaml-security-api:$opensaml_version",
             "org.opensaml:opensaml-saml-api:$opensaml_version",
             "org.opensaml:opensaml-xmlsec-impl:$opensaml_version"
+
+        security 'com.nimbusds:nimbus-jose-jwt:5.4',
+            "uk.gov.ida.eidas:trust-anchor:$trust_anchor_version",
+            "uk.gov.ida:security-utils:2.0.0-$ida_utils_version"
 
         test_deps 'uk.gov.ida:common-test-utils:2.0.0-32',
                 "com.github.tomakehurst:wiremock-standalone:2.5.0",
