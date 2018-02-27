@@ -33,17 +33,7 @@ public class TestCredentialFactory {
     }
 
     public Credential getSigningCredential() {
-
-        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(Base64.decodeBase64(privateCert));
-
-        PrivateKey privateKey;
-        try {
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            privateKey = keyFactory.generatePrivate(keySpec);
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            throw propagate(e);
-        }
-        BasicCredential credential = new BasicCredential(getPublicKey(), privateKey);
+        BasicCredential credential = new BasicCredential(getPublicKey(), getPrivateKey());
 
         credential.setUsageType(UsageType.SIGNING);
         return credential;
@@ -56,14 +46,28 @@ public class TestCredentialFactory {
         return credential;
     }
 
+    public Credential getDecryptingCredential() {
+        BasicCredential credential = new BasicCredential(getPublicKey(), getPrivateKey());
+
+        credential.setUsageType(UsageType.ENCRYPTION);
+        return credential;
+    }
+
     private PublicKey getPublicKey() {
-        PublicKey publicKey;
         try {
-            publicKey = createPublicKey(publicCert);
+            return createPublicKey(publicCert);
         } catch (CertificateException | UnsupportedEncodingException e) {
             throw propagate(e);
         }
-        return publicKey;
+    }
+
+    private PrivateKey getPrivateKey() {
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(Base64.decodeBase64(privateCert));
+        try {
+            return KeyFactory.getInstance("RSA").generatePrivate(keySpec);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw propagate(e);
+        }
     }
 
     private PublicKey createPublicKey(String partialCert) throws CertificateException, UnsupportedEncodingException {
