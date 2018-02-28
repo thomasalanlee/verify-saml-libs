@@ -8,7 +8,6 @@ import org.opensaml.core.config.InitializationService;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.impl.AuthnRequestBuilder;
 
-
 import java.util.Base64;
 
 import static org.assertj.core.api.Assertions.assertThat;
