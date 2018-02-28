@@ -1,5 +1,6 @@
 package uk.gov.ida.saml.deserializers.validators;
 
+import org.apache.xml.security.utils.Base64;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,7 +11,6 @@ import uk.gov.ida.saml.core.validation.SamlValidationSpecificationFailure;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 import static uk.gov.ida.saml.errors.SamlTransformationErrorFactory.invalidBase64Encoding;
-import static uk.gov.ida.shared.utils.string.StringEncoding.toBase64Encoded;
 
 @RunWith(MockitoJUnitRunner.class)
 public class Base64StringDecoderTest {
@@ -25,6 +25,10 @@ public class Base64StringDecoderTest {
     @Test
     public void shouldPassDecodedStringToNextProcessor() {
         assertThat(samlStringProcessor.decode(toBase64Encoded("string"))).isEqualTo("string");
+    }
+
+    private String toBase64Encoded(String string) {
+        return Base64.encode(string.getBytes());
     }
 
     @Test

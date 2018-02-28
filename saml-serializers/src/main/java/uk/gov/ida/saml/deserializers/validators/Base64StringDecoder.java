@@ -1,8 +1,9 @@
 package uk.gov.ida.saml.deserializers.validators;
 
+import net.shibboleth.utilities.java.support.codec.Base64Support;
+import org.apache.commons.codec.binary.StringUtils;
 import uk.gov.ida.saml.core.validation.SamlTransformationErrorException;
 import uk.gov.ida.saml.core.validation.SamlValidationSpecificationFailure;
-import uk.gov.ida.shared.utils.string.StringEncoding;
 
 import static java.util.regex.Pattern.matches;
 import static uk.gov.ida.saml.errors.SamlTransformationErrorFactory.invalidBase64Encoding;
@@ -16,7 +17,7 @@ public class Base64StringDecoder {
             throw new SamlTransformationErrorException(failure.getErrorMessage(), failure.getLogLevel());
         }
 
-        return StringEncoding.fromBase64Encoded(withoutWhitespace);
+        return StringUtils.newStringUtf8(Base64Support.decode(input));
     }
 
 }

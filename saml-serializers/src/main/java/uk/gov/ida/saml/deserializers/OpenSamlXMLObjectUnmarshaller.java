@@ -1,14 +1,11 @@
 package uk.gov.ida.saml.deserializers;
 
+import net.shibboleth.utilities.java.support.xml.XMLParserException;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.io.UnmarshallingException;
-import org.xml.sax.SAXException;
-import uk.gov.ida.saml.deserializers.parser.SamlObjectParser;
 import uk.gov.ida.saml.core.validation.SamlTransformationErrorException;
 import uk.gov.ida.saml.core.validation.SamlValidationSpecificationFailure;
-
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
+import uk.gov.ida.saml.deserializers.parser.SamlObjectParser;
 
 import static uk.gov.ida.saml.errors.SamlTransformationErrorFactory.unableToDeserializeStringToOpenSaml;
 
@@ -23,7 +20,7 @@ public class OpenSamlXMLObjectUnmarshaller<TOutput extends XMLObject> {
     public TOutput fromString(String input) {
         try {
             return samlObjectParser.getSamlObject(input);
-        } catch (ParserConfigurationException | SAXException | IOException | UnmarshallingException e) {
+        } catch (UnmarshallingException | XMLParserException  e) {
             SamlValidationSpecificationFailure failure = unableToDeserializeStringToOpenSaml(input);
             throw new SamlTransformationErrorException(failure.getErrorMessage(), e, failure.getLogLevel());
         }
