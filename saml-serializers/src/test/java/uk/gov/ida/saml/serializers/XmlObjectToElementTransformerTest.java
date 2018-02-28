@@ -8,12 +8,10 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.impl.AuthnRequestBuilder;
 import org.w3c.dom.Element;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 public class XmlObjectToElementTransformerTest {
-
-    private static final String REQUEST = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><saml2p:AuthnRequest xmlns:saml2p=\"urn:oasis:names:tc:SAML:2.0:protocol\" Version=\"2.0\"/>";
-
 
     @Before
     public void setup() throws InitializationException {
@@ -21,10 +19,10 @@ public class XmlObjectToElementTransformerTest {
     }
 
     @Test
-    public void shouldTransformAuthnRequestToBase64EncodedString() throws Exception {
+    public void shouldTransformObjectToElement() {
         AuthnRequest authnRequest = new AuthnRequestBuilder().buildObject();
         Element element = new XmlObjectToElementTransformer<>().apply(authnRequest);
-
+        assertThat(element.getTagName()).isEqualTo("saml2p:AuthnRequest");
     }
 
 }
