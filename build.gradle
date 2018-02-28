@@ -10,7 +10,7 @@ subprojects {
       opensaml_version = '3.3.0'
       dropwizard_version = '1.2.0'
       ida_utils_version = '317'
-      trust_anchor_version = '1.0-6'
+      trust_anchor_version = '1.0-7'
     }
 
     group = "uk.gov.ida"

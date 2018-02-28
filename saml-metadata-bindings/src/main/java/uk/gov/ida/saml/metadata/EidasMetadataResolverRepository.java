@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.stream.Collectors;
 
 public class EidasMetadataResolverRepository {
 
@@ -111,8 +112,18 @@ public class EidasMetadataResolverRepository {
         URI metadataUri = UriBuilder.fromUri(eidasMetadataConfiguration.getMetadataBaseUri()).path(URLEncoder.encode(trustAnchor.getKeyID(), "UTF-8")).build();
 
         CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-        byte[] trustedCertBytes = trustAnchor.getX509CertChain().get(0).decode();
-        X509Certificate trustedCert = (X509Certificate) certificateFactory.generateCertificate(new ByteArrayInputStream(trustedCertBytes));
+        List<X509Certificate> trustedCertChain = trustAnchor.getX509CertChain()
+                .stream()
+                .map(base64 -> base64.decode())
+                .map(certBytes -> new ByteArrayInputStream(certBytes))
+                .map(certStream -> {
+                    try { //Java streams don't allow throwing checked exceptions
+                        return (X509Certificate) certificateFactory.generateCertificate(certStream);
+                    } catch (CertificateException e) {
+                        throw new RuntimeException("Certificate in Trust Anchor x5c is not a valid x509", e);
+                    }
+                })
+                .collect(Collectors.toList());
 
         return new TrustStoreBackedMetadataConfiguration(
                 metadataUri,
@@ -122,7 +133,7 @@ public class EidasMetadataResolverRepository {
                 eidasMetadataConfiguration.getJerseyClientConfiguration(),
                 getClientName(trustAnchor.getKeyID()),
                 null,
-                new DynamicTrustStoreConfiguration(buildKeyStoreFromCertificate(trustedCert))
+                new DynamicTrustStoreConfiguration(buildKeyStoreFromCertificate(trustedCertChain))
                 );
     }
 
@@ -138,11 +149,13 @@ public class EidasMetadataResolverRepository {
         }
     }
 
-    private KeyStore buildKeyStoreFromCertificate(X509Certificate certificate) {
+    private KeyStore buildKeyStoreFromCertificate(List<X509Certificate> certificates) {
         try {
             KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
             keyStore.load(null);
-            keyStore.setCertificateEntry("certificate", certificate);
+            for(X509Certificate certificate : certificates) {
+                keyStore.setCertificateEntry("certificate-" + certificates.indexOf(certificate), certificate);
+            }
             return keyStore;
         } catch (CertificateException | NoSuchAlgorithmException | KeyStoreException | IOException e) {
             throw new RuntimeException(e);

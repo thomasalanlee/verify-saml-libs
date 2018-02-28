@@ -1,5 +1,6 @@
 package uk.gov.ida.saml.metadata;
 
+import certificates.values.CACertificates;
 import com.codahale.metrics.MetricRegistry;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.JWK;
@@ -27,6 +28,7 @@ import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
@@ -79,7 +81,8 @@ public class EidasMetadataResolverRepositoryTest {
 
     @Test
     public void shouldCreateMetadataResolverWhenTrustAnchorIsValid() throws ParseException, KeyStoreException, CertificateEncodingException {
-        JWK trustAnchor = createJWK("entity-id", TestCertificateStrings.METADATA_SIGNING_A_PUBLIC_CERT);
+        JWK trustAnchor = createJWK("entity/id", Arrays.asList(TestCertificateStrings.METADATA_SIGNING_A_PUBLIC_CERT,
+                TestCertificateStrings.METADATA_SIGNING_B_PUBLIC_CERT));
         trustAnchors.add(trustAnchor);
         metadataResolverRepository = new EidasMetadataResolverRepository(trustAnchorResolver, environment, metadataConfiguration, dropwizardMetadataResolverFactory, timer);
 
@@ -87,16 +90,19 @@ public class EidasMetadataResolverRepositoryTest {
         verify(dropwizardMetadataResolverFactory).createMetadataResolver(eq(environment), metadataResolverConfigurationCaptor.capture());
         MetadataResolverConfiguration metadataResolverConfiguration = metadataResolverConfigurationCaptor.getValue();
         byte[] expectedTrustStoreCertificate = trustAnchor.getX509CertChain().get(0).decode();
-        byte[] actualTrustStoreCertificate = metadataResolverConfiguration.getTrustStore().getCertificate("certificate").getEncoded();
+        byte[] expectedTrustStoreCACertificate = trustAnchor.getX509CertChain().get(1).decode();
+        byte[] actualTrustStoreCertificate = metadataResolverConfiguration.getTrustStore().getCertificate("certificate-0").getEncoded();
+        byte[] actualTrustStoreCACertificate = metadataResolverConfiguration.getTrustStore().getCertificate("certificate-1").getEncoded();
 
         assertThat(createdMetadataResolver).isEqualTo(metadataResolver);
         assertArrayEquals(expectedTrustStoreCertificate, actualTrustStoreCertificate);
-        assertThat(metadataResolverConfiguration.getUri().toString()).isEqualTo("http://signin.gov.uk/entity-id");
+        assertArrayEquals(expectedTrustStoreCACertificate, actualTrustStoreCACertificate);
+        assertThat(metadataResolverConfiguration.getUri().toString()).isEqualTo("http://signin.gov.uk/entity%2Fid");
     }
 
     @Test
     public void shouldNotCreateMetadataResolverWhenCertificateIsInvalid() throws ParseException {
-        trustAnchors.add(createJWK("entity-id", TestCertificateStrings.UNCHAINED_PUBLIC_CERT));
+        trustAnchors.add(createJWK("entity-id", Collections.singletonList(TestCertificateStrings.UNCHAINED_PUBLIC_CERT)));
         metadataResolverRepository = new EidasMetadataResolverRepository(trustAnchorResolver, environment, metadataConfiguration, dropwizardMetadataResolverFactory, timer);
 
         MetadataResolver createdMetadataResolver = metadataResolverRepository.getMetadataResolver("entity-id");
@@ -106,12 +112,12 @@ public class EidasMetadataResolverRepositoryTest {
 
     @Test
     public void shouldUpdateListOfMetadataResolversWhenRefreshing() throws ParseException {
-        trustAnchors.add(createJWK("entity-id", TestCertificateStrings.METADATA_SIGNING_A_PUBLIC_CERT));
+        trustAnchors.add(createJWK("entity-id", Collections.singletonList(TestCertificateStrings.METADATA_SIGNING_A_PUBLIC_CERT)));
         metadataResolverRepository = new EidasMetadataResolverRepository(trustAnchorResolver, environment, metadataConfiguration, dropwizardMetadataResolverFactory, timer);
         when(environment.metrics()).thenReturn(new MetricRegistry());
 
         trustAnchors.remove(0);
-        trustAnchors.add(createJWK("new-entity-id", TestCertificateStrings.METADATA_SIGNING_A_PUBLIC_CERT));
+        trustAnchors.add(createJWK("new-entity-id", Collections.singletonList(TestCertificateStrings.METADATA_SIGNING_A_PUBLIC_CERT)));
         runScheduledTask();
 
         assertThat(metadataResolverRepository.getMetadataResolver("entity-id")).isNull();
@@ -125,8 +131,8 @@ public class EidasMetadataResolverRepositoryTest {
         value.run();
     }
 
-    private JWK createJWK(String entityId, String certificate) throws ParseException {
-        RSAPublicKey publicKey = (RSAPublicKey) new X509CertificateFactory().createCertificate(certificate).getPublicKey();
+    private JWK createJWK(String entityId, List<String> certificates) throws ParseException {
+        RSAPublicKey publicKey = (RSAPublicKey) new X509CertificateFactory().createCertificate(certificates.get(0)).getPublicKey();
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("kty", "RSA");
@@ -135,7 +141,7 @@ public class EidasMetadataResolverRepositoryTest {
         jsonObject.put("alg", "RS256");
         jsonObject.put("e", new String (Base64.encodeInteger(publicKey.getPublicExponent())));
         jsonObject.put("n", new String (Base64.encodeInteger(publicKey.getModulus())));
-        jsonObject.put("x5c", Collections.singletonList(certificate));
+        jsonObject.put("x5c", certificates);
 
         return JWK.parse(jsonObject.toJSONString());
     }
