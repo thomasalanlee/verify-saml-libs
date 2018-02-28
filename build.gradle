@@ -35,7 +35,7 @@ subprojects {
 
         test_deps 'org.mockito:mockito-core:1.9.5',
                 'junit:junit:4.11',
-                'org.assertj:assertj-core:1.6.0',
+                'org.assertj:assertj-core:3.9.0',
                 "org.opensaml:opensaml-security-api:$opensaml_version"
 
         saml_test "org.opensaml:opensaml-saml-impl:$opensaml_version",

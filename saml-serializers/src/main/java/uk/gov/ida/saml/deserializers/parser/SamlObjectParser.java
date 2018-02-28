@@ -1,28 +1,25 @@
 package uk.gov.ida.saml.deserializers.parser;
 
-import net.shibboleth.utilities.java.support.xml.BasicParserPool;
+import net.shibboleth.utilities.java.support.xml.ParserPool;
+import net.shibboleth.utilities.java.support.xml.XMLParserException;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.Unmarshaller;
 import org.opensaml.core.xml.io.UnmarshallerFactory;
 import org.opensaml.core.xml.io.UnmarshallingException;
+import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-
-import static uk.gov.ida.shared.utils.xml.XmlUtils.convertToElement;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 
 public class SamlObjectParser {
 
-    public <T extends XMLObject> T getSamlObject(String xmlString) throws ParserConfigurationException, SAXException, IOException, UnmarshallingException {
-        BasicParserPool ppMgr = new BasicParserPool();
-        ppMgr.setNamespaceAware(true);
-
-        Element samlRootElement = convertToElement(xmlString);
-
-        return getSamlObject(samlRootElement);
+    @SuppressWarnings("unchecked")
+    public <T extends XMLObject> T getSamlObject(String xmlString) throws UnmarshallingException, XMLParserException {
+        ParserPool parserPool = XMLObjectProviderRegistrySupport.getParserPool();
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8));
+        return (T) XMLObjectSupport.unmarshallFromInputStream(parserPool, inputStream);
     }
 
     @SuppressWarnings("unchecked")
