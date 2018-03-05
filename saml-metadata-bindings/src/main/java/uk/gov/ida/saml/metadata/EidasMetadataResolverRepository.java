@@ -25,6 +25,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,6 +40,7 @@ public class EidasMetadataResolverRepository {
     private final EidasTrustAnchorResolver trustAnchorResolver;
     private final DropwizardMetadataResolverFactory dropwizardMetadataResolverFactory;
     private HashMap<String, MetadataResolver> metadataResolvers = new HashMap<>();
+    private List<JWK> trustAnchors = new ArrayList<>();
     private final Environment environment;
     private final EidasMetadataConfiguration eidasMetadataConfiguration;
     private final Timer timer;
@@ -63,16 +65,19 @@ public class EidasMetadataResolverRepository {
         return metadataResolvers;
     }
 
+    public List<String> getTrustAnchorsEntityIds() {
+        return trustAnchors.stream().map(JWK::getKeyID).collect(Collectors.toList());
+    }
+
     private void refresh() {
         delayBeforeNextRefresh =  eidasMetadataConfiguration.getTrustAnchorMaxRefreshDelay();
         try {
-            List<JWK> trustAnchors = trustAnchorResolver.getTrustAnchors();
-
-            removeMetadataResolvers(trustAnchors);
+            trustAnchors = trustAnchorResolver.getTrustAnchors();
+            removeMetadataResolvers();
             registerMetadataResolvers(trustAnchors);
         } catch (Exception e) {
             log.error("Error fetching trust anchor or validating it", e);
-            delayBeforeNextRefresh = eidasMetadataConfiguration.getTrustAnchorMinRefreshDelay();
+            setShortRefreshDelay();
         } finally {
             timer.schedule(new RefreshTimerTask(), delayBeforeNextRefresh);
         }
@@ -92,8 +97,8 @@ public class EidasMetadataResolverRepository {
 
                 Date metadataSigningCertExpiryDate = certificate.getNotAfter();
                 Date nextRunTime = DateTime.now().plus(delayBeforeNextRefresh).toDate();
-                if(metadataSigningCertExpiryDate.before(nextRunTime)) {
-                    delayBeforeNextRefresh = eidasMetadataConfiguration.getTrustAnchorMinRefreshDelay();
+                if (metadataSigningCertExpiryDate.before(nextRunTime)) {
+                    setShortRefreshDelay();
                 }
             } catch (Exception e) {
                 log.error("Error creating MetadataResolver for " + trustAnchor.getKeyID(), e);
@@ -109,7 +114,9 @@ public class EidasMetadataResolverRepository {
     private MetadataResolverConfiguration createMetadataResolverConfiguration(JWK trustAnchor)
             throws UnsupportedEncodingException, CertificateException, KeyStoreException {
 
-        URI metadataUri = UriBuilder.fromUri(eidasMetadataConfiguration.getMetadataBaseUri()).path(URLEncoder.encode(trustAnchor.getKeyID(), "UTF-8")).build();
+        URI metadataUri = UriBuilder.fromUri(eidasMetadataConfiguration.getMetadataBaseUri())
+                .path(URLEncoder.encode(trustAnchor.getKeyID(), "UTF-8"))
+                .build();
 
         CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
         List<X509Certificate> trustedCertChain = trustAnchor.getX509CertChain()
@@ -137,15 +144,14 @@ public class EidasMetadataResolverRepository {
                 );
     }
 
-    private void removeMetadataResolvers(List<JWK> trustAnchors) {
+    private void removeMetadataResolvers() {
         for(String entityId : metadataResolvers.keySet()) {
-            if(trustAnchors.stream().noneMatch(jwk -> jwk.getKeyID().equals(entityId))) {
-                if (metadataResolvers.get(entityId) instanceof AbstractReloadingMetadataResolver){
-                    ((AbstractReloadingMetadataResolver) metadataResolvers.get(entityId)).destroy();
-                }
-                environment.metrics().remove(getClientName(entityId));
-                metadataResolvers.remove(entityId);
+            MetadataResolver metadataResolver = metadataResolvers.get(entityId);
+            if (metadataResolver instanceof AbstractReloadingMetadataResolver){
+                ((AbstractReloadingMetadataResolver) metadataResolver).destroy();
             }
+            environment.metrics().remove(getClientName(entityId));
+            metadataResolvers.remove(entityId);
         }
     }
 
@@ -171,5 +177,9 @@ public class EidasMetadataResolverRepository {
         public void run() {
             refresh();
         }
+    }
+
+    private void setShortRefreshDelay() {
+        delayBeforeNextRefresh = eidasMetadataConfiguration.getTrustAnchorMinRefreshDelay();
     }
 }
