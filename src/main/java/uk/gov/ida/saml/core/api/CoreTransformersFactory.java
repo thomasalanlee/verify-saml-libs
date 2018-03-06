@@ -2,7 +2,6 @@ package uk.gov.ida.saml.core.api;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
-import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.xmlsec.algorithm.DigestAlgorithm;
 import org.opensaml.xmlsec.algorithm.SignatureAlgorithm;
 import uk.gov.ida.common.shared.security.IdGenerator;
@@ -21,11 +20,7 @@ import uk.gov.ida.saml.deserializers.parser.SamlObjectParser;
 import uk.gov.ida.saml.deserializers.validators.Base64StringDecoder;
 import uk.gov.ida.saml.deserializers.validators.NotNullSamlStringValidator;
 import uk.gov.ida.saml.deserializers.validators.SizeValidator;
-import uk.gov.ida.saml.metadata.transformers.AssertionConsumerServicesUnmarshaller;
-import uk.gov.ida.saml.metadata.transformers.ContactPersonsUnmarshaller;
-import uk.gov.ida.saml.metadata.transformers.HubServiceProviderMetadataDtoToEntityDescriptorTransformer;
 import uk.gov.ida.saml.metadata.transformers.KeyDescriptorsUnmarshaller;
-import uk.gov.ida.saml.metadata.transformers.OrganizationUnmarshaller;
 import uk.gov.ida.saml.security.CredentialFactorySignatureValidator;
 import uk.gov.ida.saml.security.EncrypterFactory;
 import uk.gov.ida.saml.security.EncryptionCredentialFactory;
@@ -159,18 +154,6 @@ public class CoreTransformersFactory {
                 responseAssertionEncrypter,
                 responseAssertionSigner,
                 new ResponseSignatureCreator(signatureFactory)
-        );
-    }
-
-    public HubServiceProviderMetadataDtoToEntityDescriptorTransformer getHubServiceProviderMetadataDtoToEntityDescriptorTransformer(){
-        OpenSamlXmlObjectFactory openSamlXmlObjectFactory = new OpenSamlXmlObjectFactory();
-        return new HubServiceProviderMetadataDtoToEntityDescriptorTransformer(
-                openSamlXmlObjectFactory,
-                new OrganizationUnmarshaller(openSamlXmlObjectFactory),
-                new ContactPersonsUnmarshaller(openSamlXmlObjectFactory),
-                new KeyDescriptorsUnmarshaller(openSamlXmlObjectFactory),
-                new AssertionConsumerServicesUnmarshaller(openSamlXmlObjectFactory),
-                new IdGenerator()
         );
     }
 }
