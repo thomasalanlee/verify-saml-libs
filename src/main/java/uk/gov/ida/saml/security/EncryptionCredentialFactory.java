@@ -1,11 +1,12 @@
 package uk.gov.ida.saml.security;
 
+import org.opensaml.security.credential.BasicCredential;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.credential.UsageType;
 
 import javax.inject.Inject;
 
-public class EncryptionCredentialFactory extends CredentialFactory {
+public class EncryptionCredentialFactory {
 
     private final EncryptionKeyStore encryptionKeyStore;
 
@@ -15,6 +16,8 @@ public class EncryptionCredentialFactory extends CredentialFactory {
     }
 
     public Credential getEncryptingCredential(String receiverId) {
-        return getCredential(encryptionKeyStore.getEncryptionKeyForEntity(receiverId), UsageType.ENCRYPTION);
+        BasicCredential credential = new BasicCredential(encryptionKeyStore.getEncryptionKeyForEntity(receiverId));
+        credential.setUsageType(UsageType.ENCRYPTION);
+        return credential;
     }
 }

@@ -1,5 +1,6 @@
 package uk.gov.ida.saml.security;
 
+import org.opensaml.security.credential.BasicCredential;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.credential.UsageType;
 
@@ -8,7 +9,7 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SigningCredentialFactory extends CredentialFactory{
+public class SigningCredentialFactory {
     private final SigningKeyStore signingKeyStore;
 
     @Inject
@@ -20,8 +21,11 @@ public class SigningCredentialFactory extends CredentialFactory{
         ArrayList<Credential> verifyingCredentials = new ArrayList<>();
         List<PublicKey> verifyingKeysForEntity = signingKeyStore.getVerifyingKeysForEntity(entityId);
         for(PublicKey verifyingKeyForEntity: verifyingKeysForEntity){
-            verifyingCredentials.add(getCredential(verifyingKeyForEntity, UsageType.SIGNING));
+            BasicCredential credential = new BasicCredential(verifyingKeyForEntity);
+            credential.setUsageType(UsageType.SIGNING);
+            verifyingCredentials.add(credential);
         }
         return verifyingCredentials;
     }
+
 }

@@ -19,6 +19,8 @@ import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.EncryptedAssertion;
 import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.encryption.Decrypter;
+import org.opensaml.security.credential.Credential;
 import org.opensaml.xmlsec.signature.support.SignatureException;
 
 import uk.gov.ida.common.shared.security.PrivateKeyFactory;
@@ -38,7 +40,7 @@ public class AssertionDecrypterTest {
 
     private final String assertionId = "test-assertion";
     private IdaKeyStoreCredentialRetriever keyStoreCredentialRetriever;
-    private AssertionDecrypter decrypter;
+    private AssertionDecrypter assertionDecrypter;
     private PublicKeyFactory publicKeyFactory;
 
     @Before
@@ -56,14 +58,15 @@ public class AssertionDecrypterTest {
         keyStoreCredentialRetriever = new IdaKeyStoreCredentialRetriever(
                 new IdaKeyStore(new KeyPair(publicKey, privateKey), Arrays.asList(encryptionKeyPair))
         );
-
-        decrypter = new AssertionDecrypter(keyStoreCredentialRetriever, new EncryptionAlgorithmValidator(), new DecrypterFactory());
+        List<Credential> credentials = keyStoreCredentialRetriever.getDecryptingCredentials();
+        Decrypter decrypter = new DecrypterFactory().createDecrypter(credentials);
+        assertionDecrypter = new AssertionDecrypter(new EncryptionAlgorithmValidator(), decrypter);
     }
 
     @Test
     public void shouldConvertEncryptedAssertionIntoAssertion() throws Exception {
         final Response response = responseForAssertion(EncryptedAssertionBuilder.anEncryptedAssertionBuilder().withPublicEncryptionCert(TestCertificateStrings.HUB_TEST_PUBLIC_ENCRYPTION_CERT).withId(assertionId).build());
-        final List<Assertion> assertions = decrypter.decryptAssertions(new ValidatedResponse(response));
+        final List<Assertion> assertions = assertionDecrypter.decryptAssertions(new ValidatedResponse(response));
         assertEquals(assertions.get(0).getID(), assertionId);
     }
 
@@ -74,7 +77,7 @@ public class AssertionDecrypterTest {
 
         final Response response = responseForAssertion(badlyEncryptedAssertion);
 
-        decrypter.decryptAssertions(new ValidatedResponse(response));
+        assertionDecrypter.decryptAssertions(new ValidatedResponse(response));
     }
 
     private Response responseForAssertion(EncryptedAssertion encryptedAssertion) throws MarshallingException, SignatureException {
