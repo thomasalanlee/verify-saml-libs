@@ -1,11 +1,11 @@
 package uk.gov.ida.saml.core.domain;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.joda.time.DateTime;
 
 public class IdentityProviderAssertion extends OutboundAssertion {
-    private Optional<MatchingDataset> matchingDataset = Optional.absent();
-    private Optional<IdentityProviderAuthnStatement> authnStatement = Optional.absent();
+    private Optional<MatchingDataset> matchingDataset = Optional.empty();
+    private Optional<IdentityProviderAuthnStatement> authnStatement = Optional.empty();
 
     public IdentityProviderAssertion(
             String id,

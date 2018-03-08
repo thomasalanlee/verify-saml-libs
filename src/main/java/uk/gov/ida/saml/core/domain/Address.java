@@ -2,7 +2,7 @@ package uk.gov.ida.saml.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.joda.time.DateTime;
 
 import java.io.Serializable;
@@ -11,11 +11,11 @@ import java.util.List;
 public class Address implements MdsAttributeValue, Serializable {
     private boolean verified;
     private DateTime from;
-    private Optional<DateTime> to = Optional.absent();
-    private Optional<String> postCode = Optional.absent();
+    private Optional<DateTime> to = Optional.empty();
+    private Optional<String> postCode = Optional.empty();
     private List<String> lines;
-    private Optional<String> internationalPostCode = Optional.absent();
-    private Optional<String> uprn = Optional.absent();
+    private Optional<String> internationalPostCode = Optional.empty();
+    private Optional<String> uprn = Optional.empty();
 
     public Address(
             List<String> lines,
@@ -26,12 +26,12 @@ public class Address implements MdsAttributeValue, Serializable {
             DateTime to,
             boolean verified) {
 
-        this.internationalPostCode = Optional.fromNullable(internationalPostCode);
-        this.uprn = Optional.fromNullable(uprn);
+        this.internationalPostCode = Optional.ofNullable(internationalPostCode);
+        this.uprn = Optional.ofNullable(uprn);
         this.from = from;
-        this.postCode = Optional.fromNullable(postCode);
+        this.postCode = Optional.ofNullable(postCode);
         this.lines = lines;
-        this.to = Optional.fromNullable(to);
+        this.to = Optional.ofNullable(to);
         this.verified = verified;
     }
 

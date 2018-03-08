@@ -1,6 +1,6 @@
 package uk.gov.ida.saml.core.test.builders;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.joda.time.DateTime;
 import uk.gov.ida.saml.core.domain.Address;
 
@@ -10,11 +10,11 @@ import java.util.List;
 public class AddressBuilder {
 
     private List<String> lines = new ArrayList<>();
-    private Optional<String> postCode = Optional.absent();
-    private Optional<String> internationalPostCode = Optional.absent();
-    private Optional<String> uprn = Optional.absent();
+    private Optional<String> postCode = Optional.empty();
+    private Optional<String> internationalPostCode = Optional.empty();
+    private Optional<String> uprn = Optional.empty();
     private DateTime fromDate = DateTime.parse("2001-01-01");
-    private Optional<DateTime> toDate = Optional.absent();
+    private Optional<DateTime> toDate = Optional.empty();
     private boolean verified = false;
 
     public static AddressBuilder anAddress() {
@@ -38,17 +38,17 @@ public class AddressBuilder {
     }
 
     public AddressBuilder withPostCode(final String postCode) {
-        this.postCode = Optional.fromNullable(postCode);
+        this.postCode = Optional.ofNullable(postCode);
         return this;
     }
 
     public AddressBuilder withInternationalPostCode(final String internationalPostCode) {
-        this.internationalPostCode = Optional.fromNullable(internationalPostCode);
+        this.internationalPostCode = Optional.ofNullable(internationalPostCode);
         return this;
     }
 
     public AddressBuilder withUPRN(final String uprn) {
-        this.uprn = Optional.fromNullable(uprn);
+        this.uprn = Optional.ofNullable(uprn);
         return this;
     }
 
@@ -58,7 +58,7 @@ public class AddressBuilder {
     }
 
     public AddressBuilder withToDate(final DateTime toDate) {
-        this.toDate = Optional.fromNullable(toDate);
+        this.toDate = Optional.ofNullable(toDate);
         return this;
     }
 

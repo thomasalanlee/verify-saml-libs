@@ -1,6 +1,6 @@
 package uk.gov.ida.saml.core.test.builders;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import uk.gov.ida.saml.core.domain.Address;
@@ -12,8 +12,8 @@ import uk.gov.ida.saml.core.domain.SimpleMdsValue;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.google.common.base.Optional.absent;
-import static com.google.common.base.Optional.fromNullable;
+import static java.util.Optional.empty;
+import static java.util.Optional.ofNullable;
 import static java.util.Arrays.asList;
 
 public class MatchingDatasetBuilder {
@@ -21,7 +21,7 @@ public class MatchingDatasetBuilder {
     private List<SimpleMdsValue<String>> firstnames = new ArrayList<>();
     private List<SimpleMdsValue<String>> middleNames = new ArrayList<>();
     private List<SimpleMdsValue<String>> surnames = new ArrayList<>();
-    private Optional<SimpleMdsValue<Gender>> gender = absent();
+    private Optional<SimpleMdsValue<Gender>> gender = Optional.empty();
     private List<SimpleMdsValue<LocalDate>> dateOfBirths = new ArrayList<>();
     private List<Address> currentAddresses = new ArrayList<>();
     private List<Address> previousAddresses = new ArrayList<>();
@@ -64,7 +64,7 @@ public class MatchingDatasetBuilder {
     }
 
     public MatchingDatasetBuilder withGender(SimpleMdsValue<Gender> gender) {
-        this.gender = fromNullable(gender);
+        this.gender = Optional.ofNullable(gender);
         return this;
     }
 

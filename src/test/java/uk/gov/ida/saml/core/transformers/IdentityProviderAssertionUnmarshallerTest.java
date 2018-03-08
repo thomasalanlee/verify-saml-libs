@@ -1,6 +1,6 @@
 package uk.gov.ida.saml.core.transformers;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,7 +51,7 @@ public class IdentityProviderAssertionUnmarshallerTest {
         Assertion originalAssertion = anAssertion().buildUnencrypted();
 
         IdentityProviderAssertion transformedAssertion = unmarshaller.fromAssertion(originalAssertion);
-        assertThat(transformedAssertion.getMatchingDataset()).isEqualTo(Optional.<MatchingDataset>absent());
+        assertThat(transformedAssertion.getMatchingDataset()).isEqualTo(Optional.empty());
     }
 
     @Test

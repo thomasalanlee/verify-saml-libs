@@ -1,6 +1,6 @@
 package uk.gov.ida.saml.core.transformers.inbound;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.SubjectConfirmationData;
 import uk.gov.ida.saml.core.domain.AssertionRestrictions;
@@ -43,7 +43,7 @@ public class HubAssertionUnmarshaller {
                     assertion.getIssueInstant(),
                     persistentId,
                     assertionRestrictions,
-                    Optional.fromNullable(cycle3Dataset)
+                    Optional.ofNullable(cycle3Dataset)
             );
         }
 

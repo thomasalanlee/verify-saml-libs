@@ -1,6 +1,6 @@
 package uk.gov.ida.saml.core.test.builders;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.joda.time.DateTime;
 import uk.gov.ida.saml.core.domain.AssertionRestrictions;
 import uk.gov.ida.saml.core.domain.Cycle3Dataset;
@@ -9,7 +9,7 @@ import uk.gov.ida.saml.core.domain.PersistentId;
 
 import java.util.UUID;
 
-import static com.google.common.base.Optional.absent;
+import static java.util.Optional.empty;
 import static uk.gov.ida.saml.core.test.builders.PersistentIdBuilder.aPersistentId;
 
 public class HubAssertionBuilder {
@@ -19,7 +19,7 @@ public class HubAssertionBuilder {
     private DateTime issueInstant = DateTime.now();
     private PersistentId persistentId = aPersistentId().build();
     private AssertionRestrictions assertionRestrictions = AssertionRestrictionsBuilder.anAssertionRestrictions().build();
-    private Optional<Cycle3Dataset> cycle3Data = absent();
+    private Optional<Cycle3Dataset> cycle3Data = Optional.empty();
 
     public static HubAssertionBuilder aHubAssertion() {
         return new HubAssertionBuilder();
@@ -61,7 +61,7 @@ public class HubAssertionBuilder {
     }
 
     public HubAssertionBuilder withCycle3Data(Cycle3Dataset cycle3Data) {
-        this.cycle3Data = Optional.fromNullable(cycle3Data);
+        this.cycle3Data = Optional.ofNullable(cycle3Data);
         return this;
     }
 }

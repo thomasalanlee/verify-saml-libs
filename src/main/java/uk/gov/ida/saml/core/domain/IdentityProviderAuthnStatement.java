@@ -1,6 +1,6 @@
 package uk.gov.ida.saml.core.domain;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 public final class IdentityProviderAuthnStatement {
 
@@ -26,14 +26,14 @@ public final class IdentityProviderAuthnStatement {
             AuthnContext levelOfAssurance,
             IpAddress userIpAddress) {
 
-        return new IdentityProviderAuthnStatement(levelOfAssurance, Optional.<FraudAuthnDetails>absent(), userIpAddress);
+        return new IdentityProviderAuthnStatement(levelOfAssurance, Optional.empty(), userIpAddress);
     }
 
     public static IdentityProviderAuthnStatement createIdentityProviderFraudAuthnStatement(
             FraudAuthnDetails fraudAuthnDetails,
             IpAddress userIpAddress) {
 
-        return new IdentityProviderAuthnStatement(AuthnContext.LEVEL_X, Optional.fromNullable(fraudAuthnDetails), userIpAddress);
+        return new IdentityProviderAuthnStatement(AuthnContext.LEVEL_X, Optional.ofNullable(fraudAuthnDetails), userIpAddress);
     }
 
     public boolean isFraudAuthnStatement() {
@@ -41,7 +41,7 @@ public final class IdentityProviderAuthnStatement {
     }
 
     public FraudAuthnDetails getFraudAuthnDetails() {
-        return fraudAuthnDetails.orNull();
+        return fraudAuthnDetails.orElse(null);
     }
 
     public IpAddress getUserIpAddress() {

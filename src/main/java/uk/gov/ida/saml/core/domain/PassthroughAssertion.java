@@ -1,18 +1,16 @@
 package uk.gov.ida.saml.core.domain;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 import java.io.Serializable;
-
-import static com.google.common.base.Optional.absent;
 
 public class PassthroughAssertion implements Serializable {
 
     private PersistentId persistentId;
     // this is optional because this is used for both AuthnStatement and MDS Assertions
-    private Optional<AuthnContext> authnContext = absent();
+    private Optional<AuthnContext> authnContext;
     private String underlyingAssertionBlob;
-    private Optional<FraudDetectedDetails> fraudDetectedDetails = absent();
+    private Optional<FraudDetectedDetails> fraudDetectedDetails;
     private Optional<String> principalIpAddressAsSeenByIdp;
 
     public PassthroughAssertion(

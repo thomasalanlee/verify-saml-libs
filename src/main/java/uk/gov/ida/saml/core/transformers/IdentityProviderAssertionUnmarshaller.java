@@ -1,6 +1,6 @@
 package uk.gov.ida.saml.core.transformers;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.SubjectConfirmationData;
 import uk.gov.ida.saml.core.domain.AssertionRestrictions;
@@ -49,8 +49,8 @@ public class IdentityProviderAssertionUnmarshaller {
                 assertion.getIssueInstant(),
                 persistentId,
                 assertionRestrictions,
-                Optional.fromNullable(matchingDataset),
-                Optional.fromNullable(authnStatement));
+                Optional.ofNullable(matchingDataset),
+                Optional.ofNullable(authnStatement));
     }
 
     private boolean assertionContainsMatchingDataset(Assertion assertion) {

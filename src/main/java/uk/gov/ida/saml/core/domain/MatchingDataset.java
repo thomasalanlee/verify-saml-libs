@@ -1,6 +1,6 @@
 package uk.gov.ida.saml.core.domain;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import org.joda.time.LocalDate;
@@ -13,7 +13,7 @@ public class MatchingDataset {
     private List<SimpleMdsValue<String>> firstNames = new ArrayList<>();
     private List<SimpleMdsValue<String>> middleNames = new ArrayList<>();
     private List<SimpleMdsValue<String>> surnames = new ArrayList<>();
-    private Optional<SimpleMdsValue<Gender>> gender = Optional.absent();
+    private Optional<SimpleMdsValue<Gender>> gender = Optional.empty();
     private List<SimpleMdsValue<LocalDate>> dateOfBirths = new ArrayList<>();
     private List<Address> currentAddresses = new ArrayList<>();
     private List<Address> previousAddresses = new ArrayList<>();

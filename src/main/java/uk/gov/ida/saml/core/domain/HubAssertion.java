@@ -1,10 +1,10 @@
 package uk.gov.ida.saml.core.domain;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.joda.time.DateTime;
 
 public class HubAssertion extends OutboundAssertion {
-    private Optional<Cycle3Dataset> cycle3Data = Optional.absent();
+    private Optional<Cycle3Dataset> cycle3Data = Optional.empty();
 
     public HubAssertion(
             String id,
