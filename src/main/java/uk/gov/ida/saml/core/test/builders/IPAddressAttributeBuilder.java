@@ -1,6 +1,5 @@
 package uk.gov.ida.saml.core.test.builders;
 
-import com.google.common.base.Optional;
 import org.opensaml.saml.saml2.core.Attribute;
 import uk.gov.ida.saml.core.IdaConstants;
 import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
@@ -10,7 +9,7 @@ public class IPAddressAttributeBuilder {
 
     private OpenSamlXmlObjectFactory openSamlXmlObjectFactory = new OpenSamlXmlObjectFactory();
 
-    private Optional<String> value = Optional.fromNullable("1.2.3.4");
+    private String value = "1.2.3.4";
 
     public static IPAddressAttributeBuilder anIPAddress() {
         return new IPAddressAttributeBuilder();
@@ -22,15 +21,15 @@ public class IPAddressAttributeBuilder {
         ipAddressAttribute.setFriendlyName(IdaConstants.Attributes_1_1.IPAddress.FRIENDLY_NAME);
         ipAddressAttribute.setName(IdaConstants.Attributes_1_1.IPAddress.NAME);
 
-        IPAddress ipAddressAttributeValue = openSamlXmlObjectFactory.createIPAddressAttributeValue(value.orNull());
+        IPAddress ipAddressAttributeValue = openSamlXmlObjectFactory.createIPAddressAttributeValue(value);
 
         ipAddressAttribute.getAttributeValues().add(ipAddressAttributeValue);
 
         return ipAddressAttribute;
     }
 
-    public IPAddressAttributeBuilder withValue(String name) {
-        this.value = Optional.fromNullable(name);
+    public IPAddressAttributeBuilder withValue(String value) {
+        this.value = value;
         return this;
     }
 }

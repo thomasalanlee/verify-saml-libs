@@ -1,14 +1,12 @@
 package uk.gov.ida.saml.core.test.builders;
 
-import com.google.common.base.Optional;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static com.google.common.base.Optional.absent;
-import static com.google.common.base.Optional.fromNullable;
 import static uk.gov.ida.saml.core.test.builders.AddressAttributeBuilder_1_1.anAddressAttribute;
 import static uk.gov.ida.saml.core.test.builders.AddressAttributeValueBuilder_1_1.anAddressAttributeValue;
 import static uk.gov.ida.saml.core.test.builders.AttributeStatementBuilder.anAttributeStatement;
@@ -16,14 +14,14 @@ import static uk.gov.ida.saml.core.test.builders.GenderAttributeBuilder_1_1.aGen
 
 public class MatchingDatasetAttributeStatementBuilder_1_1 {
 
-    private Optional<Attribute> dateOfBirthAttribute = fromNullable(DateAttributeBuilder_1_1.aDate_1_1().buildAsDateOfBirth());
-    private Optional<Attribute> currentAddressAttribute = fromNullable(anAddressAttribute().addAddress(anAddressAttributeValue().build()).buildCurrentAddress());
-    private Optional<Attribute> surnameAttribute = fromNullable(PersonNameAttributeBuilder_1_1.aPersonName_1_1().buildAsSurname());
-    private Optional<Attribute> firstnameAttribute = fromNullable(PersonNameAttributeBuilder_1_1.aPersonName_1_1().buildAsFirstname());
+    private Optional<Attribute> dateOfBirthAttribute = Optional.ofNullable(DateAttributeBuilder_1_1.aDate_1_1().buildAsDateOfBirth());
+    private Optional<Attribute> currentAddressAttribute = Optional.ofNullable(anAddressAttribute().addAddress(anAddressAttributeValue().build()).buildCurrentAddress());
+    private Optional<Attribute> surnameAttribute = Optional.ofNullable(PersonNameAttributeBuilder_1_1.aPersonName_1_1().buildAsSurname());
+    private Optional<Attribute> firstnameAttribute = Optional.ofNullable(PersonNameAttributeBuilder_1_1.aPersonName_1_1().buildAsFirstname());
     private List<Attribute> customAttributes = new ArrayList<>();
     private List<Attribute> previousAddressAttributes = new ArrayList<>();
-    private Optional<Attribute> middleNamesAttribute = fromNullable(PersonNameAttributeBuilder_1_1.aPersonName_1_1().buildAsMiddlename());
-    private Optional<Attribute> genderAttribute = fromNullable(aGender_1_1().build());
+    private Optional<Attribute> middleNamesAttribute = Optional.ofNullable(PersonNameAttributeBuilder_1_1.aPersonName_1_1().buildAsMiddlename());
+    private Optional<Attribute> genderAttribute = Optional.ofNullable(aGender_1_1().build());
 
     public static MatchingDatasetAttributeStatementBuilder_1_1 aMatchingDatasetAttributeStatement_1_1() {
         return new MatchingDatasetAttributeStatementBuilder_1_1();
@@ -74,62 +72,62 @@ public class MatchingDatasetAttributeStatementBuilder_1_1 {
     }
 
     public MatchingDatasetAttributeStatementBuilder_1_1 withMiddleNames(Attribute attribute) {
-        this.middleNamesAttribute = fromNullable(attribute);
+        this.middleNamesAttribute = Optional.ofNullable(attribute);
         return this;
     }
 
     public MatchingDatasetAttributeStatementBuilder_1_1 withoutFirstnames() {
-        this.firstnameAttribute = absent();
+        this.firstnameAttribute = Optional.empty();
         return this;
     }
 
     public MatchingDatasetAttributeStatementBuilder_1_1 withoutMiddleNames() {
-        this.middleNamesAttribute = absent();
+        this.middleNamesAttribute = Optional.empty();
         return this;
     }
 
     public MatchingDatasetAttributeStatementBuilder_1_1 withoutSurnames() {
-        this.surnameAttribute = absent();
+        this.surnameAttribute = Optional.empty();
         return this;
     }
 
     public MatchingDatasetAttributeStatementBuilder_1_1 withSurname(Attribute attribute) {
-        this.surnameAttribute = fromNullable(attribute);
+        this.surnameAttribute = Optional.ofNullable(attribute);
         return this;
     }
 
     public MatchingDatasetAttributeStatementBuilder_1_1 withFirstname(Attribute attribute) {
-        this.firstnameAttribute = fromNullable(attribute);
+        this.firstnameAttribute = Optional.ofNullable(attribute);
         return this;
     }
 
     public MatchingDatasetAttributeStatementBuilder_1_1 withDateOfBirth(Attribute dateOfBirthAttribute) {
-        this.dateOfBirthAttribute = fromNullable(dateOfBirthAttribute);
+        this.dateOfBirthAttribute = Optional.ofNullable(dateOfBirthAttribute);
         return this;
     }
 
     public MatchingDatasetAttributeStatementBuilder_1_1 withDateOfBirth() {
-        this.dateOfBirthAttribute = fromNullable(DateAttributeBuilder_1_1.aDate_1_1().buildAsDateOfBirth());
+        this.dateOfBirthAttribute = Optional.ofNullable(DateAttributeBuilder_1_1.aDate_1_1().buildAsDateOfBirth());
         return this;
     }
 
     public MatchingDatasetAttributeStatementBuilder_1_1 withGender(Attribute genderAttribute) {
-        this.genderAttribute = fromNullable(genderAttribute);
+        this.genderAttribute = Optional.ofNullable(genderAttribute);
         return this;
     }
 
     public MatchingDatasetAttributeStatementBuilder_1_1 withGender() {
-        this.dateOfBirthAttribute = fromNullable(aGender_1_1().build());
+        this.dateOfBirthAttribute = Optional.ofNullable(aGender_1_1().build());
         return this;
     }
 
     public MatchingDatasetAttributeStatementBuilder_1_1 withCurrentAddress(Attribute currentAddressAttribute) {
-        this.currentAddressAttribute = fromNullable(currentAddressAttribute);
+        this.currentAddressAttribute = Optional.ofNullable(currentAddressAttribute);
         return this;
     }
 
     public MatchingDatasetAttributeStatementBuilder_1_1 withCurrentAddress() {
-        this.currentAddressAttribute = fromNullable(anAddressAttribute().addAddress(anAddressAttributeValue().build()).buildCurrentAddress());
+        this.currentAddressAttribute = Optional.ofNullable(anAddressAttribute().addAddress(anAddressAttributeValue().build()).buildCurrentAddress());
         return this;
     }
 

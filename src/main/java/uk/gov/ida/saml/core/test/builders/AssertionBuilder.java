@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.google.common.base.Throwables.propagate;
-import static java.util.Optional.ofNullable;
 import static uk.gov.ida.saml.core.test.builders.AttributeStatementBuilder.anAttributeStatement;
 import static uk.gov.ida.saml.core.test.builders.AttributeStatementBuilder.anEidasAttributeStatement;
 import static uk.gov.ida.saml.core.test.builders.AuthnStatementBuilder.anEidasAuthnStatement;
@@ -46,12 +45,12 @@ public class AssertionBuilder {
     private List<AttributeStatement> attributeStatements = new ArrayList<>();
     private List<AuthnStatement> authnStatements = new ArrayList<>();
 
-    private Optional<String> id = ofNullable("some-assertion-id");
-    private Optional<Subject> subject = ofNullable(SubjectBuilder.aSubject().build());
-    private Optional<Issuer> issuer = ofNullable(IssuerBuilder.anIssuer().build());
-    private Optional<Signature> signature = ofNullable(SignatureBuilder.aSignature().build());
-    private Optional<Conditions> conditions = ofNullable(ConditionsBuilder.aConditions().build());
-    private Optional<DateTime> issueInstant = ofNullable(DateTime.now());
+    private Optional<String> id = Optional.of("some-assertion-id");
+    private Optional<Subject> subject = Optional.ofNullable(SubjectBuilder.aSubject().build());
+    private Optional<Issuer> issuer = Optional.ofNullable(IssuerBuilder.anIssuer().build());
+    private Optional<Signature> signature = Optional.ofNullable(SignatureBuilder.aSignature().build());
+    private Optional<Conditions> conditions = Optional.ofNullable(ConditionsBuilder.aConditions().build());
+    private Optional<DateTime> issueInstant = Optional.of(DateTime.now());
 
     public static AssertionBuilder anAssertion() {
         return new AssertionBuilder();
@@ -201,17 +200,17 @@ public class AssertionBuilder {
     }
 
     public AssertionBuilder withId(String id) {
-        this.id = ofNullable(id);
+        this.id = Optional.ofNullable(id);
         return this;
     }
 
     public AssertionBuilder withSubject(Subject subject) {
-        this.subject = ofNullable(subject);
+        this.subject = Optional.ofNullable(subject);
         return this;
     }
 
     public AssertionBuilder withIssuer(Issuer issuer) {
-        this.issuer = ofNullable(issuer);
+        this.issuer = Optional.ofNullable(issuer);
         return this;
     }
 
@@ -231,12 +230,12 @@ public class AssertionBuilder {
     }
 
     public AssertionBuilder withSignature(Signature signature) {
-        this.signature = ofNullable(signature);
+        this.signature = Optional.ofNullable(signature);
         return this;
     }
 
     public AssertionBuilder withIssueInstant(DateTime issueInstant) {
-        this.issueInstant = ofNullable(issueInstant);
+        this.issueInstant = Optional.ofNullable(issueInstant);
         return this;
     }
 
@@ -246,7 +245,7 @@ public class AssertionBuilder {
     }
 
     public AssertionBuilder withConditions(Conditions conditions) {
-        this.conditions = ofNullable(conditions);
+        this.conditions = Optional.ofNullable(conditions);
         return this;
     }
 }

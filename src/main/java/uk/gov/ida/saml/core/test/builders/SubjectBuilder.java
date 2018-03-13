@@ -1,6 +1,5 @@
 package uk.gov.ida.saml.core.test.builders;
 
-import com.google.common.base.Optional;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.core.SubjectConfirmation;
@@ -8,13 +7,14 @@ import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static uk.gov.ida.saml.core.test.builders.NameIdBuilder.aNameId;
 
 public class SubjectBuilder {
 
     private static OpenSamlXmlObjectFactory openSamlXmlObjectFactory = new OpenSamlXmlObjectFactory();
-    private Optional<NameID> nameIdValue = Optional.fromNullable(aNameId().build());
+    private Optional<NameID> nameIdValue = Optional.of(aNameId().build());
     private List<SubjectConfirmation> subjectConfirmations = new ArrayList<>();
     private boolean shouldAddDefaultSubjectConfirmation = true;
 
@@ -38,7 +38,7 @@ public class SubjectBuilder {
     }
 
     public SubjectBuilder withNameId(NameID nameId) {
-        this.nameIdValue = Optional.fromNullable(nameId);
+        this.nameIdValue = Optional.ofNullable(nameId);
         return this;
     }
 

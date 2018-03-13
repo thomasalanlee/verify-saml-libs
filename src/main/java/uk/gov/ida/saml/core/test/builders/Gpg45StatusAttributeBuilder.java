@@ -1,17 +1,16 @@
 package uk.gov.ida.saml.core.test.builders;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
+
 import org.opensaml.saml.saml2.core.Attribute;
 import uk.gov.ida.saml.core.IdaConstants;
 import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
 import uk.gov.ida.saml.core.extensions.Gpg45Status;
 
-import static com.google.common.base.Optional.fromNullable;
-
 public class Gpg45StatusAttributeBuilder {
 
     private OpenSamlXmlObjectFactory openSamlXmlObjectFactory = new OpenSamlXmlObjectFactory();
-    private Optional<String> value = fromNullable("IT01");
+    private Optional<String> value = Optional.of("IT01");
 
     public static Gpg45StatusAttributeBuilder aGpg45StatusAttribute() {
         return new Gpg45StatusAttributeBuilder();
@@ -29,7 +28,7 @@ public class Gpg45StatusAttributeBuilder {
     }
 
     public Gpg45StatusAttributeBuilder withValue(String value){
-        this.value = fromNullable(value);
+        this.value = Optional.ofNullable(value);
         return this;
     }
 }

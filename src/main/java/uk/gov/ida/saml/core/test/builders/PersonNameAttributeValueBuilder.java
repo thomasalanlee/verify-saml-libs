@@ -1,6 +1,7 @@
 package uk.gov.ida.saml.core.test.builders;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
+
 import org.joda.time.DateTime;
 import org.opensaml.saml.saml2.core.AttributeValue;
 import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
@@ -10,11 +11,11 @@ public class PersonNameAttributeValueBuilder {
 
     private OpenSamlXmlObjectFactory openSamlXmlObjectFactory = new OpenSamlXmlObjectFactory();
 
-    private Optional<DateTime> from = Optional.absent();
-    private Optional<DateTime> to = Optional.absent();
+    private Optional<DateTime> from = Optional.empty();
+    private Optional<DateTime> to = Optional.empty();
     private String value = "John";
-    private Optional<String> language = Optional.absent();
-    private Optional<Boolean> verified = Optional.absent();
+    private Optional<String> language = Optional.empty();
+    private Optional<Boolean> verified = Optional.empty();
 
     public static PersonNameAttributeValueBuilder aPersonNameValue() {
         return new PersonNameAttributeValueBuilder();
@@ -39,12 +40,12 @@ public class PersonNameAttributeValueBuilder {
     }
 
     public PersonNameAttributeValueBuilder withFrom(DateTime from) {
-        this.from = Optional.fromNullable(from);
+        this.from = Optional.ofNullable(from);
         return this;
     }
 
     public PersonNameAttributeValueBuilder withTo(DateTime to) {
-        this.to = Optional.fromNullable(to);
+        this.to = Optional.ofNullable(to);
         return this;
     }
 
@@ -54,7 +55,7 @@ public class PersonNameAttributeValueBuilder {
     }
 
     public PersonNameAttributeValueBuilder withVerified(Boolean verified) {
-        this.verified = Optional.fromNullable(verified);
+        this.verified = Optional.ofNullable(verified);
         return this;
     }
 }

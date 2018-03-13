@@ -1,24 +1,24 @@
 package uk.gov.ida.saml.core.test.builders;
 
-import com.google.common.base.Optional;
 import org.joda.time.DateTime;
 import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
 import uk.gov.ida.saml.core.extensions.Address;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class AddressAttributeValueBuilder_1_1 {
 
     private OpenSamlXmlObjectFactory openSamlXmlObjectFactory = new OpenSamlXmlObjectFactory();
 
-    private Optional<DateTime> from = Optional.absent();
-    private Optional<DateTime> to = Optional.absent();
+    private Optional<DateTime> from = Optional.empty();
+    private Optional<DateTime> to = Optional.empty();
 
     private List<String> lines = new ArrayList<>();
-    private Optional<String> postCode = Optional.fromNullable("RG99 1YY");
-    private Optional<String> internationalPostCode = Optional.fromNullable("RG88 1ZZ");
-    private Optional<String> uprn = Optional.fromNullable("79347894352");
+    private Optional<String> postCode = Optional.of("RG99 1YY");
+    private Optional<String> internationalPostCode = Optional.of("RG88 1ZZ");
+    private Optional<String> uprn = Optional.of("79347894352");
 
     private boolean verified = false;
 
@@ -55,12 +55,12 @@ public class AddressAttributeValueBuilder_1_1 {
     }
 
     public AddressAttributeValueBuilder_1_1 withFrom(DateTime from) {
-        this.from = Optional.fromNullable(from);
+        this.from = Optional.ofNullable(from);
         return this;
     }
 
     public AddressAttributeValueBuilder_1_1 withTo(DateTime to) {
-        this.to = Optional.fromNullable(to);
+        this.to = Optional.ofNullable(to);
         return this;
     }
 
@@ -75,17 +75,17 @@ public class AddressAttributeValueBuilder_1_1 {
     }
 
     public AddressAttributeValueBuilder_1_1 withPostcode(String postCode) {
-        this.postCode = Optional.fromNullable(postCode);
+        this.postCode = Optional.ofNullable(postCode);
         return this;
     }
 
     public AddressAttributeValueBuilder_1_1 withInternationalPostcode(String internationalPostcode) {
-        this.internationalPostCode = Optional.fromNullable(internationalPostcode);
+        this.internationalPostCode = Optional.ofNullable(internationalPostcode);
         return this;
     }
 
     public AddressAttributeValueBuilder_1_1 withUprn(String uprn) {
-        this.uprn = Optional.fromNullable(uprn);
+        this.uprn = Optional.ofNullable(uprn);
         return this;
     }
 }

@@ -1,6 +1,5 @@
 package uk.gov.ida.saml.core.test.builders;
 
-import com.google.common.base.Optional;
 import org.opensaml.saml.saml2.core.Issuer;
 import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
 import uk.gov.ida.saml.core.test.TestCertificateStrings;
@@ -9,7 +8,7 @@ import uk.gov.ida.saml.core.test.TestCertificateStrings;
 public class IssuerBuilder {
 
     private OpenSamlXmlObjectFactory openSamlXmlObjectFactory = new OpenSamlXmlObjectFactory();
-    private Optional<String> issuerId = Optional.fromNullable(TestCertificateStrings.TEST_ENTITY_ID);
+    private String issuerId = TestCertificateStrings.TEST_ENTITY_ID;
     private String format = null;
 
     public static IssuerBuilder anIssuer() {
@@ -18,7 +17,7 @@ public class IssuerBuilder {
 
     public Issuer build() {
 
-        Issuer issuer = openSamlXmlObjectFactory.createIssuer(issuerId.orNull());
+        Issuer issuer = openSamlXmlObjectFactory.createIssuer(issuerId);
 
         issuer.setFormat(format);
 
@@ -26,7 +25,7 @@ public class IssuerBuilder {
     }
 
     public IssuerBuilder withIssuerId(String issuerId) {
-        this.issuerId = Optional.fromNullable(issuerId);
+        this.issuerId = issuerId;
         return this;
     }
 

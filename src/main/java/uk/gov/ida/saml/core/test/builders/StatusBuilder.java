@@ -1,6 +1,7 @@
 package uk.gov.ida.saml.core.test.builders;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
+
 import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.core.StatusMessage;
@@ -9,8 +10,8 @@ import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
 public class StatusBuilder {
 
     private static OpenSamlXmlObjectFactory openSamlXmlObjectFactory = new OpenSamlXmlObjectFactory();
-    private Optional<StatusCode> statusCode = Optional.fromNullable(StatusCodeBuilder.aStatusCode().build());
-    private Optional<StatusMessage> message = Optional.absent();
+    private Optional<StatusCode> statusCode = Optional.of(StatusCodeBuilder.aStatusCode().build());
+    private Optional<StatusMessage> message = Optional.empty();
 
 
     public static StatusBuilder aStatus() {
@@ -32,12 +33,12 @@ public class StatusBuilder {
     }
 
     public StatusBuilder withStatusCode(StatusCode statusCode) {
-        this.statusCode = Optional.fromNullable(statusCode);
+        this.statusCode = Optional.ofNullable(statusCode);
         return this;
     }
 
     public StatusBuilder withMessage(StatusMessage message) {
-        this.message = Optional.fromNullable(message);
+        this.message = Optional.ofNullable(message);
         return this;
     }
 }

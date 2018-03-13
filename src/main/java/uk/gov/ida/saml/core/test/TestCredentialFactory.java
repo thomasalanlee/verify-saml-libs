@@ -1,6 +1,5 @@
 package uk.gov.ida.saml.core.test;
 
-import com.google.inject.Inject;
 import org.apache.commons.codec.binary.Base64;
 import org.opensaml.security.credential.BasicCredential;
 import org.opensaml.security.credential.Credential;
@@ -20,6 +19,8 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.text.MessageFormat;
 
 import static com.google.common.base.Throwables.propagate;
+
+import javax.inject.Inject;
 
 public class TestCredentialFactory {
 

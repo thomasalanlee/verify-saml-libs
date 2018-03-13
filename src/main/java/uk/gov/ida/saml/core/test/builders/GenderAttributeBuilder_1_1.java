@@ -1,21 +1,21 @@
 package uk.gov.ida.saml.core.test.builders;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
+
 import org.joda.time.DateTime;
 import org.opensaml.saml.saml2.core.Attribute;
 import uk.gov.ida.saml.core.IdaConstants;
 import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
 import uk.gov.ida.saml.core.extensions.Gender;
 
-import static com.google.common.base.Optional.fromNullable;
 
 public class GenderAttributeBuilder_1_1 {
 
     private OpenSamlXmlObjectFactory openSamlXmlObjectFactory = new OpenSamlXmlObjectFactory();
 
-    private Optional<DateTime> from = Optional.absent();
-    private Optional<DateTime> to = Optional.absent();
-    private Optional<String> value = Optional.absent();
+    private Optional<DateTime> from = Optional.empty();
+    private Optional<DateTime> to = Optional.empty();
+    private Optional<String> value = Optional.empty();
     private boolean verified = false;
 
     public static GenderAttributeBuilder_1_1 aGender_1_1() {
@@ -29,7 +29,7 @@ public class GenderAttributeBuilder_1_1 {
         genderAttribute.setName(IdaConstants.Attributes_1_1.Gender.NAME);
         genderAttribute.setNameFormat(Attribute.UNSPECIFIED);
 
-        Gender genderAttributeValue = openSamlXmlObjectFactory.createGenderAttributeValue(value.or("Male"));
+        Gender genderAttributeValue = openSamlXmlObjectFactory.createGenderAttributeValue(value.orElse("Male"));
 
         if (from.isPresent()) {
             genderAttributeValue.setFrom(from.get());
@@ -46,17 +46,17 @@ public class GenderAttributeBuilder_1_1 {
     }
 
     public GenderAttributeBuilder_1_1 withFrom(DateTime from) {
-        this.from = Optional.fromNullable(from);
+        this.from = Optional.ofNullable(from);
         return this;
     }
 
     public GenderAttributeBuilder_1_1 withTo(DateTime to) {
-        this.to = Optional.fromNullable(to);
+        this.to = Optional.ofNullable(to);
         return this;
     }
 
     public GenderAttributeBuilder_1_1 withValue(String name) {
-        this.value = fromNullable(name);
+        this.value = Optional.ofNullable(name);
         return this;
     }
 

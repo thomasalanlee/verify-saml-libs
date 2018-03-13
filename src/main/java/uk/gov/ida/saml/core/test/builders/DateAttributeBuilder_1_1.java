@@ -5,16 +5,16 @@ import org.opensaml.saml.saml2.core.AttributeValue;
 import uk.gov.ida.saml.core.IdaConstants;
 import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static uk.gov.ida.saml.core.test.builders.DateAttributeValueBuilder.aDateValue;
 
 public class DateAttributeBuilder_1_1 {
 
     private OpenSamlXmlObjectFactory openSamlXmlObjectFactory = new OpenSamlXmlObjectFactory();
 
-    private List<AttributeValue> values = newArrayList();
+    private List<AttributeValue> values = new ArrayList<>();
     private boolean addDefaultValue = true;
     private AttributeValue defaultDateAttributeValue = aDateValue().build();
 
