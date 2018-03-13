@@ -10,18 +10,37 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(OpenSAMLRunner.class)
 public class CurrentGivenNameUnmarshallerTest {
+
     @Test
-    public void shouldUnmarshallCurrentGivenName() throws Exception {
-        final CurrentGivenName currentGivenName = Utils.unmarshall("" +
+    public void shouldUnmarshallCurrentGivenNameValue() throws Exception {
+        final CurrentGivenName currentGivenName = Utils.unmarshall(getCurrentGivenNameSamlString(true));
+
+        assertThat(currentGivenName.getFirstName()).isEqualTo("Javier");
+    }
+
+    @Test
+    public void shouldUnmarshallLatinScriptValueWhenAbsent() throws Exception {
+        final CurrentGivenName currentGivenName = Utils.unmarshall(getCurrentGivenNameSamlString(true));
+
+        assertThat(currentGivenName.isLatinScript()).isEqualTo(true);
+    }
+
+    @Test
+    public void shouldUnmarshallLatinScriptValueWhenPresent() throws Exception {
+        final CurrentGivenName currentGivenName = Utils.unmarshall(getCurrentGivenNameSamlString(false));
+
+        assertThat(currentGivenName.isLatinScript()).isEqualTo(false);
+    }
+
+    private String getCurrentGivenNameSamlString(boolean isLatinScript) {
+        return String.format(
                 "<saml2:AttributeValue " +
+                "%s" +
                 "   xmlns:eidas-natural=\"http://eidas.europa.eu/attributes/naturalperson\"\n " +
                 "   xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\"\n " +
                 "   xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n " +
                 "   xsi:type=\"eidas-natural:CurrentGivenNameType\">\n" +
                 "Javier" +
-                "</saml2:AttributeValue>"
-        );
-
-        assertThat(currentGivenName.getFirstName()).isEqualTo("Javier");
+                "</saml2:AttributeValue>", isLatinScript ? "" : "LatinScript=\"false\"");
     }
 }

@@ -8,7 +8,7 @@ import javax.xml.namespace.QName;
 
 import static uk.gov.ida.saml.core.IdaConstants.EIDAS_NATURAL_PERSON_NS;
 
-public interface CurrentFamilyName extends AttributeValue {
+public interface CurrentFamilyName extends TransliterableString {
 
     /** Element local name. */
     String DEFAULT_ELEMENT_LOCAL_NAME = "AttributeValue";

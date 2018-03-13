@@ -1,13 +1,12 @@
 package uk.gov.ida.saml.core.extensions.eidas.impl;
 
 import org.opensaml.core.xml.XMLObject;
-import org.opensaml.saml.common.AbstractSAMLObject;
 import uk.gov.ida.saml.core.extensions.eidas.CurrentFamilyName;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class CurrentFamilyNameImpl extends AbstractSAMLObject implements CurrentFamilyName {
+public class CurrentFamilyNameImpl extends AbstractTransliterableString implements CurrentFamilyName {
 
     /** String to hold the family name. */
     private String familyName;

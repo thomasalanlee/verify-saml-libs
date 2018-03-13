@@ -1,13 +1,12 @@
 package uk.gov.ida.saml.core.extensions.eidas.impl;
 
 import org.opensaml.core.xml.XMLObject;
-import org.opensaml.saml.common.AbstractSAMLObject;
 import uk.gov.ida.saml.core.extensions.eidas.CurrentGivenName;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class CurrentGivenNameImpl extends AbstractSAMLObject implements CurrentGivenName {
+public class CurrentGivenNameImpl extends AbstractTransliterableString implements CurrentGivenName {
 
     /** String to hold the first name. */
     private String firstName;
