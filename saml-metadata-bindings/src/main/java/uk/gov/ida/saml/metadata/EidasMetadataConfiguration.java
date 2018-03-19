@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.client.JerseyClientConfiguration;
 
 import java.net.URI;
+import java.security.KeyStore;
 import java.util.Optional;
 
 public class EidasMetadataConfiguration {
@@ -83,7 +84,7 @@ public class EidasMetadataConfiguration {
         return metadataBaseUri;
     }
 
-    public TrustStoreConfiguration getTrustStoreConfiguration() {
-        return trustStore;
+    public KeyStore getTrustStore() {
+        return trustStore.getTrustStore();
     }
 }
