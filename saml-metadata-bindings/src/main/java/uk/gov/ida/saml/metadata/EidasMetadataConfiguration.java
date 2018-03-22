@@ -18,8 +18,8 @@ public class EidasMetadataConfiguration {
                                       @JsonProperty("trustAnchorMinRefreshDelay") Long trustAnchorMinRefreshDelay,
                                       @JsonProperty("client") JerseyClientConfiguration client,
                                       @JsonProperty("jerseyClientName") String jerseyClientName,
-                                      @JsonProperty("trustStore") TrustStoreConfiguration trustStore,
-                                      @JsonProperty("metadataBaseUri") URI metadataBaseUri)
+                                      @JsonProperty("trustStore") TrustStoreConfiguration trustStore
+    )
     {
         this.trustAnchorUri = trustAnchorUri;
         this.minRefreshDelay = Optional.ofNullable(minRefreshDelay).orElse(60000L);
@@ -29,7 +29,6 @@ public class EidasMetadataConfiguration {
         this.client = Optional.ofNullable(client).orElse(new JerseyClientConfiguration());
         this.jerseyClientName = Optional.ofNullable(jerseyClientName).orElse("MetadataClient");
         this.trustStore = trustStore;
-        this.metadataBaseUri = metadataBaseUri;
     }
 
     private URI trustAnchorUri;
@@ -47,8 +46,6 @@ public class EidasMetadataConfiguration {
     private JerseyClientConfiguration client;
 
     private String jerseyClientName;
-
-    private URI metadataBaseUri;
 
     private TrustStoreConfiguration trustStore;
 
@@ -78,10 +75,6 @@ public class EidasMetadataConfiguration {
 
     public String getJerseyClientName() {
         return jerseyClientName;
-    }
-
-    public URI getMetadataBaseUri() {
-        return metadataBaseUri;
     }
 
     public KeyStore getTrustStore() {

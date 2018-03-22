@@ -1,25 +1,13 @@
 package uk.gov.ida.saml.metadata;
 
-import certificates.values.CACertificates;
-import com.codahale.metrics.MetricRegistry;
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.jwk.JWK;
-import net.minidev.json.JSONObject;
-import org.apache.commons.codec.binary.Base64;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import io.dropwizard.setup.Environment;
-import org.opensaml.saml.metadata.resolver.MetadataResolver;
-import uk.gov.ida.common.shared.security.X509CertificateFactory;
-import uk.gov.ida.saml.core.test.TestCertificateStrings;
-import uk.gov.ida.saml.metadata.factories.DropwizardMetadataResolverFactory;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertArrayEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.KeyStoreException;
 import java.security.SignatureException;
@@ -34,13 +22,23 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertArrayEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import com.codahale.metrics.MetricRegistry;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.jwk.JWK;
+import io.dropwizard.setup.Environment;
+import net.minidev.json.JSONObject;
+import org.apache.commons.codec.binary.Base64;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import uk.gov.ida.common.shared.security.X509CertificateFactory;
+import uk.gov.ida.saml.core.test.TestCertificateStrings;
+import uk.gov.ida.saml.metadata.factories.DropwizardMetadataResolverFactory;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EidasMetadataResolverRepositoryTest {
@@ -74,14 +72,12 @@ public class EidasMetadataResolverRepositoryTest {
     public void setUp() throws CertificateException, SignatureException, ParseException, JOSEException, URISyntaxException {
         trustAnchors = new ArrayList<>();
         when(trustAnchorResolver.getTrustAnchors()).thenReturn(trustAnchors);
-
-        when(metadataConfiguration.getMetadataBaseUri()).thenReturn(new URI("http://signin.gov.uk"));
         when(dropwizardMetadataResolverFactory.createMetadataResolver(eq(environment), any())).thenReturn(metadataResolver);
     }
 
     @Test
     public void shouldCreateMetadataResolverWhenTrustAnchorIsValid() throws ParseException, KeyStoreException, CertificateEncodingException {
-        JWK trustAnchor = createJWK("entity/id", Arrays.asList(TestCertificateStrings.METADATA_SIGNING_A_PUBLIC_CERT,
+        JWK trustAnchor = createJWK("http://signin.gov.uk/entity/id", Arrays.asList(TestCertificateStrings.METADATA_SIGNING_A_PUBLIC_CERT,
                 TestCertificateStrings.METADATA_SIGNING_B_PUBLIC_CERT));
         trustAnchors.add(trustAnchor);
         metadataResolverRepository = new EidasMetadataResolverRepository(trustAnchorResolver, environment, metadataConfiguration, dropwizardMetadataResolverFactory, timer);
@@ -97,31 +93,31 @@ public class EidasMetadataResolverRepositoryTest {
         assertThat(createdMetadataResolver).isEqualTo(metadataResolver);
         assertArrayEquals(expectedTrustStoreCertificate, actualTrustStoreCertificate);
         assertArrayEquals(expectedTrustStoreCACertificate, actualTrustStoreCACertificate);
-        assertThat(metadataResolverConfiguration.getUri().toString()).isEqualTo("http://signin.gov.uk/entity%2Fid");
+        assertThat(metadataResolverConfiguration.getUri().toString()).isEqualTo("http://signin.gov.uk/entity/id");
     }
 
     @Test
     public void shouldNotCreateMetadataResolverWhenCertificateIsInvalid() throws ParseException {
-        trustAnchors.add(createJWK("entity-id", Collections.singletonList(TestCertificateStrings.UNCHAINED_PUBLIC_CERT)));
+        trustAnchors.add(createJWK("http://signin.gov.uk/entity-id", Collections.singletonList(TestCertificateStrings.UNCHAINED_PUBLIC_CERT)));
         metadataResolverRepository = new EidasMetadataResolverRepository(trustAnchorResolver, environment, metadataConfiguration, dropwizardMetadataResolverFactory, timer);
 
-        MetadataResolver createdMetadataResolver = metadataResolverRepository.getMetadataResolver("entity-id");
+        MetadataResolver createdMetadataResolver = metadataResolverRepository.getMetadataResolver("http://signin.gov.uk/entity-id");
 
         assertThat(createdMetadataResolver).isNull();
     }
 
     @Test
     public void shouldUpdateListOfMetadataResolversWhenRefreshing() throws ParseException {
-        trustAnchors.add(createJWK("entity-id", Collections.singletonList(TestCertificateStrings.METADATA_SIGNING_A_PUBLIC_CERT)));
+        trustAnchors.add(createJWK("http://signin.gov.uk/entity-id", Collections.singletonList(TestCertificateStrings.METADATA_SIGNING_A_PUBLIC_CERT)));
         metadataResolverRepository = new EidasMetadataResolverRepository(trustAnchorResolver, environment, metadataConfiguration, dropwizardMetadataResolverFactory, timer);
         when(environment.metrics()).thenReturn(new MetricRegistry());
 
         trustAnchors.remove(0);
-        trustAnchors.add(createJWK("new-entity-id", Collections.singletonList(TestCertificateStrings.METADATA_SIGNING_A_PUBLIC_CERT)));
+        trustAnchors.add(createJWK("http://signin.gov.uk/new-entity-id", Collections.singletonList(TestCertificateStrings.METADATA_SIGNING_A_PUBLIC_CERT)));
         runScheduledTask();
 
-        assertThat(metadataResolverRepository.getMetadataResolver("entity-id")).isNull();
-        assertThat(metadataResolverRepository.getMetadataResolver("new-entity-id")).isNotNull();
+        assertThat(metadataResolverRepository.getMetadataResolver("http://signin.gov.uk/entity-id")).isNull();
+        assertThat(metadataResolverRepository.getMetadataResolver("http://signin.gov.uk/new-entity-id")).isNotNull();
     }
 
     private void runScheduledTask() {

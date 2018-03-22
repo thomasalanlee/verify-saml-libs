@@ -3,6 +3,7 @@ package uk.gov.ida.saml.metadata;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.util.X509CertUtils;
 import io.dropwizard.setup.Environment;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.xml.security.utils.Base64;
 import org.joda.time.DateTime;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -106,16 +107,13 @@ public class EidasMetadataResolverRepository {
         }
     }
 
-    private void addMetadataResolver(JWK trustAnchor) throws IOException, CertificateException, NoSuchAlgorithmException, KeyStoreException {
+    private void addMetadataResolver(JWK trustAnchor) throws CertificateException {
         MetadataResolver metadataResolver = dropwizardMetadataResolverFactory.createMetadataResolver(environment, createMetadataResolverConfiguration(trustAnchor));
         metadataResolvers.put(trustAnchor.getKeyID(), metadataResolver);
     }
 
-    private MetadataResolverConfiguration createMetadataResolverConfiguration(JWK trustAnchor)
-            throws UnsupportedEncodingException, CertificateException, KeyStoreException {
-
-        URI metadataUri = UriBuilder.fromUri(eidasMetadataConfiguration.getMetadataBaseUri())
-                .path(URLEncoder.encode(trustAnchor.getKeyID(), "UTF-8"))
+    private MetadataResolverConfiguration createMetadataResolverConfiguration(JWK trustAnchor) throws CertificateException {
+        URI metadataUri = UriBuilder.fromUri(trustAnchor.getKeyID())
                 .build();
 
         CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
