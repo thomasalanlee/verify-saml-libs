@@ -107,7 +107,7 @@ public class EidasTrustAnchorResolverTest {
 
     private String createJwsWithACountryTrustAnchor(PrivateKey privateKey) throws ParseException, JOSEException, CertificateEncodingException {
         Generator generator = new Generator(privateKey, publicSigningCert);
-        return generator.generate(Arrays.asList(createJsonAnchor("https://eu.entity.id")));
+        return generator.generate(Arrays.asList(createJsonAnchor("https://eu.entity.id"))).serialize();
     }
 
     private String createJsonAnchor(String kid) {
