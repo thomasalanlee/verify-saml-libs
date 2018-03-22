@@ -17,16 +17,12 @@ public class SamlResponseSignatureValidator {
         this.samlMessageSignatureValidator = samlMessageSignatureValidator;
     }
 
-    public ValidatedResponse validate(Response response, QName role) throws SamlTransformationErrorException {
-        final SamlValidationResponse samlValidationResponse = samlMessageSignatureValidator.validate(response, role);
+    public ValidatedResponse validate(Response response, QName role) {
+        SamlValidationResponse samlValidationResponse = samlMessageSignatureValidator.validate(response, role);
 
-        if(!samlValidationResponse.isOK()) {
-            SamlValidationSpecificationFailure failure = samlValidationResponse.getSamlValidationSpecificationFailure();
-            if (samlValidationResponse.getCause() != null)
-                throw new SamlTransformationErrorException(failure.getErrorMessage(), samlValidationResponse.getCause(), failure.getLogLevel());
-            throw new SamlTransformationErrorException(failure.getErrorMessage(), failure.getLogLevel());
-        }
-        return new ValidatedResponse(response);
+        if (samlValidationResponse.isOK()) return new ValidatedResponse(response);
+
+        SamlValidationSpecificationFailure failure = samlValidationResponse.getSamlValidationSpecificationFailure();
+        throw new SamlTransformationErrorException(failure.getErrorMessage(), samlValidationResponse.getCause(), failure.getLogLevel());
     }
-
 }

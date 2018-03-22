@@ -44,12 +44,10 @@ public final class SamlTransformationErrorFactory {
 
     public static SamlValidationSpecificationFailure missingSignature() {
         return new GenericHubProfileValidationSpecification(GenericHubProfileValidationSpecification.MISSING_SIGNATURE);
-
     }
 
     public static SamlValidationSpecificationFailure signatureNotSigned() {
         return new GenericHubProfileValidationSpecification(GenericHubProfileValidationSpecification.SIGNATURE_NOT_SIGNED);
-
     }
 
     public static SamlValidationSpecificationFailure missingIssuer() {

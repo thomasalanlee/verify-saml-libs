@@ -20,11 +20,10 @@ public class SamlRequestSignatureValidator<T extends RequestAbstractType> {
 
     public void validate(T samlMessage, QName role) {
         SamlValidationResponse samlValidationResponse = samlMessageSignatureValidator.validate(samlMessage, role);
-        if( !samlValidationResponse.isOK()) {
-            SamlValidationSpecificationFailure failure = samlValidationResponse.getSamlValidationSpecificationFailure();
-            if (samlValidationResponse.getCause() != null)
-                throw new SamlTransformationErrorException(failure.getErrorMessage(), samlValidationResponse.getCause(), failure.getLogLevel());
-            throw new SamlTransformationErrorException(failure.getErrorMessage(), failure.getLogLevel());
-        }
+
+        if (samlValidationResponse.isOK()) return;
+
+        SamlValidationSpecificationFailure failure = samlValidationResponse.getSamlValidationSpecificationFailure();
+        throw new SamlTransformationErrorException(failure.getErrorMessage(), samlValidationResponse.getCause(), failure.getLogLevel());
     }
 }
