@@ -70,7 +70,7 @@ public class EidasMetadataResolverRepository {
         return trustAnchors.stream().map(JWK::getKeyID).collect(Collectors.toList());
     }
 
-    private void refresh() {
+    public void refresh() {
         delayBeforeNextRefresh =  eidasMetadataConfiguration.getTrustAnchorMaxRefreshDelay();
         try {
             trustAnchors = trustAnchorResolver.getTrustAnchors();
