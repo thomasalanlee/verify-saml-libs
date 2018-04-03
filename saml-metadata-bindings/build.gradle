@@ -1,0 +1,9 @@
+dependencies {
+    compile configurations.opensaml,
+            configurations.dropwizard,
+            configurations.guice,
+            configurations.security
+
+    testCompile configurations.test_deps,
+            project(':saml-metadata-bindings-test')
+}

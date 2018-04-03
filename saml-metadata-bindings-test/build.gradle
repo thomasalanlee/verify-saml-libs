@@ -1,0 +1,5 @@
+dependencies {
+    compile configurations.opensaml,
+            configurations.xml_utils,
+            project(':saml-serializers')
+}
