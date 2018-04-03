@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="uk.gov.ida.saml.core.extensions.eidas.impl.BirthNameUnmarshallerTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2018-04-03T13:57:56" hostname="gds8080.local" time="0.003">
-  <properties/>
-  <testcase name="shouldUnmarshallBirthName" classname="uk.gov.ida.saml.core.extensions.eidas.impl.BirthNameUnmarshallerTest" time="0.003"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
