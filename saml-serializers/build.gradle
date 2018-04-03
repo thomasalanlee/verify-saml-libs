@@ -1,0 +1,7 @@
+dependencies {
+    compile configurations.opensaml,
+            project(':saml-extensions')
+
+    testCompile configurations.test_deps,
+                configurations.opensaml
+}
