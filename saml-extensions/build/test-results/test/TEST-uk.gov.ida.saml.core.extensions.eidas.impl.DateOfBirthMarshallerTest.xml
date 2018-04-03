@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="uk.gov.ida.saml.core.extensions.eidas.impl.DateOfBirthMarshallerTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2018-04-03T13:57:56" hostname="gds8080.local" time="0.079">
+  <properties/>
+  <testcase name="shouldMarshallDateOfBirth" classname="uk.gov.ida.saml.core.extensions.eidas.impl.DateOfBirthMarshallerTest" time="0.079"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
