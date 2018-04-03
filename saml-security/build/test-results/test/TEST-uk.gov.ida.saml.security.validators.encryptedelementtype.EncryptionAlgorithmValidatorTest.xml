@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="uk.gov.ida.saml.security.validators.encryptedelementtype.EncryptionAlgorithmValidatorTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2018-04-03T13:58:09" hostname="gds8080.local" time="0.014">
+  <properties/>
+  <testcase name="validate_shouldThrowSamlExceptionIfKeyMissing" classname="uk.gov.ida.saml.security.validators.encryptedelementtype.EncryptionAlgorithmValidatorTest" time="0.006"/>
+  <testcase name="validate_shouldNotThrowSamlExceptionIfKeyTransportAlgorithmIsRSAOAEP" classname="uk.gov.ida.saml.security.validators.encryptedelementtype.EncryptionAlgorithmValidatorTest" time="0.001"/>
+  <testcase name="validate_shouldNotThrowSamlExceptionIfEncryptionAlgorithmIsAES_128" classname="uk.gov.ida.saml.security.validators.encryptedelementtype.EncryptionAlgorithmValidatorTest" time="0.002"/>
+  <testcase name="validate_shouldThrowSamlExceptionIfEncryptionAlgorithmIsNotAES_128" classname="uk.gov.ida.saml.security.validators.encryptedelementtype.EncryptionAlgorithmValidatorTest" time="0.001"/>
+  <testcase name="validate_shouldThrowSamlExceptionIfKeyTransportAlgorithmIsNotRSAOAEP" classname="uk.gov.ida.saml.security.validators.encryptedelementtype.EncryptionAlgorithmValidatorTest" time="0.001"/>
+  <testcase name="validate_shouldNotThrowSamlExceptionIfEncryptionAlgorithmIsWhitelisted" classname="uk.gov.ida.saml.security.validators.encryptedelementtype.EncryptionAlgorithmValidatorTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

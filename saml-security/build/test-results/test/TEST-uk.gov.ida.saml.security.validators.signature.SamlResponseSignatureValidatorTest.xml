@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="uk.gov.ida.saml.security.validators.signature.SamlResponseSignatureValidatorTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2018-04-03T13:58:09" hostname="gds8080.local" time="0.01">
+  <properties/>
+  <testcase name="validate_shouldDoNothingIfResponseSignatureIsValid" classname="uk.gov.ida.saml.security.validators.signature.SamlResponseSignatureValidatorTest" time="0.009"/>
+  <testcase name="validate_shouldThrowExceptionIfResponseSignatureIsInvalid" classname="uk.gov.ida.saml.security.validators.signature.SamlResponseSignatureValidatorTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

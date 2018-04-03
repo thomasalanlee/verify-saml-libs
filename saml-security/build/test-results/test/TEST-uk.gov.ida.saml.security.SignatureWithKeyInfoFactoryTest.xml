@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="uk.gov.ida.saml.security.SignatureWithKeyInfoFactoryTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2018-04-03T13:58:09" hostname="gds8080.local" time="0.015">
+  <properties/>
+  <testcase name="shouldCreateMultipleSignaturesWithoutThrowingExceptions" classname="uk.gov.ida.saml.security.SignatureWithKeyInfoFactoryTest" time="0.015"/>
+  <system-out><![CDATA[14:58:09.924 [Test worker] DEBUG org.opensaml.saml.common.SAMLObjectSupport - Examining signed object for content references with exclusive canonicalization transform
+14:58:09.924 [Test worker] DEBUG org.opensaml.saml.common.SAMLObjectSupport - Saw exclusive transform, declaring non-visible namespaces on signed object
+14:58:09.924 [Test worker] DEBUG org.opensaml.xmlsec.signature.impl.SignatureMarshaller - Starting to marshall {http://www.w3.org/2000/09/xmldsig#}Signature
+14:58:09.924 [Test worker] DEBUG org.opensaml.xmlsec.signature.impl.SignatureMarshaller - Creating XMLSignature object
+14:58:09.924 [Test worker] DEBUG org.apache.xml.security.algorithms.SignatureAlgorithm - Create URI "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" class "class org.apache.xml.security.algorithms.implementations.SignatureBaseRSA$SignatureRSASHA256"
+14:58:09.924 [Test worker] DEBUG org.apache.xml.security.algorithms.JCEMapper - Request for URI http://www.w3.org/2001/04/xmldsig-more#rsa-sha256
+14:58:09.924 [Test worker] DEBUG org.apache.xml.security.algorithms.implementations.SignatureBaseRSA - Created SignatureRSA using SHA256withRSA
+14:58:09.924 [Test worker] DEBUG org.opensaml.xmlsec.signature.impl.SignatureMarshaller - Adding content to XMLSignature.
+14:58:09.925 [Test worker] DEBUG org.apache.xml.security.transforms.Transforms - Transforms.addTransform(http://www.w3.org/2000/09/xmldsig#enveloped-signature)
+14:58:09.925 [Test worker] DEBUG org.apache.xml.security.transforms.Transform - Create URI "http://www.w3.org/2000/09/xmldsig#enveloped-signature" class "class org.apache.xml.security.transforms.implementations.TransformEnvelopedSignature"
+14:58:09.925 [Test worker] DEBUG org.apache.xml.security.transforms.Transform - The NodeList is null
+14:58:09.925 [Test worker] DEBUG org.apache.xml.security.transforms.Transforms - Transforms.addTransform(http://www.w3.org/2000/09/xmldsig#enveloped-signature)
+14:58:09.925 [Test worker] DEBUG org.apache.xml.security.transforms.Transforms - Transforms.addTransform(http://www.w3.org/2001/10/xml-exc-c14n#)
+14:58:09.925 [Test worker] DEBUG org.apache.xml.security.transforms.Transform - Create URI "http://www.w3.org/2001/10/xml-exc-c14n#" class "class org.apache.xml.security.transforms.implementations.TransformC14NExclusive"
+14:58:09.925 [Test worker] DEBUG org.apache.xml.security.transforms.Transform - The NodeList is null
+14:58:09.925 [Test worker] DEBUG org.apache.xml.security.transforms.Transforms - Transforms.addTransform(http://www.w3.org/2001/10/xml-exc-c14n#)
+14:58:09.925 [Test worker] DEBUG org.apache.xml.security.utils.ElementProxy - setElement("ds:Transform", "null")
+14:58:09.925 [Test worker] DEBUG org.opensaml.saml.common.SAMLObjectContentReference - Adding list of inclusive namespaces for signature exclusive canonicalization transform
+14:58:09.925 [Test worker] DEBUG org.opensaml.xmlsec.signature.impl.SignatureMarshaller - Creating Signature DOM element
+14:58:09.925 [Test worker] DEBUG org.opensaml.xmlsec.signature.support.Signer - Using a signer of implemenation: org.opensaml.xmlsec.signature.support.provider.ApacheSantuarioSignerProviderImpl
+14:58:09.925 [Test worker] DEBUG org.opensaml.xmlsec.signature.support.provider.ApacheSantuarioSignerProviderImpl - Computing signature over XMLSignature object
+14:58:09.925 [Test worker] DEBUG org.apache.xml.security.algorithms.JCEMapper - Request for URI http://www.w3.org/2001/04/xmlenc#sha256
+14:58:09.925 [Test worker] DEBUG org.apache.xml.security.utils.resolver.ResourceResolver - I was asked to create a ResourceResolver and got 0
+14:58:09.925 [Test worker] DEBUG org.apache.xml.security.utils.resolver.ResourceResolver - check resolvability by class org.apache.xml.security.utils.resolver.ResourceResolver
+14:58:09.925 [Test worker] DEBUG org.apache.xml.security.utils.resolver.implementations.ResolverFragment - State I can resolve reference: "#some-assertion-id"
+14:58:09.925 [Test worker] DEBUG org.apache.xml.security.utils.resolver.implementations.ResolverFragment - Try to catch an Element with ID some-assertion-id and Element was [saml2:Assertion: null]
+14:58:09.925 [Test worker] DEBUG org.apache.xml.security.utils.ElementProxy - setElement("ds:Transform", "null")
+14:58:09.925 [Test worker] DEBUG org.apache.xml.security.transforms.Transforms - Perform the (0)th http://www.w3.org/2000/09/xmldsig#enveloped-signature transform
+14:58:09.925 [Test worker] DEBUG org.apache.xml.security.utils.ElementProxy - setElement("ds:Transform", "null")
+14:58:09.925 [Test worker] DEBUG org.apache.xml.security.transforms.Transforms - Perform the (1)th http://www.w3.org/2001/10/xml-exc-c14n# transform
+14:58:09.926 [Test worker] DEBUG org.apache.xml.security.utils.DigesterOutputStream - Pre-digested input:
+14:58:09.926 [Test worker] DEBUG org.apache.xml.security.utils.DigesterOutputStream - <saml2:Assertion xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="some-assertion-id" IssueInstant="2018-04-03T13:58:09.924Z" Version="2.0" xsi:type="saml2:AssertionType"><saml2:Issuer>a-test-entity</saml2:Issuer><saml2:Subject xsi:type="saml2:SubjectType"><saml2:NameID Format="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"></saml2:NameID><saml2:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer" xsi:type="saml2:SubjectConfirmationType"><saml2:SubjectConfirmationData InResponseTo="default-request-id" NotOnOrAfter="2018-04-03T14:13:09.924Z" Recipient="https://signin.service.gov.uk" xsi:type="saml2:SubjectConfirmationDataType"></saml2:SubjectConfirmationData></saml2:SubjectConfirmation></saml2:Subject><saml2:Conditions xsi:type="saml2:ConditionsType"><saml2:AudienceRestriction xsi:type="saml2:AudienceRestrictionType"><saml2:Audience>https://signin.service.gov.uk</saml2:Audience></saml2:AudienceRestriction></saml2:Conditions></saml2:Assertion>
+14:58:09.926 [Test worker] DEBUG org.apache.xml.security.utils.SignerOutputStream - Canonicalized SignedInfo:
+14:58:09.926 [Test worker] DEBUG org.apache.xml.security.utils.SignerOutputStream - <ds:SignedInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+<ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"></ds:CanonicalizationMethod>
+<ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></ds:SignatureMethod>
+<ds:Reference URI="#some-assertion-id">
+<ds:Transforms>
+<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"></ds:Transform>
+<ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"></ds:Transform>
+</ds:Transforms>
+<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></ds:DigestMethod>
+<ds:DigestValue>lesaMdz0uwTsgPu9Xy4yjs3e3Ge2rfC3hQTictw10AI=</ds:DigestValue>
+</ds:Reference>
+</ds:SignedInfo>
+14:58:09.930 [Test worker] DEBUG org.opensaml.saml.common.SAMLObjectSupport - Examining signed object for content references with exclusive canonicalization transform
+14:58:09.930 [Test worker] DEBUG org.opensaml.xmlsec.signature.impl.SignatureMarshaller - Starting to marshall {http://www.w3.org/2000/09/xmldsig#}Signature
+14:58:09.930 [Test worker] DEBUG org.opensaml.xmlsec.signature.impl.SignatureMarshaller - Creating XMLSignature object
+14:58:09.930 [Test worker] DEBUG org.apache.xml.security.algorithms.SignatureAlgorithm - Create URI "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" class "class org.apache.xml.security.algorithms.implementations.SignatureBaseRSA$SignatureRSASHA256"
+14:58:09.930 [Test worker] DEBUG org.apache.xml.security.algorithms.JCEMapper - Request for URI http://www.w3.org/2001/04/xmldsig-more#rsa-sha256
+14:58:09.930 [Test worker] DEBUG org.apache.xml.security.algorithms.implementations.SignatureBaseRSA - Created SignatureRSA using SHA256withRSA
+14:58:09.930 [Test worker] DEBUG org.opensaml.xmlsec.signature.impl.SignatureMarshaller - Adding content to XMLSignature.
+14:58:09.930 [Test worker] DEBUG org.apache.xml.security.transforms.Transforms - Transforms.addTransform(http://www.w3.org/2000/09/xmldsig#enveloped-signature)
+14:58:09.930 [Test worker] DEBUG org.apache.xml.security.transforms.Transform - Create URI "http://www.w3.org/2000/09/xmldsig#enveloped-signature" class "class org.apache.xml.security.transforms.implementations.TransformEnvelopedSignature"
+14:58:09.930 [Test worker] DEBUG org.apache.xml.security.transforms.Transform - The NodeList is null
+14:58:09.930 [Test worker] DEBUG org.apache.xml.security.transforms.Transforms - Transforms.addTransform(http://www.w3.org/2000/09/xmldsig#enveloped-signature)
+14:58:09.930 [Test worker] DEBUG org.apache.xml.security.transforms.Transforms - Transforms.addTransform(http://www.w3.org/2001/10/xml-exc-c14n#)
+14:58:09.930 [Test worker] DEBUG org.apache.xml.security.transforms.Transform - Create URI "http://www.w3.org/2001/10/xml-exc-c14n#" class "class org.apache.xml.security.transforms.implementations.TransformC14NExclusive"
+14:58:09.930 [Test worker] DEBUG org.apache.xml.security.transforms.Transform - The NodeList is null
+14:58:09.930 [Test worker] DEBUG org.apache.xml.security.transforms.Transforms - Transforms.addTransform(http://www.w3.org/2001/10/xml-exc-c14n#)
+14:58:09.930 [Test worker] DEBUG org.opensaml.xmlsec.signature.impl.SignatureMarshaller - Creating Signature DOM element
+14:58:09.931 [Test worker] DEBUG org.opensaml.xmlsec.signature.support.Signer - Using a signer of implemenation: org.opensaml.xmlsec.signature.support.provider.ApacheSantuarioSignerProviderImpl
+14:58:09.931 [Test worker] DEBUG org.opensaml.xmlsec.signature.support.provider.ApacheSantuarioSignerProviderImpl - Computing signature over XMLSignature object
+14:58:09.931 [Test worker] DEBUG org.apache.xml.security.algorithms.JCEMapper - Request for URI http://www.w3.org/2001/04/xmlenc#sha256
+14:58:09.931 [Test worker] DEBUG org.apache.xml.security.utils.resolver.ResourceResolver - I was asked to create a ResourceResolver and got 0
+14:58:09.931 [Test worker] DEBUG org.apache.xml.security.utils.resolver.ResourceResolver - check resolvability by class org.apache.xml.security.utils.resolver.ResourceResolver
+14:58:09.931 [Test worker] DEBUG org.apache.xml.security.utils.resolver.implementations.ResolverFragment - State I can resolve reference: "#0ba0510a-d83a-4fae-a722-67d0c8b8ddd4"
+14:58:09.931 [Test worker] DEBUG org.apache.xml.security.utils.resolver.implementations.ResolverFragment - Try to catch an Element with ID 0ba0510a-d83a-4fae-a722-67d0c8b8ddd4 and Element was [saml2:Assertion: null]
+14:58:09.931 [Test worker] DEBUG org.apache.xml.security.utils.ElementProxy - setElement("ds:Transform", "null")
+14:58:09.931 [Test worker] DEBUG org.apache.xml.security.transforms.Transforms - Perform the (0)th http://www.w3.org/2000/09/xmldsig#enveloped-signature transform
+14:58:09.931 [Test worker] DEBUG org.apache.xml.security.utils.ElementProxy - setElement("ds:Transform", "null")
+14:58:09.931 [Test worker] DEBUG org.apache.xml.security.transforms.Transforms - Perform the (1)th http://www.w3.org/2001/10/xml-exc-c14n# transform
+14:58:09.931 [Test worker] DEBUG org.apache.xml.security.utils.DigesterOutputStream - Pre-digested input:
+14:58:09.931 [Test worker] DEBUG org.apache.xml.security.utils.DigesterOutputStream - <saml2:Assertion xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="0ba0510a-d83a-4fae-a722-67d0c8b8ddd4" IssueInstant="2018-04-03T13:58:09.930Z" Version="2.0" xsi:type="saml2:AssertionType"><saml2:Issuer>a-test-entity</saml2:Issuer><saml2:Subject xsi:type="saml2:SubjectType"><saml2:NameID Format="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"></saml2:NameID><saml2:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer" xsi:type="saml2:SubjectConfirmationType"><saml2:SubjectConfirmationData InResponseTo="default-request-id" NotOnOrAfter="2018-04-03T14:13:09.929Z" Recipient="https://signin.service.gov.uk" xsi:type="saml2:SubjectConfirmationDataType"></saml2:SubjectConfirmationData></saml2:SubjectConfirmation></saml2:Subject><saml2:Conditions xsi:type="saml2:ConditionsType"><saml2:AudienceRestriction xsi:type="saml2:AudienceRestrictionType"><saml2:Audience>https://signin.service.gov.uk</saml2:Audience></saml2:AudienceRestriction></saml2:Conditions></saml2:Assertion>
+14:58:09.931 [Test worker] DEBUG org.apache.xml.security.utils.SignerOutputStream - Canonicalized SignedInfo:
+14:58:09.931 [Test worker] DEBUG org.apache.xml.security.utils.SignerOutputStream - <ds:SignedInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+<ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"></ds:CanonicalizationMethod>
+<ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></ds:SignatureMethod>
+<ds:Reference URI="#0ba0510a-d83a-4fae-a722-67d0c8b8ddd4">
+<ds:Transforms>
+<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"></ds:Transform>
+<ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"></ds:Transform>
+</ds:Transforms>
+<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></ds:DigestMethod>
+<ds:DigestValue>vjT1AbRJTwSHSKFWkI1VYQquINk37wt9rTO09OADTdY=</ds:DigestValue>
+</ds:Reference>
+</ds:SignedInfo>
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

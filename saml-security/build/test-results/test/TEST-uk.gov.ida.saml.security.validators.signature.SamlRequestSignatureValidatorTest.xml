@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="uk.gov.ida.saml.security.validators.signature.SamlRequestSignatureValidatorTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2018-04-03T13:58:09" hostname="gds8080.local" time="0.027">
+  <properties/>
+  <testcase name="validate_shouldThrowExceptionIfAuthnRequestSignatureIsInvalid" classname="uk.gov.ida.saml.security.validators.signature.SamlRequestSignatureValidatorTest" time="0.026"/>
+  <testcase name="validate_shouldDoNothingIfAuthnRequestSignatureIsValid" classname="uk.gov.ida.saml.security.validators.signature.SamlRequestSignatureValidatorTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
