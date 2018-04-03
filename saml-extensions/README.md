@@ -1,3 +1,19 @@
-#ida-saml-extensions
 
-This library contains Java representations of the IDA saml profiles extensions for integration with opensaml. Most, it contains just value-style objects, but it also contains bootstrapping logic for initializing opensaml correctly for an IDA application.
+# SAML Extensions
+
+Libraries containing implementations of the SAML extensions defined in the
+[IDA Saml Profile](https://www.gov.uk/government/publications/identity-assurance-hub-service-saml-20-profile).
+Additionally it provides:
+
+* Bootstrapping of extensions into SAML environment
+* Test utilities for SAML extension classes
+
+### Building the project
+
+`./gradlew clean build`
+
+## Licence
+
+[MIT Licence](LICENCE)
+
+This code is provided for informational purposes only and is not yet intended for use outside GOV.UK Verify
