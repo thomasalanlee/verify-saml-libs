@@ -5,6 +5,7 @@ import org.opensaml.security.credential.BasicCredential;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.credential.UsageType;
 
+import javax.inject.Inject;
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyFactory;
@@ -19,8 +20,6 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.text.MessageFormat;
 
 import static com.google.common.base.Throwables.propagate;
-
-import javax.inject.Inject;
 
 public class TestCredentialFactory {
 

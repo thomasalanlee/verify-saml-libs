@@ -1,11 +1,11 @@
 package uk.gov.ida.saml.core.test.builders;
 
-import java.util.Optional;
 import org.joda.time.DateTime;
 import uk.gov.ida.saml.core.domain.Address;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class AddressBuilder {
 

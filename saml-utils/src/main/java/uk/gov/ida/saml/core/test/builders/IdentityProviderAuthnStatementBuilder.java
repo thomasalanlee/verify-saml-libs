@@ -1,10 +1,11 @@
 package uk.gov.ida.saml.core.test.builders;
 
-import java.util.Optional;
 import uk.gov.ida.saml.core.domain.AuthnContext;
 import uk.gov.ida.saml.core.domain.FraudAuthnDetails;
 import uk.gov.ida.saml.core.domain.IdentityProviderAuthnStatement;
 import uk.gov.ida.saml.core.domain.IpAddress;
+
+import java.util.Optional;
 
 import static uk.gov.ida.saml.core.domain.IdentityProviderAuthnStatement.createIdentityProviderAuthnStatement;
 import static uk.gov.ida.saml.core.domain.IdentityProviderAuthnStatement.createIdentityProviderFraudAuthnStatement;

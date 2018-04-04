@@ -1,8 +1,8 @@
 package uk.gov.ida.saml.core.test.builders;
 
 import org.joda.time.DateTime;
-import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
 import uk.gov.ida.saml.core.extensions.Address;
+import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
 
 import java.util.ArrayList;
 import java.util.List;

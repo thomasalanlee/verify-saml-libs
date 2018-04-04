@@ -20,9 +20,9 @@ import org.opensaml.xmlsec.algorithm.descriptors.SignatureRSASHA256;
 import org.opensaml.xmlsec.signature.support.SignatureException;
 import org.opensaml.xmlsec.signature.support.Signer;
 import uk.gov.ida.saml.core.IdaConstants;
-import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
 import uk.gov.ida.saml.core.extensions.IdaAuthnContext;
 import uk.gov.ida.saml.core.test.AuthnRequestIdGenerator;
+import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
 
 import javax.validation.constraints.NotNull;
 import java.util.Optional;

@@ -1,6 +1,5 @@
 package uk.gov.ida.saml.core.test.builders;
 
-import java.util.Optional;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import uk.gov.ida.saml.core.domain.Address;
@@ -11,9 +10,8 @@ import uk.gov.ida.saml.core.domain.SimpleMdsValue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static java.util.Optional.empty;
-import static java.util.Optional.ofNullable;
 import static java.util.Arrays.asList;
 
 public class MatchingDatasetBuilder {

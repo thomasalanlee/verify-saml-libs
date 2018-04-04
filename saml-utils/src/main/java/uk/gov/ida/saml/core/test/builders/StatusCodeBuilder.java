@@ -1,10 +1,10 @@
 package uk.gov.ida.saml.core.test.builders;
 
-import java.util.Optional;
-
 import org.opensaml.saml.saml2.core.StatusCode;
-import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
 import uk.gov.ida.saml.core.domain.SamlStatusCode;
+import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
+
+import java.util.Optional;
 
 public class StatusCodeBuilder {
 

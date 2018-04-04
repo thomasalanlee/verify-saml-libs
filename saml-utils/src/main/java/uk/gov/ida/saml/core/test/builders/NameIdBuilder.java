@@ -1,10 +1,10 @@
 package uk.gov.ida.saml.core.test.builders;
 
-import java.util.Optional;
-
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDType;
 import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
+
+import java.util.Optional;
 
 public class NameIdBuilder {
 

@@ -1,15 +1,14 @@
 package uk.gov.ida.saml.core.test.builders;
 
-import java.util.Optional;
 import org.joda.time.DateTime;
 import uk.gov.ida.saml.core.domain.AssertionRestrictions;
 import uk.gov.ida.saml.core.domain.Cycle3Dataset;
 import uk.gov.ida.saml.core.domain.HubAssertion;
 import uk.gov.ida.saml.core.domain.PersistentId;
 
+import java.util.Optional;
 import java.util.UUID;
 
-import static java.util.Optional.empty;
 import static uk.gov.ida.saml.core.test.builders.PersistentIdBuilder.aPersistentId;
 
 public class HubAssertionBuilder {

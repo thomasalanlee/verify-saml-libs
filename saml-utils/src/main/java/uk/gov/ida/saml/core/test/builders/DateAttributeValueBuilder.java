@@ -1,11 +1,11 @@
 package uk.gov.ida.saml.core.test.builders;
 
-import java.util.Optional;
-
 import org.joda.time.DateTime;
 import org.opensaml.saml.saml2.core.AttributeValue;
-import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
 import uk.gov.ida.saml.core.extensions.Date;
+import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
+
+import java.util.Optional;
 
 public class DateAttributeValueBuilder {
 

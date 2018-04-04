@@ -3,13 +3,13 @@ package uk.gov.ida.saml.core.test.builders;
 import org.joda.time.DateTime;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnStatement;
-import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
 import uk.gov.ida.saml.core.extensions.EidasAuthnContext;
+import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
+
+import java.util.Optional;
 
 import static uk.gov.ida.saml.core.test.builders.AuthnContextBuilder.anAuthnContext;
 import static uk.gov.ida.saml.core.test.builders.AuthnContextClassRefBuilder.anAuthnContextClassRef;
-
-import java.util.Optional;
 
 public class AuthnStatementBuilder {
 

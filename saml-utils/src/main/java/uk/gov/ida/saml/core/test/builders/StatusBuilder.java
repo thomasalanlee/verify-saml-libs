@@ -1,11 +1,11 @@
 package uk.gov.ida.saml.core.test.builders;
 
-import java.util.Optional;
-
 import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.core.StatusMessage;
 import uk.gov.ida.saml.core.test.OpenSamlXmlObjectFactory;
+
+import java.util.Optional;
 
 public class StatusBuilder {
 
