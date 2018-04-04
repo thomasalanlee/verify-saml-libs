@@ -7,13 +7,12 @@ subprojects {
 
     ext {
         opensaml_version = "3.3.0"
-        saml_profile_version = "1.2a"
         dropwizard_version = "1.2.0"
         ida_utils_version = '317'
         trust_anchor_version = '1.0-17'
     }
     group = "uk.gov.ida"
-    version = "$opensaml_version-$saml_profile_version-${System.env.BUILD_NUMBER ?: 'SNAPSHOT'}"
+    version = "$opensaml_version-${System.env.BUILD_NUMBER ?: 'SNAPSHOT'}"
 
     repositories {
         maven { url 'https://artifactory.ida.digital.cabinet-office.gov.uk/artifactory/whitelisted-repos' }
