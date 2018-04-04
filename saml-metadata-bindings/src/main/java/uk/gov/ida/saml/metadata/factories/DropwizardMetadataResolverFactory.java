@@ -28,7 +28,7 @@ public class DropwizardMetadataResolverFactory {
         return createMetadataResolver(environment, metadataConfiguration, false);
     }
 
-    private MetadataResolver createMetadataResolver(Environment environment, MetadataResolverConfiguration metadataConfiguration, boolean validateSignatures) {
+    public MetadataResolver createMetadataResolver(Environment environment, MetadataResolverConfiguration metadataConfiguration, boolean validateSignatures) {
         URI uri = metadataConfiguration.getUri();
         Long minRefreshDelay = metadataConfiguration.getMinRefreshDelay();
         Long maxRefreshDelay = metadataConfiguration.getMaxRefreshDelay();
