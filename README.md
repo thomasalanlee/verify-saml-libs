@@ -8,7 +8,6 @@ Affected libraries:
 * saml-extensions
 * saml-security
 * saml-utils
-* saml-test-utils
 * saml-serializers
 * saml-metadata-bindings
 * saml-metadata-bindings-test

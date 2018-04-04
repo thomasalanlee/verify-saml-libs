@@ -2,7 +2,6 @@ dependencies {
     compile configurations.opensaml,
             project(':saml-extensions'),
             project(':saml-serializers'),
-            project(':saml-test-utils'),
             project(':saml-security')
 
 }
