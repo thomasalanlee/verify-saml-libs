@@ -5,8 +5,7 @@ import org.opensaml.security.credential.Credential;
 import org.opensaml.security.credential.UsageType;
 
 
-
-public class EncryptionCredentialFactory {
+public class EncryptionCredentialFactory implements EncryptionCredentialResolver {
     private final EncryptionKeyStore encryptionKeyStore;
 
 
@@ -14,6 +13,7 @@ public class EncryptionCredentialFactory {
         this.encryptionKeyStore = encryptionKeyStore;
     }
 
+    @Override
     public Credential getEncryptingCredential(String receiverId) {
         BasicCredential credential = new BasicCredential(encryptionKeyStore.getEncryptionKeyForEntity(receiverId));
         credential.setUsageType(UsageType.ENCRYPTION);
