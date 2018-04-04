@@ -1,5 +1,15 @@
 group 'uk.gov.ida'
-version '1.0-SNAPSHOT'
+
+buildscript {
+    repositories {
+        maven { url 'https://artifactory.ida.digital.cabinet-office.gov.uk/artifactory/whitelisted-repos' }
+    }
+    dependencies {
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
+    }
+}
+
+apply plugin: 'com.github.ben-manes.versions'
 
 subprojects {
     apply plugin: 'java'
@@ -8,8 +18,8 @@ subprojects {
     ext {
         opensaml_version = "3.3.0"
         dropwizard_version = "1.2.0"
-        ida_utils_version = '317'
-        trust_anchor_version = '1.0-17'
+        ida_utils_version = '332'
+        trust_anchor_version = '1.0-19'
     }
     group = "uk.gov.ida"
     version = "$opensaml_version-${System.env.BUILD_NUMBER ?: 'SNAPSHOT'}"
@@ -50,14 +60,14 @@ subprojects {
                 "uk.gov.ida.eidas:trust-anchor:$trust_anchor_version",
                 "uk.gov.ida:security-utils:2.0.0-$ida_utils_version"
 
-        test_deps 'uk.gov.ida:common-test-utils:2.0.0-32',
+        test_deps 'uk.gov.ida:common-test-utils:2.0.0-38',
                 "com.github.tomakehurst:wiremock-standalone:2.5.0",
                 "io.dropwizard:dropwizard-testing:$dropwizard_version",
                 'org.hamcrest:hamcrest-library:1.3',
                 'org.assertj:assertj-joda-time:1.1.0',
                 'org.assertj:assertj-core:1.6.0',
                 'junit:junit:4.11',
-                'uk.gov.ida:ida-dev-pki:1.1.0-19',
+                'uk.gov.ida:ida-dev-pki:1.1.0-21',
                 'org.mockito:mockito-core:1.9.5'
 
         xml_utils "uk.gov.ida:common-utils:2.0.0-$ida_utils_version"
