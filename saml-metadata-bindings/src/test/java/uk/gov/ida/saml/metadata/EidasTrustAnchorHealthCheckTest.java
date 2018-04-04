@@ -1,6 +1,7 @@
 package uk.gov.ida.saml.metadata;
 
 import com.codahale.metrics.health.HealthCheck.Result;
+import com.google.common.collect.ImmutableMap;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import org.junit.Before;
@@ -19,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -31,14 +33,10 @@ public class EidasTrustAnchorHealthCheckTest {
 
     private EidasTrustAnchorHealthCheck eidasTrustAnchorHealthCheck;
 
-    private List<String> trustAnchorEntityIds;
 
     @Before
     public void setUp(){
         eidasTrustAnchorHealthCheck = new EidasTrustAnchorHealthCheck(metadataResolverRepository);
-
-        trustAnchorEntityIds = new ArrayList<>();
-        when(metadataResolverRepository.getTrustAnchorsEntityIds()).thenReturn(trustAnchorEntityIds);
     }
 
     @Test
@@ -53,15 +51,21 @@ public class EidasTrustAnchorHealthCheckTest {
         String entityId1 = "entityId1";
         String entityId2 = "entityId2";
         String entityId3 = "entityId3";
-        List<String> entityIds = Arrays.asList(entityId1, entityId2, entityId3);
-        trustAnchorEntityIds.addAll(entityIds);
+        List<String> entityIds = asList(entityId1, entityId2, entityId3);
+        when(metadataResolverRepository.getTrustAnchorsEntityIds()).thenReturn(entityIds);
 
         MetadataResolver validMetadataResolver = getValidMetadataResolver(entityId1);
+        MetadataResolver secondMetadataResolver = mock(MetadataResolver.class);
+        MetadataResolver thirdMetadataResolver = mock(MetadataResolver.class);
+
+        ImmutableMap<String, MetadataResolver> metadataResolverMap = ImmutableMap.of(
+                entityId1, validMetadataResolver,
+                entityId2, secondMetadataResolver,
+                entityId3, thirdMetadataResolver
+        );
 
         when(metadataResolverRepository.getEntityIdsWithResolver()).thenReturn(entityIds);
-        when(metadataResolverRepository.getMetadataResolver(entityId1)).thenReturn(validMetadataResolver);
-        when(metadataResolverRepository.getMetadataResolver(entityId2)).thenReturn(mock(MetadataResolver.class));
-        when(metadataResolverRepository.getMetadataResolver(entityId3)).thenReturn(mock(MetadataResolver.class));
+        when(metadataResolverRepository.getMetadataResolvers()).thenReturn(metadataResolverMap);
 
         Result result = eidasTrustAnchorHealthCheck.check();
 
@@ -75,13 +79,15 @@ public class EidasTrustAnchorHealthCheckTest {
         String entityId1 = "entityId1";
         String entityId2 = "entityId2";
         String entityId3 = "entityId3";
-        List<String> entityIds = Arrays.asList(entityId1, entityId2, entityId3);
-        trustAnchorEntityIds.addAll(entityIds);
+        List<String> entityIds = asList(entityId1, entityId2, entityId3);
+        when(metadataResolverRepository.getTrustAnchorsEntityIds()).thenReturn(entityIds);
 
         MetadataResolver validMetadataResolver = getValidMetadataResolver(entityId1);
 
-        when(metadataResolverRepository.getEntityIdsWithResolver()).thenReturn(Collections.singletonList(entityId1));
-        when(metadataResolverRepository.getMetadataResolver(entityId1)).thenReturn(validMetadataResolver);
+        ImmutableMap<String, MetadataResolver> metadataResolverMap = ImmutableMap.of(entityId1, validMetadataResolver);
+
+        when(metadataResolverRepository.getEntityIdsWithResolver()).thenReturn(asList(entityId1));
+        when(metadataResolverRepository.getMetadataResolvers()).thenReturn(metadataResolverMap);
 
         Result result = eidasTrustAnchorHealthCheck.check();
 
@@ -94,15 +100,15 @@ public class EidasTrustAnchorHealthCheckTest {
     public void shouldReturnHealthyWhenAllMetadataResolversAreHealthy() throws Exception {
         String entityId1 = "entityId1";
         String entityId2 = "entityId2";
-        List<String> entityIds = Arrays.asList(entityId1, entityId2);
-        trustAnchorEntityIds.addAll(entityIds);
+        List<String> entityIds = asList(entityId1, entityId2);
+        when(metadataResolverRepository.getTrustAnchorsEntityIds()).thenReturn(entityIds);
 
         MetadataResolver validMetadataResolver1 = getValidMetadataResolver(entityId1);
         MetadataResolver validMetadataResolver2 = getValidMetadataResolver(entityId2);
+        ImmutableMap<String, MetadataResolver> metadataResolverMap = ImmutableMap.of(entityId1, validMetadataResolver1, entityId2, validMetadataResolver2);
 
         when(metadataResolverRepository.getEntityIdsWithResolver()).thenReturn(entityIds);
-        when(metadataResolverRepository.getMetadataResolver(entityId1)).thenReturn(validMetadataResolver1);
-        when(metadataResolverRepository.getMetadataResolver(entityId2)).thenReturn(validMetadataResolver2);
+        when(metadataResolverRepository.getMetadataResolvers()).thenReturn(metadataResolverMap);
 
         Result result = eidasTrustAnchorHealthCheck.check();
 
