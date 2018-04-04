@@ -1,4 +1,4 @@
-group 'uk.gov.ida'
+apply from: 'publish.gradle'
 
 buildscript {
     repositories {
@@ -71,29 +71,5 @@ subprojects {
                 'org.mockito:mockito-core:1.9.5'
 
         xml_utils "uk.gov.ida:common-utils:2.0.0-$ida_utils_version"
-    }
-
-    task sourceJar(type: Jar) {
-        from sourceSets.main.allJava
-    }
-
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                from components.java
-
-                artifact sourceJar {
-                    classifier "sources"
-                }
-            }
-        }
-    }
-
-    publishing {
-        repositories {
-            maven {
-                url "/srv/maven" // change to point to your repo, e.g. http://my.org/repo
-            }
-        }
     }
 }
