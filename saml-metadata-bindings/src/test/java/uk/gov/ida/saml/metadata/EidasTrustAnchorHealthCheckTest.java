@@ -16,7 +16,7 @@ import uk.gov.ida.saml.core.test.builders.metadata.EntityDescriptorBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,26 +27,22 @@ import static org.mockito.Mockito.when;
 public class EidasTrustAnchorHealthCheckTest {
 
     @Mock
-    EidasMetadataResolverRepository metadataResolverRepository;
+    private EidasMetadataResolverRepository metadataResolverRepository;
 
     private EidasTrustAnchorHealthCheck eidasTrustAnchorHealthCheck;
 
-    private HashMap<String, MetadataResolver> metadataResolverHashMap;
     private List<String> trustAnchorEntityIds;
 
     @Before
     public void setUp(){
         eidasTrustAnchorHealthCheck = new EidasTrustAnchorHealthCheck(metadataResolverRepository);
 
-        metadataResolverHashMap = new HashMap<>();
-        when(metadataResolverRepository.getMetadataResolvers()).thenReturn(metadataResolverHashMap);
-
         trustAnchorEntityIds = new ArrayList<>();
         when(metadataResolverRepository.getTrustAnchorsEntityIds()).thenReturn(trustAnchorEntityIds);
     }
 
     @Test
-    public void shouldReturnUnhealthyWhenNoTrustAnchorsAreFound() throws Exception {
+    public void shouldReturnUnhealthyWhenNoTrustAnchorsAreFound() {
         Result result = eidasTrustAnchorHealthCheck.check();
 
         assertThat(result.isHealthy()).isFalse();
@@ -57,10 +53,15 @@ public class EidasTrustAnchorHealthCheckTest {
         String entityId1 = "entityId1";
         String entityId2 = "entityId2";
         String entityId3 = "entityId3";
-        trustAnchorEntityIds.addAll(Arrays.asList(entityId1, entityId2, entityId3));
-        metadataResolverHashMap.put(entityId1, getValidMetadataResolver(entityId1));
-        metadataResolverHashMap.put(entityId2, mock(MetadataResolver.class));
-        metadataResolverHashMap.put(entityId3, mock(MetadataResolver.class));
+        List<String> entityIds = Arrays.asList(entityId1, entityId2, entityId3);
+        trustAnchorEntityIds.addAll(entityIds);
+
+        MetadataResolver validMetadataResolver = getValidMetadataResolver(entityId1);
+
+        when(metadataResolverRepository.getEntityIdsWithResolver()).thenReturn(entityIds);
+        when(metadataResolverRepository.getMetadataResolver(entityId1)).thenReturn(validMetadataResolver);
+        when(metadataResolverRepository.getMetadataResolver(entityId2)).thenReturn(mock(MetadataResolver.class));
+        when(metadataResolverRepository.getMetadataResolver(entityId3)).thenReturn(mock(MetadataResolver.class));
 
         Result result = eidasTrustAnchorHealthCheck.check();
 
@@ -74,10 +75,13 @@ public class EidasTrustAnchorHealthCheckTest {
         String entityId1 = "entityId1";
         String entityId2 = "entityId2";
         String entityId3 = "entityId3";
-        trustAnchorEntityIds.add(entityId1);
-        trustAnchorEntityIds.add(entityId2);
-        trustAnchorEntityIds.add(entityId3);
-        metadataResolverHashMap.put(entityId1, getValidMetadataResolver(entityId1));
+        List<String> entityIds = Arrays.asList(entityId1, entityId2, entityId3);
+        trustAnchorEntityIds.addAll(entityIds);
+
+        MetadataResolver validMetadataResolver = getValidMetadataResolver(entityId1);
+
+        when(metadataResolverRepository.getEntityIdsWithResolver()).thenReturn(Collections.singletonList(entityId1));
+        when(metadataResolverRepository.getMetadataResolver(entityId1)).thenReturn(validMetadataResolver);
 
         Result result = eidasTrustAnchorHealthCheck.check();
 
@@ -90,10 +94,15 @@ public class EidasTrustAnchorHealthCheckTest {
     public void shouldReturnHealthyWhenAllMetadataResolversAreHealthy() throws Exception {
         String entityId1 = "entityId1";
         String entityId2 = "entityId2";
-        trustAnchorEntityIds.add(entityId1);
-        trustAnchorEntityIds.add(entityId2);
-        metadataResolverHashMap.put(entityId1, getValidMetadataResolver(entityId1));
-        metadataResolverHashMap.put(entityId2, getValidMetadataResolver(entityId2));
+        List<String> entityIds = Arrays.asList(entityId1, entityId2);
+        trustAnchorEntityIds.addAll(entityIds);
+
+        MetadataResolver validMetadataResolver1 = getValidMetadataResolver(entityId1);
+        MetadataResolver validMetadataResolver2 = getValidMetadataResolver(entityId2);
+
+        when(metadataResolverRepository.getEntityIdsWithResolver()).thenReturn(entityIds);
+        when(metadataResolverRepository.getMetadataResolver(entityId1)).thenReturn(validMetadataResolver1);
+        when(metadataResolverRepository.getMetadataResolver(entityId2)).thenReturn(validMetadataResolver2);
 
         Result result = eidasTrustAnchorHealthCheck.check();
 
