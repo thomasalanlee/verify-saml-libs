@@ -11,7 +11,7 @@ import org.opensaml.security.credential.Credential;
 import org.opensaml.xmlsec.encryption.support.EncryptionException;
 import uk.gov.ida.saml.core.test.OpenSAMLRunner;
 import uk.gov.ida.saml.security.EncrypterFactory;
-import uk.gov.ida.saml.security.EncryptionCredentialFactory;
+import uk.gov.ida.saml.security.KeyStoreBackedEncryptionCredentialResolver;
 import uk.gov.ida.saml.security.EntityToEncryptForLocator;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class SamlResponseAssertionEncrypterTest {
     @Test
     public void shouldConvertAssertionIntoEncryptedAssertion() throws EncryptionException {
 
-        EncryptionCredentialFactory credentialFactory = mock(EncryptionCredentialFactory.class);
+        KeyStoreBackedEncryptionCredentialResolver credentialFactory = mock(KeyStoreBackedEncryptionCredentialResolver.class);
 
         Credential credential = mock(Credential.class);
         EntityToEncryptForLocator entityToEncryptForLocator = mock(EntityToEncryptForLocator.class);
@@ -65,7 +65,7 @@ public class SamlResponseAssertionEncrypterTest {
 
     @Test
     public void decorate_shouldWrapEncryptionAssertionInSamlExceptionWhenEncryptionFails() throws EncryptionException {
-        EncryptionCredentialFactory credentialFactory = mock(EncryptionCredentialFactory.class);
+        KeyStoreBackedEncryptionCredentialResolver credentialFactory = mock(KeyStoreBackedEncryptionCredentialResolver.class);
 
         Credential credential = mock(Credential.class);
         EntityToEncryptForLocator entityToEncryptForLocator = mock(EntityToEncryptForLocator.class);

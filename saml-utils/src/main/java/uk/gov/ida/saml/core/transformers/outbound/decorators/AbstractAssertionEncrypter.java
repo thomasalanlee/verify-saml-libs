@@ -7,20 +7,20 @@ import org.opensaml.saml.saml2.encryption.Encrypter;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.xmlsec.encryption.support.EncryptionException;
 import uk.gov.ida.saml.security.EncrypterFactory;
-import uk.gov.ida.saml.security.EncryptionCredentialFactory;
+import uk.gov.ida.saml.security.KeyStoreBackedEncryptionCredentialResolver;
 import uk.gov.ida.saml.security.EntityToEncryptForLocator;
 
 import java.util.List;
 
 public abstract class AbstractAssertionEncrypter<T> {
-    protected final EncryptionCredentialFactory credentialFactory;
+    protected final KeyStoreBackedEncryptionCredentialResolver credentialFactory;
     protected final EncrypterFactory encrypterFactory;
     protected final EntityToEncryptForLocator entityToEncryptForLocator;
 
     public AbstractAssertionEncrypter(
             final EncrypterFactory encrypterFactory,
             final EntityToEncryptForLocator entityToEncryptForLocator,
-            final EncryptionCredentialFactory credentialFactory) {
+            final KeyStoreBackedEncryptionCredentialResolver credentialFactory) {
 
         this.encrypterFactory = encrypterFactory;
         this.entityToEncryptForLocator = entityToEncryptForLocator;
