@@ -4,13 +4,11 @@ import com.codahale.metrics.health.HealthCheck;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import org.opensaml.core.criterion.EntityIdCriterion;
-import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 public class EidasTrustAnchorHealthCheck extends HealthCheck {
@@ -40,11 +38,11 @@ public class EidasTrustAnchorHealthCheck extends HealthCheck {
     }
 
     private List<String> getErrorsCreatingMetadataResolvers(List<String> trustAnchorEntityIds) {
-        HashMap<String, MetadataResolver> metadataResolvers = metadataResolverRepository.getMetadataResolvers();
+        List<String> entityIdsWithResolver = metadataResolverRepository.getEntityIdsWithResolver();
 
-        if (trustAnchorEntityIds.size() > metadataResolvers.keySet().size()) {
+        if (trustAnchorEntityIds.size() > entityIdsWithResolver.size()) {
             List<String> missingMetadataResolverEntityIds = new ArrayList<>(trustAnchorEntityIds);
-            missingMetadataResolverEntityIds.removeAll(metadataResolvers.keySet());
+            missingMetadataResolverEntityIds.removeAll(entityIdsWithResolver);
 
             return Collections.singletonList("Metadata Resolver(s) not created for: " + String.join(", ", missingMetadataResolverEntityIds));
         }
@@ -52,12 +50,11 @@ public class EidasTrustAnchorHealthCheck extends HealthCheck {
     }
 
     private List<String> getErrorsResolvingMetadata() {
-        HashMap<String, MetadataResolver> metadataResolvers = metadataResolverRepository.getMetadataResolvers();
         List<String> errors = new ArrayList<>();
-        for (String entityId : metadataResolvers.keySet()) {
+        for (String entityId : metadataResolverRepository.getEntityIdsWithResolver()) {
             try {
                 CriteriaSet criteria = new CriteriaSet(new EntityIdCriterion(entityId));
-                EntityDescriptor entityDescriptor = metadataResolvers.get(entityId).resolveSingle(criteria);
+                EntityDescriptor entityDescriptor = metadataResolverRepository.getMetadataResolver(entityId).resolveSingle(criteria);
                 if (entityDescriptor == null){
                     errors.add("Could not resolve metadata for " + entityId);
                 }

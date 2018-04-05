@@ -3,7 +3,6 @@ package uk.gov.ida.saml.metadata;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.util.X509CertUtils;
 import io.dropwizard.setup.Environment;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.xml.security.utils.Base64;
 import org.joda.time.DateTime;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -17,9 +16,7 @@ import javax.inject.Inject;
 import javax.ws.rs.core.UriBuilder;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URLEncoder;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -28,11 +25,12 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class EidasMetadataResolverRepository {
@@ -40,7 +38,7 @@ public class EidasMetadataResolverRepository {
     private final Logger log = LoggerFactory.getLogger(EidasMetadataResolverRepository.class);
     private final EidasTrustAnchorResolver trustAnchorResolver;
     private final DropwizardMetadataResolverFactory dropwizardMetadataResolverFactory;
-    private HashMap<String, MetadataResolver> metadataResolvers = new HashMap<>();
+    private ConcurrentHashMap<String, MetadataResolver> metadataResolvers = new ConcurrentHashMap<>();
     private List<JWK> trustAnchors = new ArrayList<>();
     private final Environment environment;
     private final EidasMetadataConfiguration eidasMetadataConfiguration;
@@ -48,7 +46,10 @@ public class EidasMetadataResolverRepository {
     private long delayBeforeNextRefresh;
 
     @Inject
-    public EidasMetadataResolverRepository(EidasTrustAnchorResolver trustAnchorResolver, Environment environment, EidasMetadataConfiguration eidasMetadataConfiguration, DropwizardMetadataResolverFactory dropwizardMetadataResolverFactory, Timer timer) {
+    public EidasMetadataResolverRepository(EidasTrustAnchorResolver trustAnchorResolver, Environment environment,
+                                           EidasMetadataConfiguration eidasMetadataConfiguration,
+                                           DropwizardMetadataResolverFactory dropwizardMetadataResolverFactory,
+                                           Timer timer) {
         this.trustAnchorResolver = trustAnchorResolver;
         this.environment = environment;
         this.eidasMetadataConfiguration = eidasMetadataConfiguration;
@@ -62,8 +63,8 @@ public class EidasMetadataResolverRepository {
         return metadataResolvers.get(entityId);
     }
 
-    public HashMap<String, MetadataResolver> getMetadataResolvers(){
-        return metadataResolvers;
+    public List<String> getEntityIdsWithResolver() {
+        return Collections.list(metadataResolvers.keys());
     }
 
     public List<String> getTrustAnchorsEntityIds() {
@@ -71,7 +72,7 @@ public class EidasMetadataResolverRepository {
     }
 
     public void refresh() {
-        delayBeforeNextRefresh =  eidasMetadataConfiguration.getTrustAnchorMaxRefreshDelay();
+        delayBeforeNextRefresh = eidasMetadataConfiguration.getTrustAnchorMaxRefreshDelay();
         try {
             trustAnchors = trustAnchorResolver.getTrustAnchors();
             removeMetadataResolvers();
@@ -90,11 +91,11 @@ public class EidasMetadataResolverRepository {
                 X509Certificate certificate = X509CertUtils.parse(Base64.decode(String.valueOf(trustAnchor.getX509CertChain().get(0))));
                 certificate.checkValidity();
 
-                addMetadataResolver(trustAnchor);
                 Collection<String> errors = CountryTrustAnchor.findErrors(trustAnchor);
                 if (!errors.isEmpty()) {
                     throw new Error(String.format("Managed to generate an invalid anchor: %s", String.join(", ", errors)));
                 }
+                addMetadataResolver(trustAnchor);
 
                 Date metadataSigningCertExpiryDate = certificate.getNotAfter();
                 Date nextRunTime = DateTime.now().plus(delayBeforeNextRefresh).toDate();
@@ -143,7 +144,7 @@ public class EidasMetadataResolverRepository {
     }
 
     private void removeMetadataResolvers() {
-        for(String entityId : metadataResolvers.keySet()) {
+        for (String entityId : metadataResolvers.keySet()) {
             MetadataResolver metadataResolver = metadataResolvers.get(entityId);
             if (metadataResolver instanceof AbstractReloadingMetadataResolver){
                 ((AbstractReloadingMetadataResolver) metadataResolver).destroy();
