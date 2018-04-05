@@ -28,6 +28,8 @@ import java.net.URL;
 import java.security.PublicKey;
 
 import static org.assertj.core.api.Assertions.*;
+import static uk.gov.ida.saml.core.test.TestEntityIds.HUB_ENTITY_ID;
+import static uk.gov.ida.saml.core.test.TestEntityIds.STUB_IDP_ONE;
 
 public class MetadataBackedEncryptionCredentialResolverTest {
     private MetadataCredentialResolver metadataCredentialResolver;
@@ -61,13 +63,19 @@ public class MetadataBackedEncryptionCredentialResolverTest {
     @Test
     public void shouldSupportResolvingCredentialsFromKeysInMetadata() throws Exception {
         PublicKey publicKey = TestCredentialFactory.createPublicKey(TestCertificateStrings.HUB_TEST_PUBLIC_ENCRYPTION_CERT);
-        assertThat(new MetadataBackedEncryptionCredentialResolver(metadataCredentialResolver, SPSSODescriptor.DEFAULT_ELEMENT_NAME).getEncryptingCredential(TestEntityIds.HUB_ENTITY_ID).getPublicKey()).isEqualTo(publicKey);
+        assertThat(new MetadataBackedEncryptionCredentialResolver(metadataCredentialResolver, SPSSODescriptor.DEFAULT_ELEMENT_NAME).getEncryptingCredential(HUB_ENTITY_ID).getPublicKey()).isEqualTo(publicKey);
     }
 
     @Test
-    public void shouldFailToResolveIfEnttiyIsNotFound() throws Exception {
-        assertThat(new MetadataBackedEncryptionCredentialResolver(metadataCredentialResolver, IDPSSODescriptor.DEFAULT_ELEMENT_NAME).getEncryptingCredential(TestEntityIds.HUB_ENTITY_ID)).isNull();
-        assertThat(new MetadataBackedEncryptionCredentialResolver(metadataCredentialResolver, IDPSSODescriptor.DEFAULT_ELEMENT_NAME).getEncryptingCredential(TestEntityIds.STUB_IDP_ONE)).isNull();
+    public void shouldFailToResolveAndThrowIfEntityIsNotFound() throws Exception {
+        assertThatThrownBy(() -> {
+            new MetadataBackedEncryptionCredentialResolver(metadataCredentialResolver, IDPSSODescriptor.DEFAULT_ELEMENT_NAME).getEncryptingCredential(HUB_ENTITY_ID);
+        }).isExactlyInstanceOf(MetadataBackedEncryptionCredentialResolver.CredentialMissingInMetadataException.class)
+          .hasMessage("No public key for entity-id: \""+ HUB_ENTITY_ID + "\" could be found in the metadata. Metadata could be expired, invalid, or missing entities");
+        assertThatThrownBy(() -> {
+            new MetadataBackedEncryptionCredentialResolver(metadataCredentialResolver, IDPSSODescriptor.DEFAULT_ELEMENT_NAME).getEncryptingCredential(STUB_IDP_ONE);
+        }).isExactlyInstanceOf(MetadataBackedEncryptionCredentialResolver.CredentialMissingInMetadataException.class)
+          .hasMessage("No public key for entity-id: \""+ STUB_IDP_ONE + "\" could be found in the metadata. Metadata could be expired, invalid, or missing entities");
     }
 
 }
