@@ -10,6 +10,8 @@ import org.opensaml.security.credential.UsageType;
 import org.opensaml.security.criteria.UsageCriterion;
 
 import javax.xml.namespace.QName;
+import java.text.MessageFormat;
+import java.util.Optional;
 
 public class MetadataBackedEncryptionCredentialResolver implements EncryptionCredentialResolver {
 
@@ -28,9 +30,20 @@ public class MetadataBackedEncryptionCredentialResolver implements EncryptionCre
         criteria.add(new EntityRoleCriterion(role));
         criteria.add(new UsageCriterion(UsageType.ENCRYPTION));
         try {
-            return credentialResolver.resolveSingle(criteria);
+            return Optional.ofNullable(credentialResolver.resolveSingle(criteria))
+                    .orElseThrow(() -> new CredentialMissingInMetadataException(receiverId));
         } catch (ResolverException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static class CredentialMissingInMetadataException extends RuntimeException {
+
+        public static final String PATTERN = "No public key for entity-id: \"{0}\" could be found in the metadata. Metadata could be expired, invalid, or missing entities";
+
+        public CredentialMissingInMetadataException(String receivedId) {
+           super(MessageFormat.format(PATTERN, receivedId));
+        };
+
     }
 }
