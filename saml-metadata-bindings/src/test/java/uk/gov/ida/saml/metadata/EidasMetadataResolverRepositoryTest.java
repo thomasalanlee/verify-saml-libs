@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -92,7 +93,7 @@ public class EidasMetadataResolverRepositoryTest {
         metadataResolverRepository = new EidasMetadataResolverRepository(trustAnchorResolver, environment, metadataConfiguration, dropwizardMetadataResolverFactory, timer, metadataSignatureTrustEngineFactory);
 
         verify(dropwizardMetadataResolverFactory).createMetadataResolver(eq(environment), metadataResolverConfigurationCaptor.capture());
-        MetadataResolver createdMetadataResolver = metadataResolverRepository.getMetadataResolver(trustAnchor.getKeyID());
+        MetadataResolver createdMetadataResolver = metadataResolverRepository.getMetadataResolver(trustAnchor.getKeyID()).get();
         MetadataResolverConfiguration metadataResolverConfiguration = metadataResolverConfigurationCaptor.getValue();
         byte[] expectedTrustStoreCertificate = trustAnchor.getX509CertChain().get(0).decode();
         byte[] expectedTrustStoreCACertificate = trustAnchor.getX509CertChain().get(1).decode();
@@ -103,7 +104,7 @@ public class EidasMetadataResolverRepositoryTest {
         assertArrayEquals(expectedTrustStoreCertificate, actualTrustStoreCertificate);
         assertArrayEquals(expectedTrustStoreCACertificate, actualTrustStoreCACertificate);
         assertThat(metadataResolverConfiguration.getUri().toString()).isEqualTo("http://signin.gov.uk/entity/id");
-        assertThat(metadataResolverRepository.getSignatureTrustEngine(trustAnchor.getKeyID())).isEqualTo(explicitKeySignatureTrustEngine);
+        assertThat(metadataResolverRepository.getSignatureTrustEngine(trustAnchor.getKeyID())).isEqualTo(Optional.of(explicitKeySignatureTrustEngine));
     }
 
     @Test
@@ -112,8 +113,8 @@ public class EidasMetadataResolverRepositoryTest {
         trustAnchors.add(createJWK(entityId, Collections.singletonList(TestCertificateStrings.UNCHAINED_PUBLIC_CERT)));
         metadataResolverRepository = new EidasMetadataResolverRepository(trustAnchorResolver, environment, metadataConfiguration, dropwizardMetadataResolverFactory, timer, metadataSignatureTrustEngineFactory);
 
-        assertThat(metadataResolverRepository.getMetadataResolver(entityId)).isNull();
-        assertThat(metadataResolverRepository.getSignatureTrustEngine(entityId)).isNull();
+        assertThat(metadataResolverRepository.getMetadataResolver(entityId)).isEmpty();
+        assertThat(metadataResolverRepository.getSignatureTrustEngine(entityId)).isEmpty();
     }
 
     @Test
@@ -126,8 +127,8 @@ public class EidasMetadataResolverRepositoryTest {
         trustAnchors.add(createJWK("http://signin.gov.uk/new-entity-id", Collections.singletonList(TestCertificateStrings.METADATA_SIGNING_A_PUBLIC_CERT)));
         runScheduledTask();
 
-        assertThat(metadataResolverRepository.getMetadataResolver("http://signin.gov.uk/entity-id")).isNull();
-        assertThat(metadataResolverRepository.getMetadataResolver("http://signin.gov.uk/new-entity-id")).isNotNull();
+        assertThat(metadataResolverRepository.getMetadataResolver("http://signin.gov.uk/entity-id")).isEmpty();
+        assertThat(metadataResolverRepository.getMetadataResolver("http://signin.gov.uk/new-entity-id")).isPresent();
     }
 
     private void runScheduledTask() {

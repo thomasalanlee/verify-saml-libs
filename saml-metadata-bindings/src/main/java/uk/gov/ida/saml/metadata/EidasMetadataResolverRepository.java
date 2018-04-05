@@ -66,16 +66,16 @@ public class EidasMetadataResolverRepository {
         refresh();
     }
 
-    public MetadataResolver getMetadataResolver(String entityId) {
-        return Optional.ofNullable(metadataResolvers.get(entityId)).map(MetadataPair::getMetadataResolver).orElse(null);
+    public Optional<MetadataResolver> getMetadataResolver(String entityId) {
+        return Optional.ofNullable(metadataResolvers.get(entityId)).map(MetadataPair::getMetadataResolver);
     }
 
     public List<String> getEntityIdsWithResolver() {
         return metadataResolvers.keySet().asList();
     }
 
-    public ExplicitKeySignatureTrustEngine getSignatureTrustEngine(String entityId) {
-        return Optional.ofNullable(metadataResolvers.get(entityId)).map(MetadataPair::getSignatureTrustEngine).orElse(null);
+    public Optional<ExplicitKeySignatureTrustEngine> getSignatureTrustEngine(String entityId) {
+        return Optional.ofNullable(metadataResolvers.get(entityId)).map(MetadataPair::getSignatureTrustEngine);
     }
 
     public Map<String, MetadataResolver> getMetadataResolvers(){
