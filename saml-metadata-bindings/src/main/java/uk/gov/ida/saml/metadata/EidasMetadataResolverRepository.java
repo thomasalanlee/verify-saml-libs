@@ -1,5 +1,6 @@
 package uk.gov.ida.saml.metadata;
 
+import com.google.common.collect.ImmutableMap;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.util.X509CertUtils;
 import io.dropwizard.setup.Environment;
@@ -25,12 +26,10 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class EidasMetadataResolverRepository {
@@ -38,7 +37,7 @@ public class EidasMetadataResolverRepository {
     private final Logger log = LoggerFactory.getLogger(EidasMetadataResolverRepository.class);
     private final EidasTrustAnchorResolver trustAnchorResolver;
     private final DropwizardMetadataResolverFactory dropwizardMetadataResolverFactory;
-    private ConcurrentHashMap<String, MetadataResolver> metadataResolvers = new ConcurrentHashMap<>();
+    private ImmutableMap<String, MetadataResolver> metadataResolvers = ImmutableMap.of();
     private List<JWK> trustAnchors = new ArrayList<>();
     private final Environment environment;
     private final EidasMetadataConfiguration eidasMetadataConfiguration;
@@ -64,7 +63,7 @@ public class EidasMetadataResolverRepository {
     }
 
     public List<String> getEntityIdsWithResolver() {
-        return Collections.list(metadataResolvers.keys());
+        return metadataResolvers.keySet().asList();
     }
 
     public List<String> getTrustAnchorsEntityIds() {
@@ -75,8 +74,7 @@ public class EidasMetadataResolverRepository {
         delayBeforeNextRefresh = eidasMetadataConfiguration.getTrustAnchorMaxRefreshDelay();
         try {
             trustAnchors = trustAnchorResolver.getTrustAnchors();
-            removeMetadataResolvers();
-            registerMetadataResolvers(trustAnchors);
+            refreshMetadataResolvers(trustAnchors);
         } catch (Exception e) {
             log.error("Error fetching trust anchor or validating it", e);
             setShortRefreshDelay();
@@ -85,8 +83,9 @@ public class EidasMetadataResolverRepository {
         }
     }
 
-    private void registerMetadataResolvers(List<JWK> trustAnchors) {
-        for(JWK trustAnchor : trustAnchors) {
+    private void refreshMetadataResolvers(List<JWK> trustAnchors) {
+        ImmutableMap.Builder<String, MetadataResolver> metadataResolverBuilder = ImmutableMap.<String, MetadataResolver>builder();
+        for (JWK trustAnchor : trustAnchors) {
             try {
                 X509Certificate certificate = X509CertUtils.parse(Base64.decode(String.valueOf(trustAnchor.getX509CertChain().get(0))));
                 certificate.checkValidity();
@@ -95,7 +94,8 @@ public class EidasMetadataResolverRepository {
                 if (!errors.isEmpty()) {
                     throw new Error(String.format("Managed to generate an invalid anchor: %s", String.join(", ", errors)));
                 }
-                addMetadataResolver(trustAnchor);
+
+                metadataResolverBuilder.put(trustAnchor.getKeyID(), createMetadataResolver(trustAnchor));
 
                 Date metadataSigningCertExpiryDate = certificate.getNotAfter();
                 Date nextRunTime = DateTime.now().plus(delayBeforeNextRefresh).toDate();
@@ -106,11 +106,13 @@ public class EidasMetadataResolverRepository {
                 log.error("Error creating MetadataResolver for " + trustAnchor.getKeyID(), e);
             }
         }
+        ImmutableMap<String, MetadataResolver> oldMetadataResolvers = metadataResolvers;
+        metadataResolvers = metadataResolverBuilder.build();
+        stopOldMetadataResolvers(oldMetadataResolvers);
     }
 
-    private void addMetadataResolver(JWK trustAnchor) throws CertificateException {
-        MetadataResolver metadataResolver = dropwizardMetadataResolverFactory.createMetadataResolver(environment, createMetadataResolverConfiguration(trustAnchor));
-        metadataResolvers.put(trustAnchor.getKeyID(), metadataResolver);
+    private MetadataResolver createMetadataResolver(JWK trustAnchor) throws CertificateException {
+        return dropwizardMetadataResolverFactory.createMetadataResolver(environment, createMetadataResolverConfiguration(trustAnchor));
     }
 
     private MetadataResolverConfiguration createMetadataResolverConfiguration(JWK trustAnchor) throws CertificateException {
@@ -121,7 +123,7 @@ public class EidasMetadataResolverRepository {
         List<X509Certificate> trustedCertChain = trustAnchor.getX509CertChain()
                 .stream()
                 .map(base64 -> base64.decode())
-                .map(certBytes -> new ByteArrayInputStream(certBytes))
+                .map(ByteArrayInputStream::new)
                 .map(certStream -> {
                     try { //Java streams don't allow throwing checked exceptions
                         return (X509Certificate) certificateFactory.generateCertificate(certStream);
@@ -143,15 +145,14 @@ public class EidasMetadataResolverRepository {
                 );
     }
 
-    private void removeMetadataResolvers() {
-        for (String entityId : metadataResolvers.keySet()) {
-            MetadataResolver metadataResolver = metadataResolvers.get(entityId);
-            if (metadataResolver instanceof AbstractReloadingMetadataResolver){
+    private void stopOldMetadataResolvers(ImmutableMap<String, MetadataResolver> oldMetadataResolvers) {
+        oldMetadataResolvers.forEach((key, metadataResolver) -> {
+            if (metadataResolver instanceof AbstractReloadingMetadataResolver) {
+                //destroy() stops the timer - objects using the MetadataResolver will still be able to read metadata objects that are in memory
                 ((AbstractReloadingMetadataResolver) metadataResolver).destroy();
             }
-            environment.metrics().remove(getClientName(entityId));
-            metadataResolvers.remove(entityId);
-        }
+            environment.metrics().remove(getClientName(key));
+        });
     }
 
     private KeyStore buildKeyStoreFromCertificate(List<X509Certificate> certificates) {
