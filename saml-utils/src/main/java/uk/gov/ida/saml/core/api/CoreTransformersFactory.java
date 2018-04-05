@@ -4,7 +4,6 @@ import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.xmlsec.algorithm.DigestAlgorithm;
 import org.opensaml.xmlsec.algorithm.SignatureAlgorithm;
-import uk.gov.ida.common.shared.security.IdGenerator;
 import uk.gov.ida.saml.core.OpenSamlXmlObjectFactory;
 import uk.gov.ida.saml.core.transformers.inbound.Cycle3DatasetFactory;
 import uk.gov.ida.saml.core.transformers.inbound.HubAssertionUnmarshaller;
@@ -23,7 +22,7 @@ import uk.gov.ida.saml.deserializers.validators.SizeValidator;
 import uk.gov.ida.saml.metadata.transformers.KeyDescriptorsUnmarshaller;
 import uk.gov.ida.saml.security.CredentialFactorySignatureValidator;
 import uk.gov.ida.saml.security.EncrypterFactory;
-import uk.gov.ida.saml.security.EncryptionCredentialFactory;
+import uk.gov.ida.saml.security.KeyStoreBackedEncryptionCredentialResolver;
 import uk.gov.ida.saml.security.EncryptionKeyStore;
 import uk.gov.ida.saml.security.EntityToEncryptForLocator;
 import uk.gov.ida.saml.security.IdaKeyStore;
@@ -145,7 +144,7 @@ public class CoreTransformersFactory {
             final ResponseAssertionSigner responseAssertionSigner) {
         SamlResponseAssertionEncrypter responseAssertionEncrypter =
                 new SamlResponseAssertionEncrypter(
-                        new EncryptionCredentialFactory(publicKeyStore),
+                        new KeyStoreBackedEncryptionCredentialResolver(publicKeyStore),
                         encrypterFactory,
                         entityToEncryptForLocator);
         return new ResponseToSignedStringTransformer(

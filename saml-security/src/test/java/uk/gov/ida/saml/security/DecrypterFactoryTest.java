@@ -88,8 +88,8 @@ public class DecrypterFactoryTest {
 
     private Credential getCredential(final String entityId) {
         HardCodedKeyStore keyStore = new HardCodedKeyStore(entityId);
-        EncryptionCredentialFactory encryptionCredentialFactory = new EncryptionCredentialFactory(keyStore);
-        return encryptionCredentialFactory.getEncryptingCredential(entityId);
+        KeyStoreBackedEncryptionCredentialResolver keyStoreBackedEncryptionCredentialResolver = new KeyStoreBackedEncryptionCredentialResolver(keyStore);
+        return keyStoreBackedEncryptionCredentialResolver.getEncryptingCredential(entityId);
     }
 
     private BasicCredential getPrivateKeyFor(final String entityId) {
