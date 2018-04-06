@@ -42,7 +42,7 @@ public class EidasMetadataResolverRepository {
     private final Logger log = LoggerFactory.getLogger(EidasMetadataResolverRepository.class);
     private final EidasTrustAnchorResolver trustAnchorResolver;
     private final DropwizardMetadataResolverFactory dropwizardMetadataResolverFactory;
-    private ImmutableMap<String, MetadataPair> metadataResolvers = ImmutableMap.of();
+    private ImmutableMap<String, MetadataResolverContainer> metadataResolvers = ImmutableMap.of();
     private List<JWK> trustAnchors = new ArrayList<>();
     private final Environment environment;
     private final EidasMetadataConfiguration eidasMetadataConfiguration;
@@ -67,7 +67,7 @@ public class EidasMetadataResolverRepository {
     }
 
     public Optional<MetadataResolver> getMetadataResolver(String entityId) {
-        return Optional.ofNullable(metadataResolvers.get(entityId)).map(MetadataPair::getMetadataResolver);
+        return Optional.ofNullable(metadataResolvers.get(entityId)).map(MetadataResolverContainer::getMetadataResolver);
     }
 
     public List<String> getEntityIdsWithResolver() {
@@ -75,7 +75,7 @@ public class EidasMetadataResolverRepository {
     }
 
     public Optional<ExplicitKeySignatureTrustEngine> getSignatureTrustEngine(String entityId) {
-        return Optional.ofNullable(metadataResolvers.get(entityId)).map(MetadataPair::getSignatureTrustEngine);
+        return Optional.ofNullable(metadataResolvers.get(entityId)).map(MetadataResolverContainer::getSignatureTrustEngine);
     }
 
     public Map<String, MetadataResolver> getMetadataResolvers(){
@@ -104,7 +104,7 @@ public class EidasMetadataResolverRepository {
     }
 
     private void refreshMetadataResolvers(List<JWK> trustAnchors) {
-        ImmutableMap.Builder<String, MetadataPair> metadataResolverBuilder = ImmutableMap.builder();
+        ImmutableMap.Builder<String, MetadataResolverContainer> metadataResolverBuilder = ImmutableMap.builder();
         for (JWK trustAnchor : trustAnchors) {
             try {
                 X509Certificate certificate = X509CertUtils.parse(Base64.decode(String.valueOf(trustAnchor.getX509CertChain().get(0))));
@@ -126,24 +126,38 @@ public class EidasMetadataResolverRepository {
                 log.error("Error creating MetadataResolver for " + trustAnchor.getKeyID(), e);
             }
         }
-        ImmutableMap<String, MetadataPair> oldMetadataResolvers = metadataResolvers;
+        ImmutableMap<String, MetadataResolverContainer> oldMetadataResolvers = metadataResolvers;
         metadataResolvers = metadataResolverBuilder.build();
         stopOldMetadataResolvers(oldMetadataResolvers);
     }
 
-    private MetadataPair createMetadataResolver(JWK trustAnchor) throws CertificateException, ComponentInitializationException {
-        MetadataResolver metadataResolver = dropwizardMetadataResolverFactory.createMetadataResolver(environment, createMetadataResolverConfiguration(trustAnchor));
-        return new MetadataPair(metadataResolver, metadataSignatureTrustEngineFactory.createSignatureTrustEngine(metadataResolver));
+    private MetadataResolverContainer createMetadataResolver(JWK trustAnchor) throws CertificateException, ComponentInitializationException {
+        MetadataResolverConfiguration metadataResolverConfiguration = createMetadataResolverConfiguration(trustAnchor);
+        MetadataResolver metadataResolver = dropwizardMetadataResolverFactory.createMetadataResolver(environment, metadataResolverConfiguration);
+        return new MetadataResolverContainer(
+                metadataResolverConfiguration.getJerseyClientName(),
+                metadataResolver,
+                metadataSignatureTrustEngineFactory.createSignatureTrustEngine(metadataResolver));
+    }
+
+    public String getClientName(String entityId) {
+        return String.format("%s - %s - %s",
+                eidasMetadataConfiguration.getJerseyClientName(),
+                entityId,
+                DateTime.now().getMillis());
     }
 
     private MetadataResolverConfiguration createMetadataResolverConfiguration(JWK trustAnchor) throws CertificateException {
+
+        String metricName = getClientName(trustAnchor.getKeyID());
+
         URI metadataUri = UriBuilder.fromUri(trustAnchor.getKeyID())
                 .build();
 
         CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
         List<X509Certificate> trustedCertChain = trustAnchor.getX509CertChain()
                 .stream()
-                .map(base64 -> base64.decode())
+                .map(com.nimbusds.jose.util.Base64::decode)
                 .map(ByteArrayInputStream::new)
                 .map(certStream -> {
                     try { //Java streams don't allow throwing checked exceptions
@@ -160,20 +174,20 @@ public class EidasMetadataResolverRepository {
                 eidasMetadataConfiguration.getMaxRefreshDelay(),
                 null,
                 eidasMetadataConfiguration.getJerseyClientConfiguration(),
-                getClientName(trustAnchor.getKeyID()),
+                metricName,
                 null,
                 new DynamicTrustStoreConfiguration(buildKeyStoreFromCertificate(trustedCertChain))
                 );
     }
 
-    private void stopOldMetadataResolvers(ImmutableMap<String, MetadataPair> oldMetadataResolvers) {
-        oldMetadataResolvers.forEach((key, metadataPair) -> {
-            MetadataResolver metadataResolver = metadataPair.getMetadataResolver();
+    private void stopOldMetadataResolvers(ImmutableMap<String, MetadataResolverContainer> oldMetadataResolvers) {
+        oldMetadataResolvers.forEach((key, metadataResolverContainer) -> {
+            MetadataResolver metadataResolver = metadataResolverContainer.getMetadataResolver();
             if (metadataResolver instanceof AbstractReloadingMetadataResolver) {
-                //destroy() stops the timer - objects using the MetadataResolver will still be able to read metadata objects that are in memory
+                // destroy() stops the timer - objects using the MetadataResolver will still be able to read metadata objects that are in memory
                 ((AbstractReloadingMetadataResolver) metadataResolver).destroy();
             }
-            environment.metrics().remove(getClientName(key));
+            environment.metrics().remove(metadataResolverContainer.getMetricName());
         });
     }
 
@@ -190,10 +204,6 @@ public class EidasMetadataResolverRepository {
         }
     }
 
-    private String getClientName(String entityId) {
-        return String.format("%s - %s", eidasMetadataConfiguration.getJerseyClientName(), entityId);
-    }
-
     private class RefreshTimerTask extends TimerTask {
         @Override
         public void run() {
@@ -205,21 +215,28 @@ public class EidasMetadataResolverRepository {
         delayBeforeNextRefresh = eidasMetadataConfiguration.getTrustAnchorMinRefreshDelay();
     }
 
-    private class MetadataPair {
+    private class MetadataResolverContainer {
+        private final String metricName;
         private final MetadataResolver metadataResolver;
         private final ExplicitKeySignatureTrustEngine explicitKeySignatureTrustEngine;
 
-        private MetadataPair(MetadataResolver metadataResolver, ExplicitKeySignatureTrustEngine explicitKeySignatureTrustEngine) {
+        private MetadataResolverContainer(String metricName, MetadataResolver metadataResolver,
+                                          ExplicitKeySignatureTrustEngine explicitKeySignatureTrustEngine) {
+            this.metricName = metricName;
             this.metadataResolver = metadataResolver;
             this.explicitKeySignatureTrustEngine = explicitKeySignatureTrustEngine;
         }
 
-        ExplicitKeySignatureTrustEngine getSignatureTrustEngine() {
+        private ExplicitKeySignatureTrustEngine getSignatureTrustEngine() {
             return explicitKeySignatureTrustEngine;
         }
 
         private MetadataResolver getMetadataResolver() {
             return metadataResolver;
+        }
+
+        private String getMetricName() {
+            return metricName;
         }
     }
 }
