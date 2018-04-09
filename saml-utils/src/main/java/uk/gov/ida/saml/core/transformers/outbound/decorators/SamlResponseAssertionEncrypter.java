@@ -4,6 +4,7 @@ import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.EncryptedAssertion;
 import org.opensaml.saml.saml2.core.Response;
 import uk.gov.ida.saml.security.EncrypterFactory;
+import uk.gov.ida.saml.security.EncryptionCredentialResolver;
 import uk.gov.ida.saml.security.KeyStoreBackedEncryptionCredentialResolver;
 import uk.gov.ida.saml.security.EntityToEncryptForLocator;
 
@@ -14,10 +15,10 @@ public class SamlResponseAssertionEncrypter extends AbstractAssertionEncrypter<R
 
     @Inject
     public SamlResponseAssertionEncrypter(
-            KeyStoreBackedEncryptionCredentialResolver credentialFactory,
+            EncryptionCredentialResolver credentialResolver,
             EncrypterFactory encrypterFactory,
             EntityToEncryptForLocator entityToEncryptForLocator) {
-        super(encrypterFactory, entityToEncryptForLocator, credentialFactory);
+        super(encrypterFactory, entityToEncryptForLocator, credentialResolver);
 
     }
 

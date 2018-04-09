@@ -7,30 +7,30 @@ import org.opensaml.saml.saml2.encryption.Encrypter;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.xmlsec.encryption.support.EncryptionException;
 import uk.gov.ida.saml.security.EncrypterFactory;
-import uk.gov.ida.saml.security.KeyStoreBackedEncryptionCredentialResolver;
+import uk.gov.ida.saml.security.EncryptionCredentialResolver;
 import uk.gov.ida.saml.security.EntityToEncryptForLocator;
 
 import java.util.List;
 
 public abstract class AbstractAssertionEncrypter<T> {
-    protected final KeyStoreBackedEncryptionCredentialResolver credentialFactory;
+    protected final EncryptionCredentialResolver credentialResolver;
     protected final EncrypterFactory encrypterFactory;
     protected final EntityToEncryptForLocator entityToEncryptForLocator;
 
     public AbstractAssertionEncrypter(
             final EncrypterFactory encrypterFactory,
             final EntityToEncryptForLocator entityToEncryptForLocator,
-            final KeyStoreBackedEncryptionCredentialResolver credentialFactory) {
+            final EncryptionCredentialResolver credentialResolver) {
 
         this.encrypterFactory = encrypterFactory;
         this.entityToEncryptForLocator = entityToEncryptForLocator;
-        this.credentialFactory = credentialFactory;
+        this.credentialResolver = credentialResolver;
     }
 
     public T encryptAssertions(T samlMessage) {
         if (getAssertions(samlMessage).size() > 0) {
             String entityToEncryptFor = entityToEncryptForLocator.fromRequestId(getRequestId(samlMessage));
-            Credential credential = credentialFactory.getEncryptingCredential(entityToEncryptFor);
+            Credential credential = credentialResolver.getEncryptingCredential(entityToEncryptFor);
 
             Encrypter samlEncrypter = encrypterFactory.createEncrypter(credential);
 
