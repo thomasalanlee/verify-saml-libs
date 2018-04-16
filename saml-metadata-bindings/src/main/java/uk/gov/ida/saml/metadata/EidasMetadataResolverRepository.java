@@ -17,15 +17,8 @@ import uk.gov.ida.saml.metadata.factories.DropwizardMetadataResolverFactory;
 import uk.gov.ida.saml.metadata.factories.MetadataSignatureTrustEngineFactory;
 
 import javax.inject.Inject;
-import javax.ws.rs.core.UriBuilder;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.URI;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
+import java.io.UnsupportedEncodingException;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,12 +35,13 @@ public class EidasMetadataResolverRepository {
     private final Logger log = LoggerFactory.getLogger(EidasMetadataResolverRepository.class);
     private final EidasTrustAnchorResolver trustAnchorResolver;
     private final DropwizardMetadataResolverFactory dropwizardMetadataResolverFactory;
+    private final MetadataResolverConfigBuilder metadataResolverConfigBuilder;
     private ImmutableMap<String, MetadataResolverContainer> metadataResolvers = ImmutableMap.of();
     private List<JWK> trustAnchors = new ArrayList<>();
     private final Environment environment;
     private final EidasMetadataConfiguration eidasMetadataConfiguration;
     private final Timer timer;
-    private MetadataSignatureTrustEngineFactory metadataSignatureTrustEngineFactory;
+    private final MetadataSignatureTrustEngineFactory metadataSignatureTrustEngineFactory;
     private long delayBeforeNextRefresh;
 
     @Inject
@@ -56,13 +50,15 @@ public class EidasMetadataResolverRepository {
                                            EidasMetadataConfiguration eidasMetadataConfiguration,
                                            DropwizardMetadataResolverFactory dropwizardMetadataResolverFactory,
                                            Timer timer,
-                                           MetadataSignatureTrustEngineFactory metadataSignatureTrustEngineFactory) {
+                                           MetadataSignatureTrustEngineFactory metadataSignatureTrustEngineFactory,
+                                           MetadataResolverConfigBuilder metadataResolverConfigBuilder) {
         this.trustAnchorResolver = trustAnchorResolver;
         this.environment = environment;
         this.eidasMetadataConfiguration = eidasMetadataConfiguration;
         this.dropwizardMetadataResolverFactory = dropwizardMetadataResolverFactory;
         this.timer = timer;
         this.metadataSignatureTrustEngineFactory = metadataSignatureTrustEngineFactory;
+        this.metadataResolverConfigBuilder = metadataResolverConfigBuilder;
         refresh();
     }
 
@@ -131,53 +127,13 @@ public class EidasMetadataResolverRepository {
         stopOldMetadataResolvers(oldMetadataResolvers);
     }
 
-    private MetadataResolverContainer createMetadataResolver(JWK trustAnchor) throws CertificateException, ComponentInitializationException {
-        MetadataResolverConfiguration metadataResolverConfiguration = createMetadataResolverConfiguration(trustAnchor);
+    private MetadataResolverContainer createMetadataResolver(JWK trustAnchor) throws CertificateException, ComponentInitializationException, UnsupportedEncodingException {
+        MetadataResolverConfiguration metadataResolverConfiguration = metadataResolverConfigBuilder.createMetadataResolverConfiguration(trustAnchor, eidasMetadataConfiguration);
         MetadataResolver metadataResolver = dropwizardMetadataResolverFactory.createMetadataResolver(environment, metadataResolverConfiguration);
         return new MetadataResolverContainer(
                 metadataResolverConfiguration.getJerseyClientName(),
                 metadataResolver,
                 metadataSignatureTrustEngineFactory.createSignatureTrustEngine(metadataResolver));
-    }
-
-    public String getClientName(String entityId) {
-        return String.format("%s - %s - %s",
-                eidasMetadataConfiguration.getJerseyClientName(),
-                entityId,
-                DateTime.now().getMillis());
-    }
-
-    private MetadataResolverConfiguration createMetadataResolverConfiguration(JWK trustAnchor) throws CertificateException {
-
-        String metricName = getClientName(trustAnchor.getKeyID());
-
-        URI metadataUri = UriBuilder.fromUri(trustAnchor.getKeyID())
-                .build();
-
-        CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-        List<X509Certificate> trustedCertChain = trustAnchor.getX509CertChain()
-                .stream()
-                .map(com.nimbusds.jose.util.Base64::decode)
-                .map(ByteArrayInputStream::new)
-                .map(certStream -> {
-                    try { //Java streams don't allow throwing checked exceptions
-                        return (X509Certificate) certificateFactory.generateCertificate(certStream);
-                    } catch (CertificateException e) {
-                        throw new RuntimeException("Certificate in Trust Anchor x5c is not a valid x509", e);
-                    }
-                })
-                .collect(Collectors.toList());
-
-        return new TrustStoreBackedMetadataConfiguration(
-                metadataUri,
-                eidasMetadataConfiguration.getMinRefreshDelay(),
-                eidasMetadataConfiguration.getMaxRefreshDelay(),
-                null,
-                eidasMetadataConfiguration.getJerseyClientConfiguration(),
-                metricName,
-                null,
-                new DynamicTrustStoreConfiguration(buildKeyStoreFromCertificate(trustedCertChain))
-                );
     }
 
     private void stopOldMetadataResolvers(ImmutableMap<String, MetadataResolverContainer> oldMetadataResolvers) {
@@ -189,19 +145,6 @@ public class EidasMetadataResolverRepository {
             }
             environment.metrics().remove(metadataResolverContainer.getMetricName());
         });
-    }
-
-    private KeyStore buildKeyStoreFromCertificate(List<X509Certificate> certificates) {
-        try {
-            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            keyStore.load(null);
-            for(X509Certificate certificate : certificates) {
-                keyStore.setCertificateEntry("certificate-" + certificates.indexOf(certificate), certificate);
-            }
-            return keyStore;
-        } catch (CertificateException | NoSuchAlgorithmException | KeyStoreException | IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private class RefreshTimerTask extends TimerTask {
@@ -220,7 +163,8 @@ public class EidasMetadataResolverRepository {
         private final MetadataResolver metadataResolver;
         private final ExplicitKeySignatureTrustEngine explicitKeySignatureTrustEngine;
 
-        private MetadataResolverContainer(String metricName, MetadataResolver metadataResolver,
+        private MetadataResolverContainer(String metricName,
+                                          MetadataResolver metadataResolver,
                                           ExplicitKeySignatureTrustEngine explicitKeySignatureTrustEngine) {
             this.metricName = metricName;
             this.metadataResolver = metadataResolver;

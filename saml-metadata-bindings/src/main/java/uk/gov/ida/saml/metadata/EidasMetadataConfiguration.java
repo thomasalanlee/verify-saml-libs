@@ -10,6 +10,7 @@ import java.util.Optional;
 
 public class EidasMetadataConfiguration {
 
+
     @JsonCreator
     public EidasMetadataConfiguration(@JsonProperty("trustAnchorUri") URI trustAnchorUri,
                                       @JsonProperty("minRefreshDelay") Long minRefreshDelay,
@@ -18,7 +19,8 @@ public class EidasMetadataConfiguration {
                                       @JsonProperty("trustAnchorMinRefreshDelay") Long trustAnchorMinRefreshDelay,
                                       @JsonProperty("client") JerseyClientConfiguration client,
                                       @JsonProperty("jerseyClientName") String jerseyClientName,
-                                      @JsonProperty("trustStore") TrustStoreConfiguration trustStore
+                                      @JsonProperty("trustStore") TrustStoreConfiguration trustStore,
+                                      @JsonProperty("metadataSourceUri") URI metadataSourceUri
     )
     {
         this.trustAnchorUri = trustAnchorUri;
@@ -29,6 +31,7 @@ public class EidasMetadataConfiguration {
         this.client = Optional.ofNullable(client).orElse(new JerseyClientConfiguration());
         this.jerseyClientName = Optional.ofNullable(jerseyClientName).orElse("MetadataClient");
         this.trustStore = trustStore;
+        this.metadataSourceUri = metadataSourceUri;
     }
 
     private URI trustAnchorUri;
@@ -48,6 +51,8 @@ public class EidasMetadataConfiguration {
     private String jerseyClientName;
 
     private TrustStoreConfiguration trustStore;
+
+    private URI metadataSourceUri;
 
     public URI getTrustAnchorUri() {
         return trustAnchorUri;
@@ -79,5 +84,9 @@ public class EidasMetadataConfiguration {
 
     public KeyStore getTrustStore() {
         return trustStore.getTrustStore();
+    }
+
+    public URI getMetadataSourceUri() {
+        return metadataSourceUri;
     }
 }
