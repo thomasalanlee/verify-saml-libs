@@ -91,4 +91,9 @@ public class SubjectConfirmationDataBuilder {
         this.encryptedAssertions.add(assertion);
         return this;
     }
+
+    public SubjectConfirmationDataBuilder addEncryptedAssertions(List<EncryptedAssertion> assertions) {
+        this.encryptedAssertions.addAll(assertions);
+        return this;
+    }
 }

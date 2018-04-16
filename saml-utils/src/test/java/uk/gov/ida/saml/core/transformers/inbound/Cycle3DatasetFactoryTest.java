@@ -39,7 +39,7 @@ public class Cycle3DatasetFactoryTest {
         attributes.add(aSimpleStringAttribute().withName(attributeNameOne).withSimpleStringValue(attributeValueOne).build());
         attributes.add(aSimpleStringAttribute().withName(attributeNameTwo).withSimpleStringValue(attributeValueTwo).build());
 
-        Assertion assertion = AssertionBuilder.aCycle3DatasetAssertion(attributes);
+        Assertion assertion = AssertionBuilder.aCycle3DatasetAssertion(attributes).buildUnencrypted();
 
         Cycle3Dataset cycle3Dataset = cycle3DatasetFactory.createCycle3DataSet(assertion);
 

@@ -36,7 +36,7 @@ public class HubAssertionUnmarshallerTest {
 
     @Test
     public void transform_shouldDelegateCycle3DataTransformation() throws Exception {
-        Assertion cycle3Assertion = aCycle3DatasetAssertion("name", "value");
+        Assertion cycle3Assertion = aCycle3DatasetAssertion("name", "value").buildUnencrypted();
         Cycle3Dataset cycle3Data = Cycle3DatasetBuilder.aCycle3Dataset().addCycle3Data("name", "value").build();
         Mockito.when(assertionCycle3DatasetTransformer.createCycle3DataSet(cycle3Assertion)).thenReturn(cycle3Data);
 

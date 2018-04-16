@@ -67,7 +67,7 @@ subprojects {
                 'org.assertj:assertj-joda-time:1.1.0',
                 'org.assertj:assertj-core:1.6.0',
                 'junit:junit:4.11',
-                'uk.gov.ida:ida-dev-pki:1.1.0-21',
+                'uk.gov.ida:ida-dev-pki:1.1.0-22',
                 'org.mockito:mockito-core:1.9.5'
 
         xml_utils "uk.gov.ida:common-utils:2.0.0-$ida_utils_version"

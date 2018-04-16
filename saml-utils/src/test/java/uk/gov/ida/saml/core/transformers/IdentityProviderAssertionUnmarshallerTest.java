@@ -64,7 +64,8 @@ public class IdentityProviderAssertionUnmarshallerTest {
                 aGender_1_1().build(),
                 aDate_1_1().buildAsDateOfBirth(),
                 anAddressAttribute().buildCurrentAddress(),
-                anAddressAttribute().addAddress(anAddressAttributeValue().build()).buildPreviousAddress());
+                anAddressAttribute().addAddress(anAddressAttributeValue().build()).buildPreviousAddress())
+                .buildUnencrypted();
 
         MatchingDataset matchingDataset = aMatchingDataset().build();
 
@@ -77,7 +78,7 @@ public class IdentityProviderAssertionUnmarshallerTest {
 
     @Test
     public void transform_shouldDelegateAuthnStatementTransformationWhenAssertionContainsAuthnStatement() throws Exception {
-        Assertion assertion = anAuthnStatementAssertion();
+        Assertion assertion = anAuthnStatementAssertion().buildUnencrypted();
         IdentityProviderAuthnStatement authnStatement = anIdentityProviderAuthnStatement().build();
 
         when(idaAuthnStatementUnmarshaller.fromAssertion(assertion)).thenReturn(authnStatement);
