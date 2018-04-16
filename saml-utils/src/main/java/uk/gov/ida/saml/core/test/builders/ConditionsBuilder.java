@@ -62,13 +62,12 @@ public class ConditionsBuilder {
     }
 
     public ConditionsBuilder validFor(Duration duration){
-        withNotBefore(DateTime.now()).withNotOnOrAfter(DateTime.now().plus(duration));
-        return this;
+        return withNotBefore(DateTime.now())
+              .withNotOnOrAfter(DateTime.now().plus(duration));
     }
 
     public ConditionsBuilder restrictedToAudience(String audienceUri){
         AudienceRestriction audienceRestriction = anAudienceRestriction().withAudienceId(audienceUri).build();
-        audienceRestrictions.add(audienceRestriction);
-        return this;
+        return addAudienceRestriction(audienceRestriction);
     }
 }
