@@ -9,8 +9,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -20,8 +18,7 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.net.URLEncoder.*;
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static uk.gov.ida.saml.metadata.ResourceEncoder.*;
 
 public class MetadataResolverConfigBuilder {
 
@@ -40,10 +37,9 @@ public class MetadataResolverConfigBuilder {
     }
 
     private URI fullUri(URI sourceUri, String entityId) throws UnsupportedEncodingException {
-        //FIXME Double encoding to account for S3 object key being already encoded before made into a REST resource (i.e. once on submission and once as endpoint)
         return UriBuilder
                 .fromUri(sourceUri)
-                .path(encode(encode(entityId, UTF_8.name()), UTF_8.name()))
+                .path(entityIdAsResource(entityId))
                 .build();
     }
 
