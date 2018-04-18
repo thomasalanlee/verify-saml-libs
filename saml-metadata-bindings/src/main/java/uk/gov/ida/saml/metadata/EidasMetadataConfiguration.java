@@ -10,6 +10,25 @@ import java.util.Optional;
 
 public class EidasMetadataConfiguration {
 
+    private URI trustAnchorUri;
+
+    /* Used to set {@link org.opensaml.saml2.metadata.provider.AbstractReloadingMetadataProvider#minRefreshDelay} */
+    private Long minRefreshDelay;
+
+    /* Used to set {@link org.opensaml.saml2.metadata.provider.AbstractReloadingMetadataProvider#maxRefreshDelay} */
+    private Long maxRefreshDelay;
+
+    private Long trustAnchorMaxRefreshDelay;
+
+    private Long trustAnchorMinRefreshDelay;
+
+    private JerseyClientConfiguration client;
+
+    private String jerseyClientName;
+
+    private TrustStoreConfiguration trustStore;
+
+    private URI metadataSourceUri;
 
     @JsonCreator
     public EidasMetadataConfiguration(@JsonProperty("trustAnchorUri") URI trustAnchorUri,
@@ -33,26 +52,6 @@ public class EidasMetadataConfiguration {
         this.trustStore = trustStore;
         this.metadataSourceUri = metadataSourceUri;
     }
-
-    private URI trustAnchorUri;
-
-    /* Used to set {@link org.opensaml.saml2.metadata.provider.AbstractReloadingMetadataProvider#minRefreshDelay} */
-    private Long minRefreshDelay;
-
-    /* Used to set {@link org.opensaml.saml2.metadata.provider.AbstractReloadingMetadataProvider#maxRefreshDelay} */
-    private Long maxRefreshDelay;
-
-    private Long trustAnchorMaxRefreshDelay;
-
-    private Long trustAnchorMinRefreshDelay;
-
-    private JerseyClientConfiguration client;
-
-    private String jerseyClientName;
-
-    private TrustStoreConfiguration trustStore;
-
-    private URI metadataSourceUri;
 
     public URI getTrustAnchorUri() {
         return trustAnchorUri;
