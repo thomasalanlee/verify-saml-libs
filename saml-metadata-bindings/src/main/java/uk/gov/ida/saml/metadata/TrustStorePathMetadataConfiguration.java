@@ -2,6 +2,7 @@ package uk.gov.ida.saml.metadata;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.client.JerseyClientConfiguration;
 import uk.gov.ida.saml.metadata.factories.MetadataTrustStoreProvider;
@@ -18,6 +19,7 @@ import java.security.KeyStore;
  * to use a nested trust store object instead of having path and password as part of the metadata configuration.
  */
 @Deprecated
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TrustStorePathMetadataConfiguration extends MetadataConfiguration {
 
     @JsonCreator
