@@ -31,13 +31,17 @@ import javax.ws.rs.Path;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SamlMetadataBundleTest {
     public static final WireMockRule metadataResource = new WireMockRule(WireMockConfiguration.options().dynamicPort());
 
-    public static KeyStoreRule keyStoreRule = new KeyStoreRuleBuilder().withCertificate("metadata", CACertificates.TEST_METADATA_CA).withCertificate("root", CACertificates.TEST_ROOT_CA).build();
+    public static KeyStoreRule metadataKeyStoreRule = new KeyStoreRuleBuilder().withCertificate("metadata", CACertificates.TEST_METADATA_CA).withCertificate("root", CACertificates.TEST_ROOT_CA).build();
+    public static KeyStoreRule hubKeyStoreRule = new KeyStoreRuleBuilder().withCertificate("hub", CACertificates.TEST_CORE_CA).withCertificate("root", CACertificates.TEST_ROOT_CA).build();
+    public static KeyStoreRule idpKeyStoreRule = new KeyStoreRuleBuilder().withCertificate("idp", CACertificates.TEST_IDP_CA).withCertificate("root", CACertificates.TEST_ROOT_CA).build();
 
     static {
         metadataResource.stubFor(get(urlEqualTo("/metadata")).willReturn(aResponse().withBody(new MetadataFactory().defaultMetadata())));
@@ -48,26 +52,42 @@ public class SamlMetadataBundleTest {
             OldTestApplication.class,
             ResourceHelpers.resourceFilePath("old-test-app.yml"),
             ConfigOverride.config("metadata.uri", () -> "http://localhost:" + metadataResource.port() + "/metadata"),
-            ConfigOverride.config("metadata.trustStorePath", () -> keyStoreRule.getAbsolutePath()),
-            ConfigOverride.config("metadata.trustStorePassword", () -> keyStoreRule.getPassword()),
-            ConfigOverride.config("metadata.trustStore.unknownProperty", () -> "unknownValue")
+            ConfigOverride.config("metadata.trustStorePath", () -> metadataKeyStoreRule.getAbsolutePath()),
+            ConfigOverride.config("metadata.trustStorePassword", () -> metadataKeyStoreRule.getPassword()),
+            ConfigOverride.config("metadata.trustStore.unknownProperty", () -> "unknownValue"),
+            ConfigOverride.config("hubTrustStore.path", () -> hubKeyStoreRule.getAbsolutePath()),
+            ConfigOverride.config("hubTrustStore.password", () -> hubKeyStoreRule.getPassword()),
+            ConfigOverride.config("idpTrustStore.path", () -> idpKeyStoreRule.getAbsolutePath()),
+            ConfigOverride.config("idpTrustStore.password", () -> idpKeyStoreRule.getPassword())
     );
 
     public static final DropwizardAppRule<TestConfiguration> APPLICATION_DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
             TestApplication.class,
             ResourceHelpers.resourceFilePath("test-app.yml"),
             ConfigOverride.config("metadata.uri", () -> "http://localhost:" + metadataResource.port() + "/metadata"),
-            ConfigOverride.config("metadata.trustStore.path", () -> keyStoreRule.getAbsolutePath()),
-            ConfigOverride.config("metadata.trustStore.password", () -> keyStoreRule.getPassword()),
-            ConfigOverride.config("metadata.unknownProperty", () -> "unknownValue")
+            ConfigOverride.config("metadata.trustStore.path", () -> metadataKeyStoreRule.getAbsolutePath()),
+            ConfigOverride.config("metadata.trustStore.password", () -> metadataKeyStoreRule.getPassword()),
+            ConfigOverride.config("metadata.unknownProperty", () -> "unknownValue"),
+            ConfigOverride.config("hubTrustStore.path", () -> hubKeyStoreRule.getAbsolutePath()),
+            ConfigOverride.config("hubTrustStore.password", () -> hubKeyStoreRule.getPassword()),
+            ConfigOverride.config("idpTrustStore.path", () -> idpKeyStoreRule.getAbsolutePath()),
+            ConfigOverride.config("idpTrustStore.password", () -> idpKeyStoreRule.getPassword())
     );
 
     @ClassRule
     @Deprecated
-    public final static RuleChain oldRuleChain = RuleChain.outerRule(metadataResource).around(keyStoreRule).around(OLD_APPLICATION_DROPWIZARD_APP_RULE);
+    public final static RuleChain oldRuleChain = RuleChain.outerRule(metadataResource)
+                                                          .around(metadataKeyStoreRule)
+                                                          .around(hubKeyStoreRule)
+                                                          .around(idpKeyStoreRule)
+                                                          .around(OLD_APPLICATION_DROPWIZARD_APP_RULE);
 
     @ClassRule
-    public final static RuleChain ruleChain = RuleChain.outerRule(metadataResource).around(keyStoreRule).around(APPLICATION_DROPWIZARD_APP_RULE);
+    public final static RuleChain ruleChain = RuleChain.outerRule(metadataResource)
+                                                       .around(metadataKeyStoreRule)
+                                                       .around(hubKeyStoreRule)
+                                                       .around(idpKeyStoreRule)
+                                                       .around(APPLICATION_DROPWIZARD_APP_RULE);
 
     @Deprecated
     private static Client oldClient;
@@ -97,8 +117,22 @@ public class SamlMetadataBundleTest {
         @JsonProperty("metadata")
         private TrustStorePathMetadataConfiguration metadataConfiguration;
 
+        @JsonProperty("hubTrustStore")
+        private TrustStoreConfiguration hubTrustStoreConfiguration;
+
+        @JsonProperty("idpTrustStore")
+        private TrustStoreConfiguration idpTrustStoreConfiguration;
+
         public MetadataResolverConfiguration getMetadataConfiguration() {
             return metadataConfiguration;
+        }
+
+        public TrustStoreConfiguration getHubTrustStoreConfiguration() {
+            return hubTrustStoreConfiguration;
+        }
+
+        public TrustStoreConfiguration getIdpTrustStoreConfiguration() {
+            return idpTrustStoreConfiguration;
         }
     }
 
@@ -106,8 +140,22 @@ public class SamlMetadataBundleTest {
         @JsonProperty("metadata")
         private TrustStoreBackedMetadataConfiguration metadataConfiguration;
 
+        @JsonProperty("hubTrustStore")
+        private TrustStoreConfiguration hubTrustStoreConfiguration;
+
+        @JsonProperty("idpTrustStore")
+        private TrustStoreConfiguration idpTrustStoreConfiguration;
+
         public MetadataResolverConfiguration getMetadataConfiguration() {
             return metadataConfiguration;
+        }
+
+        public TrustStoreConfiguration getHubTrustStoreConfiguration() {
+            return hubTrustStoreConfiguration;
+        }
+
+        public TrustStoreConfiguration getIdpTrustStoreConfiguration() {
+            return idpTrustStoreConfiguration;
         }
     }
 
@@ -118,7 +166,10 @@ public class SamlMetadataBundleTest {
         @Override
         public void initialize(Bootstrap<OldTestConfiguration> bootstrap) {
             super.initialize(bootstrap);
-            bundle = new MetadataResolverBundle<>(OldTestConfiguration::getMetadataConfiguration);
+            bundle = new MetadataResolverBundle<>(
+                OldTestConfiguration::getMetadataConfiguration,
+                OldTestConfiguration::getHubTrustStoreConfiguration,
+                OldTestConfiguration::getIdpTrustStoreConfiguration);
             bootstrap.addBundle(bundle);
         }
 
@@ -148,7 +199,10 @@ public class SamlMetadataBundleTest {
         @Override
         public void initialize(Bootstrap<TestConfiguration> bootstrap) {
             super.initialize(bootstrap);
-            bundle = new MetadataResolverBundle<>(TestConfiguration::getMetadataConfiguration);
+            bundle = new MetadataResolverBundle<>(
+                TestConfiguration::getMetadataConfiguration,
+                TestConfiguration::getHubTrustStoreConfiguration,
+                TestConfiguration::getIdpTrustStoreConfiguration);
             bootstrap.addBundle(bundle);
         }
 
