@@ -25,4 +25,13 @@ public class JerseyClientMetadataResolver extends AbstractReloadingMetadataResol
     protected byte[] fetchMetadata() {
         return client.target(metadataUri).request().get(String.class).getBytes();
     }
+
+    @Override
+    public void doDestroy() {
+        try {
+            client.close();
+        } finally {
+            super.doDestroy();
+        }
+    }
 }
