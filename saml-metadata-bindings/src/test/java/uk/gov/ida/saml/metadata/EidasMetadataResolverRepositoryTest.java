@@ -3,10 +3,14 @@ package uk.gov.ida.saml.metadata;
 import com.codahale.metrics.MetricRegistry;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.util.X509CertUtils;
+
 import io.dropwizard.setup.Environment;
 import net.minidev.json.JSONObject;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+
 import org.apache.commons.codec.binary.Base64;
+import org.apache.xml.security.exceptions.Base64DecodingException;
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
@@ -30,6 +34,7 @@ import java.security.KeyStoreException;
 import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -99,9 +104,13 @@ public class EidasMetadataResolverRepositoryTest {
 
     @Test
     public void shouldCreateMetadataResolverWhenTrustAnchorIsValid() throws ParseException, KeyStoreException, CertificateEncodingException {
-        JWK trustAnchor = createJWK("http://signin.gov.uk/entity/id", Arrays.asList(TestCertificateStrings.METADATA_SIGNING_A_PUBLIC_CERT,
-                TestCertificateStrings.METADATA_SIGNING_B_PUBLIC_CERT));
+
+        List<String> stringCertChain = Arrays.asList(TestCertificateStrings.STUB_COUNTRY_PUBLIC_PRIMARY_CERT,
+                TestCertificateStrings.STUB_COUNTRY_PUBLIC_SECONDARY_CERT);
+
+        JWK trustAnchor = createJWK("http://signin.gov.uk/entity/id", stringCertChain);
         trustAnchors.add(trustAnchor);
+
         when(metadataConfiguration.getMetadataSourceUri()).thenReturn(UriBuilder.fromUri("https://source.com").build());
         metadataResolverRepository = new EidasMetadataResolverRepository(trustAnchorResolver, environment, metadataConfiguration,
                 dropwizardMetadataResolverFactory, timer, metadataSignatureTrustEngineFactory, new MetadataResolverConfigBuilder());
@@ -123,9 +132,36 @@ public class EidasMetadataResolverRepositoryTest {
     }
 
     @Test
+    public void shouldUseEarliestExpiryDateOfX509Cert() throws ParseException, Base64DecodingException {
+        String entityId = "http://signin.gov.uk/entity-id";
+
+        List<String> stringCertsChain = Arrays.asList(TestCertificateStrings.STUB_COUNTRY_PUBLIC_PRIMARY_CERT,
+                TestCertificateStrings.STUB_COUNTRY_PUBLIC_SECONDARY_CERT, TestCertificateStrings.STUB_COUNTRY_PUBLIC_TERTIARY_CERT);
+
+        JWK trustAnchor = createJWK(entityId, stringCertsChain);
+        trustAnchors.add(trustAnchor);
+
+        when(metadataConfiguration.getMetadataSourceUri()).thenReturn(UriBuilder.fromUri("https://source.com").build());
+        metadataResolverRepository = new EidasMetadataResolverRepository(trustAnchorResolver, environment, metadataConfiguration,
+                dropwizardMetadataResolverFactory, timer, metadataSignatureTrustEngineFactory, new MetadataResolverConfigBuilder());
+        verify(dropwizardMetadataResolverFactory).createMetadataResolver(eq(environment), metadataResolverConfigurationCaptor.capture());
+
+        MetadataResolver createdMetadataResolver = metadataResolverRepository.getMetadataResolver(trustAnchor.getKeyID()).get();
+        MetadataResolverConfiguration metadataResolverConfiguration = metadataResolverConfigurationCaptor.getValue();
+        metadataResolverConfiguration.getMinRefreshDelay();
+
+        X509Certificate cert = X509CertUtils.parse(org.apache.xml.security.utils.Base64.decode(String.valueOf(TestCertificateStrings.STUB_COUNTRY_PUBLIC_TERTIARY_CERT)));
+        List<X509Certificate> sortedCerts = metadataResolverRepository.sortCertsByDate(trustAnchor);
+
+        assertThat(trustAnchor.getX509CertChain().size()).isEqualTo(3);
+        assertThat(createdMetadataResolver).isEqualTo(metadataResolver);
+        assertThat(sortedCerts.get(0)).isEqualTo(cert);
+    }
+
+    @Test
     public void shouldNotCreateMetadataResolverWhenCertificateIsInvalid() throws ParseException {
         String entityId = "http://signin.gov.uk/entity-id";
-        trustAnchors.add(createJWK(entityId, Collections.singletonList(TestCertificateStrings.UNCHAINED_PUBLIC_CERT)));
+        trustAnchors.add(createJWK(entityId, Collections.singletonList(TestCertificateStrings.METADATA_SIGNING_A_PUBLIC_CERT)));
         metadataResolverRepository = new EidasMetadataResolverRepository(trustAnchorResolver, environment, metadataConfiguration,
                 dropwizardMetadataResolverFactory, timer, metadataSignatureTrustEngineFactory, new MetadataResolverConfigBuilder());
 

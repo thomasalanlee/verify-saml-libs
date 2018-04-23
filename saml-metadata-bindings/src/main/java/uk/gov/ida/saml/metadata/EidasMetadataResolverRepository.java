@@ -5,6 +5,7 @@ import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.util.X509CertUtils;
 import io.dropwizard.setup.Environment;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import org.apache.xml.security.exceptions.Base64DecodingException;
 import org.apache.xml.security.utils.Base64;
 import org.joda.time.DateTime;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -103,17 +104,15 @@ public class EidasMetadataResolverRepository {
         ImmutableMap.Builder<String, MetadataResolverContainer> metadataResolverBuilder = ImmutableMap.builder();
         for (JWK trustAnchor : trustAnchors) {
             try {
-                X509Certificate certificate = X509CertUtils.parse(Base64.decode(String.valueOf(trustAnchor.getX509CertChain().get(0))));
-                certificate.checkValidity();
-
                 Collection<String> errors = CountryTrustAnchor.findErrors(trustAnchor);
+
                 if (!errors.isEmpty()) {
                     throw new Error(String.format("Managed to generate an invalid anchor: %s", String.join(", ", errors)));
                 }
 
                 metadataResolverBuilder.put(trustAnchor.getKeyID(), createMetadataResolver(trustAnchor));
 
-                Date metadataSigningCertExpiryDate = certificate.getNotAfter();
+                Date metadataSigningCertExpiryDate = sortCertsByDate(trustAnchor).get(0).getNotAfter();
                 Date nextRunTime = DateTime.now().plus(delayBeforeNextRefresh).toDate();
                 if (metadataSigningCertExpiryDate.before(nextRunTime)) {
                     setShortRefreshDelay();
@@ -127,6 +126,23 @@ public class EidasMetadataResolverRepository {
         stopOldMetadataResolvers(oldMetadataResolvers);
     }
 
+    public List<X509Certificate> sortCertsByDate(JWK trustAnchor){
+    	
+    	List<X509Certificate> certs = trustAnchor.getX509CertChain().stream()
+                .map(base64 -> {
+                	
+                    try {
+                        return X509CertUtils.parse(Base64.decode(String.valueOf(base64)));
+                    } catch (Base64DecodingException e) {
+                    	throw new IllegalArgumentException(String.format("Failed to parse X509 certificate: %s", e.getMessage()));
+                    }
+                })
+                .sorted((cert1, cert2) -> cert1.getNotAfter().compareTo(cert2.getNotAfter()))
+                .collect(Collectors.toList());
+    	
+    	return certs;
+    }
+    
     private MetadataResolverContainer createMetadataResolver(JWK trustAnchor) throws CertificateException, ComponentInitializationException, UnsupportedEncodingException {
         MetadataResolverConfiguration metadataResolverConfiguration = metadataResolverConfigBuilder.createMetadataResolverConfiguration(trustAnchor, eidasMetadataConfiguration);
         MetadataResolver metadataResolver = dropwizardMetadataResolverFactory.createMetadataResolver(environment, metadataResolverConfiguration);
