@@ -14,9 +14,8 @@ logging:
 
 metadata:
   uri: OVERRIDE_ME
-  trustStore:
-    path: OVERRIDE_ME
-    password: puppet
+  trustStorePath: OVERRIDE_ME
+  trustStorePassword: puppet
   minRefreshDelay: 60000
   maxRefreshDelay: 600000
   expectedEntityId: https://signin.service.gov.uk

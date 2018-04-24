@@ -20,8 +20,6 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
-import org.opensaml.core.config.InitializationException;
-import org.opensaml.core.config.InitializationService;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import uk.gov.ida.saml.core.test.TestEntityIds;
@@ -45,51 +43,87 @@ public class SamlMetadataBundleTest {
         metadataResource.stubFor(get(urlEqualTo("/metadata")).willReturn(aResponse().withBody(new MetadataFactory().defaultMetadata())));
     }
 
-    public static final DropwizardAppRule<TestConfiguration> applicationDropwizardAppRule = new DropwizardAppRule<>(
+    @Deprecated
+    public static final DropwizardAppRule<OldTestConfiguration> OLD_APPLICATION_DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
+            OldTestApplication.class,
+            ResourceHelpers.resourceFilePath("old-test-app.yml"),
+            ConfigOverride.config("metadata.uri", () -> "http://localhost:" + metadataResource.port() + "/metadata"),
+            ConfigOverride.config("metadata.trustStorePath", () -> keyStoreRule.getAbsolutePath()),
+            ConfigOverride.config("metadata.trustStorePassword", () -> keyStoreRule.getPassword()),
+            ConfigOverride.config("metadata.trustStore.unknownProperty", () -> "unknownValue")
+    );
+
+    public static final DropwizardAppRule<TestConfiguration> APPLICATION_DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
             TestApplication.class,
             ResourceHelpers.resourceFilePath("test-app.yml"),
             ConfigOverride.config("metadata.uri", () -> "http://localhost:" + metadataResource.port() + "/metadata"),
-            ConfigOverride.config("metadata.trustStorePath", () -> keyStoreRule.getAbsolutePath()),
-            ConfigOverride.config("metadata.trustStorePassword", () -> keyStoreRule.getPassword())
+            ConfigOverride.config("metadata.trustStore.path", () -> keyStoreRule.getAbsolutePath()),
+            ConfigOverride.config("metadata.trustStore.password", () -> keyStoreRule.getPassword()),
+            ConfigOverride.config("metadata.unknownProperty", () -> "unknownValue")
     );
 
     @ClassRule
-    public final static RuleChain ruleChain = RuleChain.outerRule(metadataResource).around(keyStoreRule).around(applicationDropwizardAppRule);
+    @Deprecated
+    public final static RuleChain oldRuleChain = RuleChain.outerRule(metadataResource).around(keyStoreRule).around(OLD_APPLICATION_DROPWIZARD_APP_RULE);
 
+    @ClassRule
+    public final static RuleChain ruleChain = RuleChain.outerRule(metadataResource).around(keyStoreRule).around(APPLICATION_DROPWIZARD_APP_RULE);
+
+    @Deprecated
+    private static Client oldClient;
     private static Client client;
 
     @BeforeClass
-    public static void setUp() throws Exception {
-      client = new JerseyClientBuilder(applicationDropwizardAppRule.getEnvironment()).build(SamlMetadataBundleTest.class.getName());
+    public static void setUp() {
+        oldClient = new JerseyClientBuilder(OLD_APPLICATION_DROPWIZARD_APP_RULE.getEnvironment()).build(SamlMetadataBundleTest.class.getName());
+        client = new JerseyClientBuilder(APPLICATION_DROPWIZARD_APP_RULE.getEnvironment()).build(SamlMetadataBundleTest.class.getName());
     }
 
     @Test
-    public void shouldReadMetadataFromMetadataServer() throws Exception {
-        Response response = client.target("http://localhost:" + applicationDropwizardAppRule.getLocalPort() +"/foo").request().get();
+    @Deprecated
+    public void shouldReadMetadataFromMetadataServer() {
+        Response response = oldClient.target("http://localhost:" + OLD_APPLICATION_DROPWIZARD_APP_RULE.getLocalPort() +"/foo").request().get();
         assertThat(response.readEntity(String.class)).isEqualTo(TestEntityIds.HUB_ENTITY_ID);
     }
 
-    public static class TestConfiguration extends Configuration {
+    @Test
+    public void shouldReadMetadataFromMetadataServerUsingTrustStoreBackedMetadataConfiguration() {
+        Response response = client.target("http://localhost:" + APPLICATION_DROPWIZARD_APP_RULE.getLocalPort() +"/foo").request().get();
+        assertThat(response.readEntity(String.class)).isEqualTo(TestEntityIds.HUB_ENTITY_ID);
+    }
+
+    @Deprecated
+    public static class OldTestConfiguration extends Configuration {
         @JsonProperty("metadata")
-        TrustStorePathMetadataConfiguration metadataConfiguration;
+        private TrustStorePathMetadataConfiguration metadataConfiguration;
 
         public MetadataResolverConfiguration getMetadataConfiguration() {
             return metadataConfiguration;
         }
     }
 
-    public static class TestApplication extends Application<TestConfiguration> {
-        private MetadataResolverBundle<TestConfiguration> bundle;
+    public static class TestConfiguration extends Configuration {
+        @JsonProperty("metadata")
+        private TrustStoreBackedMetadataConfiguration metadataConfiguration;
+
+        public MetadataResolverConfiguration getMetadataConfiguration() {
+            return metadataConfiguration;
+        }
+    }
+
+    @Deprecated
+    public static class OldTestApplication extends Application<OldTestConfiguration> {
+        private MetadataResolverBundle<OldTestConfiguration> bundle;
 
         @Override
-        public void initialize(Bootstrap<TestConfiguration> bootstrap) {
+        public void initialize(Bootstrap<OldTestConfiguration> bootstrap) {
             super.initialize(bootstrap);
-            bundle = new MetadataResolverBundle<>(TestConfiguration::getMetadataConfiguration);
+            bundle = new MetadataResolverBundle<>(OldTestConfiguration::getMetadataConfiguration);
             bootstrap.addBundle(bundle);
         }
 
         @Override
-        public void run(TestConfiguration configuration, Environment environment) throws Exception {
+        public void run(OldTestConfiguration configuration, Environment environment) {
             environment.jersey().register(new TestResource(bundle.getMetadataResolver()));
         }
 
@@ -108,4 +142,33 @@ public class SamlMetadataBundleTest {
         }
     }
 
+    public static class TestApplication extends Application<TestConfiguration> {
+        private MetadataResolverBundle<TestConfiguration> bundle;
+
+        @Override
+        public void initialize(Bootstrap<TestConfiguration> bootstrap) {
+            super.initialize(bootstrap);
+            bundle = new MetadataResolverBundle<>(TestConfiguration::getMetadataConfiguration);
+            bootstrap.addBundle(bundle);
+        }
+
+        @Override
+        public void run(TestConfiguration configuration, Environment environment) {
+            environment.jersey().register(new TestResource(bundle.getMetadataResolver()));
+        }
+
+        @Path("/")
+        public static class TestResource {
+            private MetadataResolver metadataResolver;
+            TestResource(MetadataResolver metadataResolver) {
+                this.metadataResolver = metadataResolver;
+            }
+
+            @Path("/foo")
+            @GET
+            public String getMetadata() throws ResolverException {
+                return metadataResolver.resolveSingle(new CriteriaSet(new EntityIdCriterion(TestEntityIds.HUB_ENTITY_ID))).getEntityID();
+            };
+        }
+    }
 }
