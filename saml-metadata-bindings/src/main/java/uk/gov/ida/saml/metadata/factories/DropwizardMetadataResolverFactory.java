@@ -10,7 +10,6 @@ import uk.gov.ida.saml.metadata.CertificateChainValidationFilter;
 import uk.gov.ida.saml.metadata.ExpiredCertificateMetadataFilter;
 import uk.gov.ida.saml.metadata.MetadataResolverConfiguration;
 import uk.gov.ida.saml.metadata.PKIXSignatureValidationFilterProvider;
-import uk.gov.ida.saml.metadata.TrustStoreConfiguration;
 
 import javax.ws.rs.client.Client;
 import java.net.URI;
@@ -21,8 +20,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.Collections.emptyList;
-import static uk.gov.ida.saml.metadata.Role.SP;
 import static uk.gov.ida.saml.metadata.Role.IDP;
+import static uk.gov.ida.saml.metadata.Role.SP;
 
 public class DropwizardMetadataResolverFactory {
     private final MetadataResolverFactory metadataResolverFactory = new MetadataResolverFactory();
@@ -38,22 +37,10 @@ public class DropwizardMetadataResolverFactory {
         return createMetadataResolver(environment, metadataConfiguration, false);
     }
 
-    public MetadataResolver createMetadataResolver(Environment environment, MetadataResolverConfiguration metadataConfiguration, boolean validateSignatures) {
-
-        return createMetadataResolver(
-        environment,
-        metadataConfiguration,
-        validateSignatures,
-        null,
-        null);
-    }
-
     public MetadataResolver createMetadataResolver(
         final Environment environment,
         final MetadataResolverConfiguration metadataConfiguration,
-        final boolean validateSignatures,
-        final TrustStoreConfiguration hubTrustStoreConfiguration,
-        final TrustStoreConfiguration idpTrustStoreConfiguration) {
+        final boolean validateSignatures) {
 
         URI uri = metadataConfiguration.getUri();
         Long minRefreshDelay = metadataConfiguration.getMinRefreshDelay();
@@ -66,12 +53,12 @@ public class DropwizardMetadataResolverFactory {
             getMetadataFilters(
                 metadataConfiguration,
                 validateSignatures,
-                Optional.ofNullable(hubTrustStoreConfiguration.getTrustStore()),
-                Optional.ofNullable(idpTrustStoreConfiguration.getTrustStore())),
+                Optional.ofNullable(metadataConfiguration.getHubTrustStore()),
+                Optional.ofNullable(metadataConfiguration.getIdpTrustStore())),
             minRefreshDelay,
-            maxRefreshDelay);
+            maxRefreshDelay
+        );
     }
-
 
     private List<MetadataFilter> getMetadataFilters(MetadataResolverConfiguration metadataConfiguration, boolean validateSignatures) {
 

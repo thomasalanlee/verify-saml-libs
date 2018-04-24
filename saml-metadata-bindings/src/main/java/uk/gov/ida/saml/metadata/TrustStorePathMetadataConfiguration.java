@@ -22,22 +22,6 @@ import java.security.KeyStore;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TrustStorePathMetadataConfiguration extends MetadataConfiguration {
 
-    @JsonCreator
-    public TrustStorePathMetadataConfiguration(
-            @JsonProperty("uri") @JsonAlias({ "url" }) URI uri,
-            @JsonProperty("minRefreshDelay") Long minRefreshDelay,
-            @JsonProperty("maxRefreshDelay") Long maxRefreshDelay,
-            @JsonProperty("expectedEntityId") String expectedEntityId,
-            @JsonProperty("client") JerseyClientConfiguration client,
-            @JsonProperty("jerseyClientName") @JsonAlias({ "client" }) String jerseyClientName,
-            @JsonProperty("hubFederationId") String hubFederationId,
-            @JsonProperty("trustStorePath") String trustStorePath,
-            @JsonProperty("trustStorePassword") String trustStorePassword
-    ) {
-        super(uri, minRefreshDelay, maxRefreshDelay, expectedEntityId, client, jerseyClientName, hubFederationId);
-        this.trustStorePath = trustStorePath;
-        this.trustStorePassword = trustStorePassword;
-    }
     /*
      * TrustStore configuration is used to do certificate chain validation when loading metadata
      */
@@ -49,8 +33,59 @@ public class TrustStorePathMetadataConfiguration extends MetadataConfiguration {
     @Valid
     private String trustStorePassword;
 
+    @Valid
+    private String hubTrustStorePath;
+
+    @Valid
+    private String hubTrustStorePassword;
+
+    @Valid
+    private String idpTrustStorePath;
+
+    @Valid
+    private String idpTrustStorePassword;
+
+    @JsonCreator
+    public TrustStorePathMetadataConfiguration(
+            @JsonProperty("uri") @JsonAlias({ "url" }) URI uri,
+            @JsonProperty("minRefreshDelay") Long minRefreshDelay,
+            @JsonProperty("maxRefreshDelay") Long maxRefreshDelay,
+            @JsonProperty("expectedEntityId") String expectedEntityId,
+            @JsonProperty("client") JerseyClientConfiguration client,
+            @JsonProperty("jerseyClientName") @JsonAlias({ "client" }) String jerseyClientName,
+            @JsonProperty("hubFederationId") String hubFederationId,
+            @JsonProperty("trustStorePath") String trustStorePath,
+            @JsonProperty("trustStorePassword") String trustStorePassword,
+            @JsonProperty("hubTrustStorePath") String hubTrustStorePath,
+            @JsonProperty("hubTrustStorePassword") String hubTrustStorePassword,
+            @JsonProperty("idpTrustStorePath") String idpTrustStorePath,
+            @JsonProperty("idpTrustStorePassword") String idpTrustStorePassword
+    ) {
+        super(uri, minRefreshDelay, maxRefreshDelay, expectedEntityId, client, jerseyClientName, hubFederationId);
+        this.trustStorePath = trustStorePath;
+        this.trustStorePassword = trustStorePassword;
+        this.hubTrustStorePath = hubTrustStorePath;
+        this.hubTrustStorePassword = hubTrustStorePassword;
+        this.idpTrustStorePath = idpTrustStorePath;
+        this.idpTrustStorePassword = idpTrustStorePassword;
+    }
+
     @Override
     public KeyStore getTrustStore() {
-        return new MetadataTrustStoreProvider(new KeyStoreLoader(), trustStorePath, trustStorePassword).get();
+        return getKeyStore(trustStorePath, trustStorePassword);
+    }
+
+    @Override
+    public KeyStore getHubTrustStore() {
+        return getKeyStore(hubTrustStorePath, hubTrustStorePassword);
+    }
+
+    @Override
+    public KeyStore getIdpTrustStore() {
+        return getKeyStore(idpTrustStorePath, idpTrustStorePassword);
+    }
+
+    private KeyStore getKeyStore(String path, String password) {
+        return new MetadataTrustStoreProvider(new KeyStoreLoader(), path, password).get();
     }
 }

@@ -33,8 +33,7 @@ public class MetadataResolverConfigBuilder {
                 configuration.getJerseyClientConfiguration(),
                 getClientName(trustAnchor.getKeyID(), configuration.getJerseyClientName()),
                 null,
-                trustStoreConfig(trustAnchor)
-        );
+                trustStoreConfig(trustAnchor));
     }
 
     private URI fullUri(URI sourceUri, String entityId) throws UnsupportedEncodingException {

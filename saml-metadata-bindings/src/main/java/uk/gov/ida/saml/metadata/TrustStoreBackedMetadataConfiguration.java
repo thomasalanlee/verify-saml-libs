@@ -14,6 +14,10 @@ import java.security.KeyStore;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TrustStoreBackedMetadataConfiguration extends MetadataConfiguration {
 
+    @NotNull
+    @Valid
+    private TrustStoreConfiguration trustStore;
+
     @JsonCreator
     public TrustStoreBackedMetadataConfiguration(
         @JsonProperty("uri") @JsonAlias({ "url" }) URI uri,
@@ -29,12 +33,18 @@ public class TrustStoreBackedMetadataConfiguration extends MetadataConfiguration
         this.trustStore = trustStore;
     }
 
-    @NotNull
-    @Valid
-    private TrustStoreConfiguration trustStore;
-
     @Override
     public KeyStore getTrustStore() {
         return trustStore.getTrustStore();
+    }
+
+    @Override
+    public KeyStore getHubTrustStore() {
+        return null;
+    }
+
+    @Override
+    public KeyStore getIdpTrustStore() {
+        return null;
     }
 }

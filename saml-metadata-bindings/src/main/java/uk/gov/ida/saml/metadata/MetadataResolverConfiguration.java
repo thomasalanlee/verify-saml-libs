@@ -7,19 +7,23 @@ import java.security.KeyStore;
 
 public interface MetadataResolverConfiguration {
 
-    public KeyStore getTrustStore();
+    KeyStore getTrustStore();
 
-    public URI getUri();
+    KeyStore getHubTrustStore();
 
-    public Long getMinRefreshDelay();
+    KeyStore getIdpTrustStore();
 
-    public Long getMaxRefreshDelay();
+    URI getUri();
 
-    public String getExpectedEntityId();
+    Long getMinRefreshDelay();
 
-    public JerseyClientConfiguration getJerseyClientConfiguration();
+    Long getMaxRefreshDelay();
 
-    public String getJerseyClientName();
+    String getExpectedEntityId();
 
-    public String getHubFederationId();
+    JerseyClientConfiguration getJerseyClientConfiguration();
+
+    String getJerseyClientName();
+
+    String getHubFederationId();
 }

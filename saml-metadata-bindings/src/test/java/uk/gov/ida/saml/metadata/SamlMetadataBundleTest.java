@@ -55,10 +55,10 @@ public class SamlMetadataBundleTest {
             ConfigOverride.config("metadata.trustStorePath", () -> metadataKeyStoreRule.getAbsolutePath()),
             ConfigOverride.config("metadata.trustStorePassword", () -> metadataKeyStoreRule.getPassword()),
             ConfigOverride.config("metadata.trustStore.unknownProperty", () -> "unknownValue"),
-            ConfigOverride.config("hubTrustStore.path", () -> hubKeyStoreRule.getAbsolutePath()),
-            ConfigOverride.config("hubTrustStore.password", () -> hubKeyStoreRule.getPassword()),
-            ConfigOverride.config("idpTrustStore.path", () -> idpKeyStoreRule.getAbsolutePath()),
-            ConfigOverride.config("idpTrustStore.password", () -> idpKeyStoreRule.getPassword())
+            ConfigOverride.config("metadata.hubTrustStorePath", () -> hubKeyStoreRule.getAbsolutePath()),
+            ConfigOverride.config("metadata.hubTrustStorePassword", () -> hubKeyStoreRule.getPassword()),
+            ConfigOverride.config("metadata.idpTrustStorePath", () -> idpKeyStoreRule.getAbsolutePath()),
+            ConfigOverride.config("metadata.idpTrustStorePassword", () -> idpKeyStoreRule.getPassword())
     );
 
     public static final DropwizardAppRule<TestConfiguration> APPLICATION_DROPWIZARD_APP_RULE = new DropwizardAppRule<>(
@@ -68,10 +68,10 @@ public class SamlMetadataBundleTest {
             ConfigOverride.config("metadata.trustStore.path", () -> metadataKeyStoreRule.getAbsolutePath()),
             ConfigOverride.config("metadata.trustStore.password", () -> metadataKeyStoreRule.getPassword()),
             ConfigOverride.config("metadata.unknownProperty", () -> "unknownValue"),
-            ConfigOverride.config("hubTrustStore.path", () -> hubKeyStoreRule.getAbsolutePath()),
-            ConfigOverride.config("hubTrustStore.password", () -> hubKeyStoreRule.getPassword()),
-            ConfigOverride.config("idpTrustStore.path", () -> idpKeyStoreRule.getAbsolutePath()),
-            ConfigOverride.config("idpTrustStore.password", () -> idpKeyStoreRule.getPassword())
+            ConfigOverride.config("metadata.hubTrustStore.path", () -> hubKeyStoreRule.getAbsolutePath()),
+            ConfigOverride.config("metadata.hubTrustStore.password", () -> hubKeyStoreRule.getPassword()),
+            ConfigOverride.config("metadata.idpTrustStore.path", () -> idpKeyStoreRule.getAbsolutePath()),
+            ConfigOverride.config("metadata.idpTrustStore.password", () -> idpKeyStoreRule.getPassword())
     );
 
     @ClassRule
@@ -117,22 +117,8 @@ public class SamlMetadataBundleTest {
         @JsonProperty("metadata")
         private TrustStorePathMetadataConfiguration metadataConfiguration;
 
-        @JsonProperty("hubTrustStore")
-        private TrustStoreConfiguration hubTrustStoreConfiguration;
-
-        @JsonProperty("idpTrustStore")
-        private TrustStoreConfiguration idpTrustStoreConfiguration;
-
         public MetadataResolverConfiguration getMetadataConfiguration() {
             return metadataConfiguration;
-        }
-
-        public TrustStoreConfiguration getHubTrustStoreConfiguration() {
-            return hubTrustStoreConfiguration;
-        }
-
-        public TrustStoreConfiguration getIdpTrustStoreConfiguration() {
-            return idpTrustStoreConfiguration;
         }
     }
 
@@ -140,22 +126,8 @@ public class SamlMetadataBundleTest {
         @JsonProperty("metadata")
         private TrustStoreBackedMetadataConfiguration metadataConfiguration;
 
-        @JsonProperty("hubTrustStore")
-        private TrustStoreConfiguration hubTrustStoreConfiguration;
-
-        @JsonProperty("idpTrustStore")
-        private TrustStoreConfiguration idpTrustStoreConfiguration;
-
         public MetadataResolverConfiguration getMetadataConfiguration() {
             return metadataConfiguration;
-        }
-
-        public TrustStoreConfiguration getHubTrustStoreConfiguration() {
-            return hubTrustStoreConfiguration;
-        }
-
-        public TrustStoreConfiguration getIdpTrustStoreConfiguration() {
-            return idpTrustStoreConfiguration;
         }
     }
 
@@ -166,10 +138,7 @@ public class SamlMetadataBundleTest {
         @Override
         public void initialize(Bootstrap<OldTestConfiguration> bootstrap) {
             super.initialize(bootstrap);
-            bundle = new MetadataResolverBundle<>(
-                OldTestConfiguration::getMetadataConfiguration,
-                OldTestConfiguration::getHubTrustStoreConfiguration,
-                OldTestConfiguration::getIdpTrustStoreConfiguration);
+            bundle = new MetadataResolverBundle<>(OldTestConfiguration::getMetadataConfiguration);
             bootstrap.addBundle(bundle);
         }
 
@@ -199,10 +168,7 @@ public class SamlMetadataBundleTest {
         @Override
         public void initialize(Bootstrap<TestConfiguration> bootstrap) {
             super.initialize(bootstrap);
-            bundle = new MetadataResolverBundle<>(
-                TestConfiguration::getMetadataConfiguration,
-                TestConfiguration::getHubTrustStoreConfiguration,
-                TestConfiguration::getIdpTrustStoreConfiguration);
+            bundle = new MetadataResolverBundle<>(TestConfiguration::getMetadataConfiguration);
             bootstrap.addBundle(bundle);
         }
 
